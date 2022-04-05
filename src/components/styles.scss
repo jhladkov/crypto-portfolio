@@ -1,5 +1,5 @@
 .hello {
-  background: red;
+  background: $service-item-label-decor;
   &:after {
     content: '123';
   }

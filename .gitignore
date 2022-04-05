@@ -1,11 +1,16 @@
 .DS_Store
 node_modules
 /dist
-
+/coverage
+/allure-results
+.npmrc
 
 # local env files
 .env.local
 .env.*.local
+
+# docker files
+docker-compose.yml
 
 # Log files
 npm-debug.log*

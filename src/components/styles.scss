@@ -1,0 +1,6 @@
+.hello {
+  background: red;
+  &:after {
+    content: '123';
+  }
+}

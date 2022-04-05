@@ -1,5 +1,5 @@
 <template>
-  <HelloWorld msg="Welcome to Your Vue.js App a" />
+  <HelloWorld msg="Welcome to Your Vue.js App a a" />
 </template>
 
 <script>

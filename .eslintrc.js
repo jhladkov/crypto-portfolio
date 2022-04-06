@@ -12,6 +12,7 @@ module.exports = {
   },
   rules: {
     camelcase: 'off',
+    'vue/multi-word-component-names': 'off',
     'no-param-reassign': 'off',
     'no-shadow': 'off',
     'import/prefer-default-export': 'off',

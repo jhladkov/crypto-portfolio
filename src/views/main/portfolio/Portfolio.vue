@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <PriceSection />
+    <price-section />
     <assets-section />
   </div>
 </template>

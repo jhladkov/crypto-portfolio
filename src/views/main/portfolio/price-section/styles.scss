@@ -13,11 +13,15 @@
 }
 
 .price-section__block {
+  .block__inner{
+    display: flex;
+    align-items: center;
+  }
   .price-section__title {
     letter-spacing: 1px;
-    margin-bottom: 10px;
     font-size: 32px;
     color: $black ;
+    margin-right: 16px;
   }
 }
 
@@ -36,15 +40,5 @@
     color: $gray;
     background: $lightGray;
     border-radius: 8px;
-  }
-}
-
-.profit{
-  padding: 10px 20px;
-  background: $green;
-  border-radius: 8px;
-  color: $white;
-  .profit__value{
-    font-weight: 700;
   }
 }

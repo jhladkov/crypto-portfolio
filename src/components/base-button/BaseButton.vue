@@ -1,10 +1,25 @@
 <template>
-  <div />
+  <button
+    class="button"
+    :class="className"
+  >
+    {{ value }}
+  </button>
 </template>
 
 <script>
 export default {
-
+  name: 'BaseButton',
+  props: {
+    className: {
+      type: String,
+      default: null,
+    },
+    value: {
+      type: String,
+      required: true,
+    },
+  },
 };
 </script>
 

@@ -4,15 +4,18 @@
     <button @click="testHandler">
       test
     </button>
+    <assets-section />
   </div>
 </template>
 
 <script>
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+import AssetsSection from '@/views/main/portfolio/assets-section/AssetsSection.vue';
 
 export default {
   name: 'Portfolio',
+  components: { AssetsSection },
   setup() {
     const store = useStore();
     return {

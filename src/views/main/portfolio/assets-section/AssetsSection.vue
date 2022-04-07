@@ -5,7 +5,9 @@
     </div>
     <div class="table-assets">
       <div class="table-assets-head">
-        <div class="table-assets-head-col">
+        <div
+          class="table-assets-head-col"
+        >
           Name
         </div>
         <div class="table-assets-head-col">
@@ -29,7 +31,7 @@
       </div>
       <div class="table-assets-body">
         <body-col
-          v-for="(item, index) in test"
+          v-for="(item, index) in tokensData"
           :key="index"
           class="table-assets-body-col"
           :asset="item"
@@ -45,55 +47,38 @@ import BodyCol from '@/components/body-col/BodyCol.vue';
 export default {
   name: 'AssetsSection',
   components: { BodyCol },
-  setup() {
-    const test = [
-      {
-        name: 'Solana',
-        shortName: 'SOL',
-        price: '130.34',
-        holdTokens: '8.75',
-        change: '12',
-        hold: '1034',
-        avg: '90',
-        profit: '200',
-        src: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png',
-      },
-      {
-        name: 'Genopets',
-        shortName: 'GENE',
-        price: '130.34',
-        holdTokens: '8.75',
-        change: '12',
-        hold: '1034',
-        avg: '90',
-        profit: '200',
-        src: 'https://s2.coinmarketcap.com/static/img/coins/64x64/13632.png',
-      },
-      {
-        name: 'Ethereum',
-        shortName: 'ETH',
-        price: '130.34',
-        holdTokens: '8.75',
-        change: '12',
-        hold: '1034',
-        avg: '90',
-        profit: '200',
-        src: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-      },
-      {
-        name: 'Impossible Finance Launchpad',
-        shortName: 'IDIA',
-        price: '130.34',
-        holdTokens: '8.75',
-        change: '12',
-        hold: '1034',
-        avg: '90',
-        profit: '200',
-        src: 'https://s2.coinmarketcap.com/static/img/coins/64x64/10933.png',
-      },
-    ];
+  data() {
     return {
-      test,
+      WBSKData: [],
+      connection: null,
+    };
+  },
+  computed: {
+    tokensData() {
+      const data = this.WBSKData[0]?.tokenList;
+      return data?.map((item) => ({
+        name: item?.name,
+        shortName: item?.symbol,
+        price: item?.currentPrice.toFixed(2),
+        holdTokens: item?.amount.toFixed(2),
+        change: item?.priceChangePercentage24h.toFixed(2),
+        hold: item?.cryptoHoldings.toFixed(2),
+        avg: item?.buyAvgPrice.toFixed(2),
+        profit: ((item?.currentPrice * item?.amount)
+          - (item?.buyAvgPrice * item?.amount)).toFixed(2),
+        src: item.image,
+      }));
+    },
+  },
+  created() {
+    const connection = new WebSocket('ws://localhost:5000');
+    connection.onmessage = (event) => {
+      this.WBSKData = JSON.parse(event.data);
+    };
+
+    connection.onopen = () => {
+      // console.log('Successfully connected to the echo websocket server...');
+      connection.send(JSON.stringify({ method: 'getPortfolio', id: 1 }));
     };
   },
 };

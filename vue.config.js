@@ -9,8 +9,7 @@ module.exports = defineConfig({
     loaderOptions: {
       sass: {
         additionalData: `
-          @import "~@/assets/scss/variables.scss";
-          @import "~@/assets/scss/helpers.scss";
+          @import "~@/assets/scss/main.scss";
         `,
       },
     },

@@ -28,10 +28,12 @@
 import {
   reactive, ref, onBeforeMount, computed,
 } from 'vue';
+import { useStore } from 'vuex';
 
 export default {
   name: 'Chart',
   setup() {
+    const store = useStore();
     const activeButton = ref(0);
     const chart = ref(null);
 
@@ -69,6 +71,8 @@ export default {
         },
       },
     });
+    const activeIndex = computed(() => state.activeButton || 0);
+
     const updateData = (index) => {
       const indexes = [
         '24h', '7d', '1m', '3m', '1y',
@@ -77,25 +81,12 @@ export default {
         state.activeButton = index;
         state.chartOptions.series[0] = {
           name: 'main',
-          data: state.allValues[`historyChart${indexes[index]}`] || [],
+          data: store.getters['portfolio/chartData'][`historyChart${indexes[index]}`] || [],
         };
       }
     };
-
-    const activeIndex = computed(() => state.activeButton || 0);
     onBeforeMount(() => {
-      const connection = new WebSocket('ws://vm3356913.52ssd.had.wf:5000/');
-      connection.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        state.allValues = data;
-        state.chartOptions.series[0] = {
-          name: 'main',
-          data: data.historyChart24h || [],
-        };
-      };
-      connection.onopen = () => {
-        connection.send(JSON.stringify({ method: 'getChartValues', id: 1 }));
-      };
+      // get call
     });
 
     return {

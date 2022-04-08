@@ -2,9 +2,21 @@ import axios from 'axios';
 
 const state = {
   WBSKData: [],
+  chartData: [],
+  searchData: [],
+  connection: null,
 };
 
 const getters = {
+  connection(state) {
+    return state.connection;
+  },
+  chartData(state) {
+    return state.chartData;
+  },
+  searchData(state) {
+    return state.searchData;
+  },
   getTokensList(state) {
     const data = state.WBSKData;
     return data?.map((item) => ({
@@ -25,6 +37,15 @@ const getters = {
 const mutations = {
   setWBSKData(state, value) {
     state.WBSKData = value;
+  },
+  setConnection(state, value) {
+    state.connection = value;
+  },
+  setChartData(state, value) {
+    state.chartData = value;
+  },
+  setSearchData(state, value) {
+    state.searchData = value;
   },
 };
 
@@ -48,7 +69,17 @@ const actions = {
   getConnectionToWebSocket({ commit }) {
     const connection = new WebSocket('ws://vm3356913.52ssd.had.wf:5000/');
     connection.onmessage = (event) => {
-      commit('setWBSKData', JSON.parse(event.data).tokenList);
+      const response = JSON.parse(event.data);
+      const { data } = response;
+      if (response?.action === 'portfolio') {
+        commit('setWBSKData', data.tokenList);
+      }
+      if (response?.action === 'chart') {
+        commit('setChartData', data);
+      }
+      if (response?.action === 'search') {
+        commit('setSearchData', data);
+      }
     };
 
     connection.onopen = () => {
@@ -61,6 +92,7 @@ const actions = {
     connection.onerror = () => {
       console.log('Error');
     };
+    commit('setConnection', connection);
   },
 };
 

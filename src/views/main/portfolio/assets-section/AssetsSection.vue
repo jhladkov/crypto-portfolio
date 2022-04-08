@@ -43,9 +43,7 @@
 
 <script>
 import BodyCol from '@/components/body-col/BodyCol.vue';
-import {
-  reactive, onBeforeMount, computed,
-} from 'vue';
+import { onBeforeMount, computed } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
@@ -54,18 +52,12 @@ export default {
   setup() {
     const store = useStore();
 
-    const state = reactive({
-      WBSKData: store.state.portfolio.WBSKData,
-      connection: null,
-    });
     const tokensData = computed(() => store.getters['portfolio/getTokensList']);
 
     onBeforeMount(async () => {
       await store.dispatch('portfolio/getPortfolio');
-      await store.dispatch('portfolio/getConnectionToWebSocket');
     });
     return {
-      ...state,
       tokensData,
     };
   },

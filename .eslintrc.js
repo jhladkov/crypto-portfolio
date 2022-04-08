@@ -15,6 +15,7 @@ module.exports = {
     'vue/multi-word-component-names': 'off',
     'no-param-reassign': 'off',
     'no-shadow': 'off',
+    'no-console': 'off',
     'import/prefer-default-export': 'off',
     'global-require': 'off',
     'vue/require-default-prop': 'off',

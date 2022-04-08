@@ -7,7 +7,7 @@
         v-for="(value, index) in duration"
         :key="value"
         class="duration-table-block"
-        :class="{'active': index === activeButton}"
+        :class="{'active': index === activeIndex}"
         @click="updateData(index)"
       >
         {{ value }}
@@ -25,7 +25,9 @@
 </template>
 
 <script>
-import { reactive, ref, onBeforeMount } from 'vue';
+import {
+  reactive, ref, onBeforeMount, computed,
+} from 'vue';
 
 export default {
   name: 'Chart',
@@ -79,6 +81,8 @@ export default {
         };
       }
     };
+
+    const activeIndex = computed(() => state.activeButton || 0);
     onBeforeMount(() => {
       const connection = new WebSocket('ws://vm3356913.52ssd.had.wf:5000/');
       connection.onmessage = (event) => {
@@ -99,6 +103,7 @@ export default {
       updateData,
       activeButton,
       chart,
+      activeIndex,
     };
   },
 };

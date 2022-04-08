@@ -43,42 +43,30 @@
 
 <script>
 import BodyCol from '@/components/body-col/BodyCol.vue';
+import {
+  reactive, onBeforeMount, computed,
+} from 'vue';
+import { useStore } from 'vuex';
 
 export default {
   name: 'AssetsSection',
   components: { BodyCol },
-  data() {
-    return {
-      WBSKData: [],
-      connection: null,
-    };
-  },
-  computed: {
-    tokensData() {
-      const data = this.WBSKData[0]?.tokenList;
-      return data?.map((item) => ({
-        name: item?.name,
-        shortName: item?.symbol,
-        price: item?.currentPrice.toFixed(2),
-        holdTokens: item?.amount.toFixed(2),
-        change: item?.priceChangePercentage24h.toFixed(2),
-        hold: item?.cryptoHoldings.toFixed(2),
-        avg: item?.buyAvgPrice.toFixed(2),
-        profit: ((item?.currentPrice * item?.amount)
-          - (item?.buyAvgPrice * item?.amount)).toFixed(2),
-        src: item.image,
-      }));
-    },
-  },
-  created() {
-    const connection = new WebSocket('ws://localhost:5000');
-    connection.onmessage = (event) => {
-      this.WBSKData = JSON.parse(event.data);
-    };
+  setup() {
+    const store = useStore();
 
-    connection.onopen = () => {
-      // console.log('Successfully connected to the echo websocket server...');
-      connection.send(JSON.stringify({ method: 'getPortfolio', id: 1 }));
+    const state = reactive({
+      WBSKData: store.state.portfolio.WBSKData,
+      connection: null,
+    });
+    const tokensData = computed(() => store.getters['portfolio/getTokensList']);
+
+    onBeforeMount(async () => {
+      await store.dispatch('portfolio/getPortfolio');
+      await store.dispatch('portfolio/getConnectionToWebSocket');
+    });
+    return {
+      ...state,
+      tokensData,
     };
   },
 };

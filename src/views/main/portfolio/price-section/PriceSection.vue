@@ -19,8 +19,8 @@
         </h1>
         <indicator
           class-name="price-section__profit"
-          :background="true"
-          value="0.04"
+          :background="tokenInfo?.change < 0 ? 'down' : 'up'"
+          :value="tokenInfo ? tokenInfo.change : '0,04'"
         />
       </div>
 

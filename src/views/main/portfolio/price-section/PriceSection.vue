@@ -2,11 +2,20 @@
   <section class="section price-section">
     <div class="price-section__block block">
       <p class="prise-section__pre-title">
-        Current Balance
+        {{ preTitle }}
       </p>
       <div class="block__inner">
+        <div
+          v-if="tokenInfo"
+          class="price-section__token-img"
+        >
+          <img
+            :src="tokenInfo.src"
+            alt=""
+          >
+        </div>
         <h1 class="price-section__title">
-          {{ getTotalPrice }}
+          {{ tokenInfo ? priceToken: getTotalPrice }}
         </h1>
         <indicator
           class-name="price-section__profit"
@@ -15,7 +24,10 @@
         />
       </div>
 
-      <div class="price-section__inner info-block">
+      <div
+        v-if="!tokenInfo"
+        class="price-section__inner info-block"
+      >
         <p class="info-block__value">
           + $25.72
         </p>
@@ -42,12 +54,24 @@ import { computed } from 'vue';
 export default {
   name: 'PriceSection',
   components: { BaseButton, Indicator },
-  setup() {
+  props: {
+    preTitle: {
+      type: String,
+      default: 'Current Balance',
+    },
+    tokenInfo: {
+      type: Object,
+      default: null,
+    },
+  },
+  setup(props) {
     const store = useStore();
     const getTotalPrice = computed(() => store.getters['portfolio/totalPrice']);
+    const priceToken = computed(() => props.tokenInfo?.cryptoHoldings?.toFixed(2));
 
     return {
       getTotalPrice,
+      priceToken,
     };
   },
 };

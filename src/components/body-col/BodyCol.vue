@@ -44,13 +44,19 @@
       </div>
     </div>
     <div class="table-td">
-      Action
+      <router-link
+        :to="`/transactions/${asset.name}`"
+      >
+        Transactions
+      </router-link>
     </div>
   </div>
 </template>
 
 <script>
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { usePercentProfit } from '@/hook/usePercentProfit';
 
 export default {
   name: 'BodyCol',
@@ -61,14 +67,19 @@ export default {
     },
   },
   setup(props) {
-    const profit_loss_percent = computed(() => {
-      const initSpendMoney = +props.asset.holdTokens * +props.asset.avg;
-      return ((props.asset.profit * 100) / initSpendMoney).toFixed(2);
-    });
+    const router = useRouter();
 
-    // console.log(props.asset);
+    const profit_loss_percent = computed(() => usePercentProfit(
+      props.asset.holdTokens, props.asset.avg, props.asset.profit,
+    ));
+
+    const goToTransactions = () => {
+      router.push(`/transactions/${props.asset.name}`);
+    };
+
     return {
       profit_loss_percent,
+      goToTransactions,
     };
   },
 };

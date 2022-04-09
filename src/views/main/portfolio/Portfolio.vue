@@ -18,7 +18,10 @@
       </div>
     </div>
     <chart />
-    <assets-section />
+    <assets-section
+      :asset-col="assetCol"
+      title="Your Assets"
+    />
   </div>
 </template>
 
@@ -37,6 +40,7 @@ export default {
   setup() {
     const store = useStore();
 
+    const assetCol = ref(['Name', 'Price', 'Holdings', 'Avg. Buy Price', 'Profit/Loss', 'Actions']);
     const value = ref('');
     const searchData = computed(() => store.getters['portfolio/searchData']);
 
@@ -53,6 +57,7 @@ export default {
     return {
       value,
       searchData,
+      assetCol,
     };
   },
 };

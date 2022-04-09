@@ -5,32 +5,16 @@
       class="assets-section__wrapper"
     >
       <div class="assets-title">
-        Your Assets
+        {{ title }} Transactions
       </div>
       <div class="table-assets">
         <div class="table-assets-head">
           <div
+            v-for="(colName,index) in assetCol"
+            :key="index"
             class="table-assets-head-col"
           >
-            Name
-          </div>
-          <div class="table-assets-head-col">
-            Price
-          </div>
-          <div class="table-assets-head-col">
-            24H
-          </div>
-          <div class="table-assets-head-col">
-            Holdings
-          </div>
-          <div class="table-assets-head-col">
-            Avg. Buy Price
-          </div>
-          <div class="table-assets-head-col">
-            Profit/Loss
-          </div>
-          <div class="table-assets-head-col">
-            Actions
+            {{ colName }}
           </div>
         </div>
         <div class="table-assets-body">
@@ -58,6 +42,10 @@ import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 export default {
   name: 'AssetsSection',
   components: { BaseLoader, BodyCol },
+  props: {
+    assetCol: Array,
+    title: String,
+  },
   setup() {
     const store = useStore();
 

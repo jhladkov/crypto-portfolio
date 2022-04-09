@@ -48,19 +48,11 @@ section{
   margin-bottom: 30px;
 }
 
-.vue-apexcharts{
-  //.apexcharts-toolbar{
-  //  display: none;
-  //}
-  //.apexcharts-xaxistooltip-bottom{
-  //  display: none;
-  //}
-  //.apexcharts-tooltip .apexcharts-active {
-  //  display: none !important;
-  //}
-  //.apexcharts-tooltip-title{
-  //  display: none;
-  //}
+.increase {
+  color: $green;
+}
 
+.decrease {
+  color: $red;
 }
 

@@ -12,6 +12,9 @@ const getters = {
   totalPrice(state) {
     return `$${state.totalPrice.toFixed(2)}`;
   },
+  getSpecificTokenByName(state, getters) {
+    return (tokenName) => getters.getTokensList.find((item) => item.name === tokenName);
+  },
   connection(state) {
     return state.connection;
   },

@@ -13,5 +13,13 @@ export default {
         '../views/main/portfolio/Portfolio.vue'
       ),
     },
+    {
+      path: '/transactions/:token',
+      name: 'Transactions',
+      component: () => import(
+        /* webpackChunkName: "transactions" */
+        '../views/main/transactions/Transactions.vue'
+      ),
+    },
   ],
 };

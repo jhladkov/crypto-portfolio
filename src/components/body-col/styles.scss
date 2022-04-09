@@ -7,22 +7,31 @@
   align-items: center;
   font-size: 14px;
   transition: .5s ease background-color;
+
   &:hover {
     background-color: #f8fafd;
   }
 }
+
 .table-td {
   font-weight: 500;
   padding: 10px;
   text-align: right;
+
+  .table-td__profit{
+    margin-bottom: 5px;
+  }
+
   &:first-child {
     text-align: left;
     padding-left: 0;
   }
+
   &:last-child {
     padding-right: 0;
   }
 }
+
 .asset-img {
   height: 24px;
   width: 24px;
@@ -45,4 +54,12 @@
 .asset-hold-tokens {
   color: rgb(88, 102, 126);
   font-size: 12px;
+}
+
+.increase {
+  color: $green;
+}
+
+.decrease {
+  color: $red;
 }

@@ -6,7 +6,7 @@
       </p>
       <div class="block__inner">
         <h1 class="price-section__title">
-          $3000.12
+          {{ getTotalPrice }}
         </h1>
         <indicator
           class-name="price-section__profit"
@@ -36,10 +36,20 @@
 <script>
 import Indicator from '@/components/indicator/Indicator.vue';
 import BaseButton from '@/components/base-button/BaseButton.vue';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 
 export default {
   name: 'PriceSection',
   components: { BaseButton, Indicator },
+  setup() {
+    const store = useStore();
+    const getTotalPrice = computed(() => store.getters['portfolio/totalPrice']);
+
+    return {
+      getTotalPrice,
+    };
+  },
 };
 </script>
 

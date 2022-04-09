@@ -5,9 +5,13 @@ const state = {
   chartData: [],
   searchData: [],
   connection: null,
+  totalPrice: 0,
 };
 
 const getters = {
+  totalPrice(state) {
+    return `$${state.totalPrice.toFixed(2)}`;
+  },
   connection(state) {
     return state.connection;
   },
@@ -24,7 +28,7 @@ const getters = {
       shortName: item?.symbol,
       price: item?.currentPrice.toFixed(2),
       holdTokens: item?.amount.toFixed(2),
-      change: item?.priceChangePercentage24h.toFixed(2),
+      change: (+item?.priceChangePercentage24h * 100).toFixed(2),
       hold: item?.cryptoHoldings.toFixed(2),
       avg: item?.buyAvgPrice.toFixed(2),
       profit: ((item?.currentPrice * item?.amount)
@@ -47,6 +51,9 @@ const mutations = {
   setSearchData(state, value) {
     state.searchData = value;
   },
+  setTotalPrice(state, value) {
+    state.totalPrice = value;
+  },
 };
 
 const actions = {
@@ -61,6 +68,22 @@ const actions = {
       });
 
       commit('setWBSKData', res.data.tokenList);
+    } catch (err) {
+      console.warn(err);
+    }
+  },
+
+  async getCharts({ commit }) {
+    try {
+      const res = await axios.get('http://vm3356913.52ssd.had.wf:5000/chart-values?id=1', {
+        headers: {
+          withCredentials: true,
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
+        },
+      });
+
+      commit('setChartData', res.data);
     } catch (err) {
       console.warn(err);
     }

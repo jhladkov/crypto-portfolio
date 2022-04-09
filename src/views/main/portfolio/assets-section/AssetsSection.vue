@@ -1,5 +1,8 @@
 <template>
-  <section class="assets-section">
+  <section
+    class="assets-section"
+    :class="className"
+  >
     <div
       v-if="!loader"
       class="assets-section__wrapper"
@@ -18,12 +21,7 @@
           </div>
         </div>
         <div class="table-assets-body">
-          <body-col
-            v-for="(item, index) in tokensData"
-            :key="index"
-            class="table-assets-body-col"
-            :asset="item"
-          />
+          <slot />
         </div>
       </div>
     </div>
@@ -32,7 +30,6 @@
 </template>
 
 <script>
-import BodyCol from '@/components/body-col/BodyCol.vue';
 import {
   reactive, onBeforeMount, computed,
 } from 'vue';
@@ -41,10 +38,14 @@ import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 
 export default {
   name: 'AssetsSection',
-  components: { BaseLoader, BodyCol },
+  components: { BaseLoader },
   props: {
     assetCol: Array,
     title: String,
+    className: {
+      type: String,
+      default: null,
+    },
   },
   setup() {
     const store = useStore();
@@ -54,7 +55,6 @@ export default {
       connection: null,
       loaderActive: false,
     });
-    const tokensData = computed(() => store.getters['portfolio/getTokensList']);
     const loader = computed(() => state.loaderActive);
 
     onBeforeMount(async () => {
@@ -65,7 +65,6 @@ export default {
     });
     return {
       ...state,
-      tokensData,
       loader,
     };
   },

@@ -12,6 +12,9 @@ const getters = {
   totalPrice(state) {
     return `$${state.totalPrice.toFixed(2)}`;
   },
+  getHistoryListByTokenName(state) {
+    return (tokenName) => state.WBSKData.find((item) => item.name === tokenName)?.historyList;
+  },
   getSpecificTokenByName(state, getters) {
     return (tokenName) => getters.getTokensList.find((item) => item.name === tokenName);
   },

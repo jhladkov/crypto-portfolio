@@ -15,7 +15,7 @@
           >
         </div>
         <h1 class="price-section__title">
-          {{ tokenInfo ? priceToken: getTotalPrice }}
+          ${{ tokenInfo ? priceToken: getTotalPrice }}
         </h1>
         <indicator
           class-name="price-section__profit"
@@ -67,7 +67,7 @@ export default {
   setup(props) {
     const store = useStore();
     const getTotalPrice = computed(() => store.getters['portfolio/totalPrice']);
-    const priceToken = computed(() => props.tokenInfo?.cryptoHoldings?.toFixed(2));
+    const priceToken = computed(() => props.tokenInfo?.hold);
 
     return {
       getTotalPrice,

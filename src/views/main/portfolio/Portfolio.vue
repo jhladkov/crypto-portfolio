@@ -21,7 +21,14 @@
     <assets-section
       :asset-col="assetCol"
       title="Your Assets"
-    />
+    >
+      <body-col
+        v-for="(item, index) in tokensData"
+        :key="index"
+        class="table-assets-body-col"
+        :asset="item"
+      />
+    </assets-section>
   </div>
 </template>
 
@@ -33,16 +40,20 @@ import { useStore } from 'vuex';
 import {
   computed, onBeforeMount, ref, watch,
 } from 'vue';
+import BodyCol from '@/components/body-col/BodyCol.vue';
 
 export default {
   name: 'Portfolio',
-  components: { Chart, PriceSection, AssetsSection },
+  components: {
+    BodyCol, Chart, PriceSection, AssetsSection,
+  },
   setup() {
     const store = useStore();
 
     const assetCol = ref(['Name', 'Price', 'Holdings', 'Avg. Buy Price', 'Profit/Loss', 'Actions']);
     const value = ref('');
     const searchData = computed(() => store.getters['portfolio/searchData']);
+    const tokensData = computed(() => store.getters['portfolio/getTokensList']);
 
     watch(value, async (newValue, oldValue) => {
       if (newValue === oldValue) return;
@@ -58,6 +69,7 @@ export default {
       value,
       searchData,
       assetCol,
+      tokensData,
     };
   },
 };

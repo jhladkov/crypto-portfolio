@@ -7,19 +7,19 @@
         v-for="(value, index) in duration"
         :key="value"
         class="duration-table-block"
-        :class="{'active': index === activeIndex}"
+        :class="{'active': index === getActiveIndex}"
         @click="updateData(index)"
       >
         {{ value }}
       </button>
     </div>
-    <apexchart
+    <vue-apex-charts
       ref="chart"
       width="100%"
       height="250px"
-      type="line"
-      :options="chartOptions"
-      :series="chartOptions.series"
+      :options="chartConfig"
+      :series="series"
+      @MouseMove="mouseMove"
     />
   </section>
 </template>
@@ -28,73 +28,55 @@
 import {
   reactive, ref, onBeforeMount, computed,
 } from 'vue';
+import VueApexCharts from 'vue3-apexcharts';
 import { useStore } from 'vuex';
+import { chartConfig } from '@/constants';
 
 export default {
   name: 'Chart',
+  components: { VueApexCharts },
   setup() {
     const store = useStore();
-    const activeButton = ref(0);
-    const chart = ref(null);
+    const activeIndex = ref(0);
+    const indexes = ['24h', '7d', '1m', '3m', '1y'];
+    const duration = ['24H', '7D', '30D', '90D', 'ALL'];
 
     const state = reactive({
-      allValues: [],
-      duration: ['24H', '7D', '30D', '90D', 'ALL'],
-      chartOptions: {
-        series: [],
-        chart: {
-          id: 'area-datetime',
-          type: 'area',
-          animations: {
-            initialAnimation: {
-              enabled: true,
-            },
-          },
-          height: 350,
-          zoom: {
-            enabled: false,
-          },
-        },
-        xaxis: {
-          type: 'datetime',
-          position: 'bottom',
-          axisTicks: {
-            show: true,
-          },
-        },
-        colors: ['rgb(22, 199, 132)'],
-        stroke: {
-          width: 2,
-        },
-        theme: {
-          palette: 'palette10',
-        },
-      },
+      series: [],
     });
-    const activeIndex = computed(() => state.activeButton || 0);
 
+    const getActiveIndex = computed(() => state.activeIndex || 0);
+
+    const setData = (index) => {
+      state.series[0] = {
+        name: 'main',
+        data: store.getters['portfolio/chartData'][`historyChart${indexes[index]}`] || [],
+      };
+    };
     const updateData = (index) => {
-      const indexes = [
-        '24h', '7d', '1m', '3m', '1y',
-      ];
-      if (activeButton !== index) {
-        state.activeButton = index;
-        state.chartOptions.series[0] = {
-          name: 'main',
-          data: store.getters['portfolio/chartData'][`historyChart${indexes[index]}`] || [],
-        };
+      if (activeIndex !== index) {
+        state.activeIndex = index;
+        setData(index);
       }
     };
-    onBeforeMount(() => {
-      // get call
+    const mouseMove = (e, chart, opt) => {
+      const data = state?.series[0]?.data[opt?.dataPointIndex];
+      if (data?.length === 2 && data[1]) {
+        store.commit('portfolio/setTotalPrice', state.series[0].data[opt.dataPointIndex][1]);
+      }
+    };
+    onBeforeMount(async () => {
+      await store.dispatch('portfolio/getCharts');
+      setData(0);
     });
 
     return {
       ...state,
+      duration,
+      mouseMove,
       updateData,
-      activeButton,
-      chart,
-      activeIndex,
+      chartConfig,
+      getActiveIndex,
     };
   },
 };

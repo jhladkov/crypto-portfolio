@@ -39,8 +39,8 @@
       <div class="table-td__profit">
         + ${{ asset.profit }}
       </div>
-      <div :class="[profit_loss_percent > 0 ? 'increase' : 'decrease']">
-        {{ profit_loss_percent }}%
+      <div :class="[asset.profit_loss_percent > 0 ? 'increase' : 'decrease']">
+        {{ asset.profit_loss_percent }}%
       </div>
     </div>
     <div class="table-td">
@@ -50,8 +50,6 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
 export default {
   name: 'BodyCol',
   props: {
@@ -59,17 +57,6 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  setup(props) {
-    const profit_loss_percent = computed(() => {
-      const initSpendMoney = +props.asset.holdTokens * +props.asset.avg;
-      return ((props.asset.profit * 100) / initSpendMoney).toFixed(2);
-    });
-
-    // console.log(props.asset);
-    return {
-      profit_loss_percent,
-    };
   },
 };
 </script>

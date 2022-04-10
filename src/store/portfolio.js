@@ -1,5 +1,12 @@
 import axios from 'axios';
 
+// const api = 'localhost';
+const api = 'vm3356913.52ssd.had.wf';
+
+const calcProfit = (item) => ((((item?.currentPrice * item?.amount)
+    - (item?.buyAvgPrice * item?.amount))
+    * 100) / (+item?.amount * +item?.buyAvgPrice)).toFixed(2);
+
 const state = {
   WBSKData: [],
   chartData: [],
@@ -31,14 +38,15 @@ const getters = {
     const data = state.WBSKData;
     return data?.map((item) => ({
       name: item?.name,
-      shortName: item?.symbol,
-      price: item?.currentPrice.toFixed(2),
-      holdTokens: item?.amount.toFixed(2),
-      change: (+item?.priceChangePercentage24h * 100).toFixed(2),
-      hold: item?.cryptoHoldings.toFixed(2),
-      avg: item?.buyAvgPrice.toFixed(2),
+      shortName: item?.symbol.toUpperCase(),
+      price: item?.currentPrice?.toFixed(2),
+      holdTokens: item?.amount?.toFixed(2),
+      change: +item?.priceChangePercentage24h?.toFixed(2),
+      hold: item?.cryptoHoldings?.toFixed(2),
+      avg: item?.buyAvgPrice?.toFixed(2),
+      profit_loss_percent: calcProfit(item),
       profit: ((item?.currentPrice * item?.amount)
-          - (item?.buyAvgPrice * item?.amount)).toFixed(2),
+          - (item?.buyAvgPrice * item?.amount))?.toFixed(2),
       src: item.image,
     }));
   },
@@ -65,7 +73,7 @@ const mutations = {
 const actions = {
   async getPortfolio({ commit }) {
     try {
-      const res = await axios.get('http://vm3356913.52ssd.had.wf:5000/get-portfolio?id=1', {
+      const res = await axios.get(`http://${api}:5000/get-portfolio?id=1`, {
         headers: {
           withCredentials: true,
           'Access-Control-Allow-Origin': '*',
@@ -81,22 +89,25 @@ const actions = {
 
   async getCharts({ commit }) {
     try {
-      const res = await axios.get('http://vm3356913.52ssd.had.wf:5000/chart-values?id=1', {
+      const res = await axios.get(`http://${api}:5000/chart-values?id=1`, {
         headers: {
           withCredentials: true,
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
         },
       });
-
       commit('setChartData', res.data);
     } catch (err) {
       console.warn(err);
     }
   },
 
-  getConnectionToWebSocket({ commit }) {
-    const connection = new WebSocket('ws://vm3356913.52ssd.had.wf:5000/');
+  disconnectFromWebSocket({ state }) {
+    state.connection.close('Close');
+  },
+
+  connectToWebSocket({ commit }) {
+    const connection = new WebSocket(`ws://${api}:5000/`);
     connection.onmessage = (event) => {
       const response = JSON.parse(event.data);
       const { data } = response;

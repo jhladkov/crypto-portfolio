@@ -38,7 +38,7 @@ import AssetsSection from '@/views/main/portfolio/assets-section/AssetsSection.v
 import Chart from '@/views/main/portfolio/chart-section/Chart.vue';
 import { useStore } from 'vuex';
 import {
-  computed, onBeforeMount, ref, watch,
+  computed, onBeforeMount, onBeforeUnmount, ref, watch,
 } from 'vue';
 import BodyCol from '@/components/body-col/BodyCol.vue';
 
@@ -62,7 +62,11 @@ export default {
     });
 
     onBeforeMount(async () => {
-      await store.dispatch('portfolio/getConnectionToWebSocket');
+      await store.dispatch('portfolio/connectToWebSocket');
+    });
+
+    onBeforeUnmount(async () => {
+      await store.dispatch('portfolio/disconnectFromWebSocket');
     });
 
     return {

@@ -1,16 +1,14 @@
 <template>
-  <section
-    class="assets-section"
-    :class="className"
-  >
-    <div
-      v-if="!loader"
-      class="assets-section__wrapper"
-    >
+  <section class="assets-section">
+    <div class="assets-section__wrapper">
       <div class="assets-title">
         {{ title }} Transactions
       </div>
-      <div class="table-assets">
+      <base-loader v-if="loading" />
+      <div
+        v-else
+        class="table-assets"
+      >
         <div class="table-assets-head">
           <div
             v-for="(colName,index) in assetCol"
@@ -25,7 +23,6 @@
         </div>
       </div>
     </div>
-    <base-loader v-else />
   </section>
 </template>
 
@@ -53,19 +50,20 @@ export default {
     const state = reactive({
       WBSKData: store.state.portfolio.WBSKData,
       connection: null,
-      loaderActive: false,
+      loading: false,
     });
-    const loader = computed(() => state.loaderActive);
+    const tokensData = computed(() => store.getters['portfolio/getTokensList']);
+    const loading = computed(() => state.loading);
 
     onBeforeMount(async () => {
-      state.loaderActive = true;
+      state.loading = true;
       await store.dispatch('portfolio/getPortfolio');
-      await store.dispatch('portfolio/getConnectionToWebSocket');
-      state.loaderActive = false;
+      state.loading = false;
     });
     return {
       ...state,
-      loader,
+      tokensData,
+      loading,
     };
   },
 };

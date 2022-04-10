@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+// const api = 'localhost';
+const api = 'vm3356913.52ssd.had.wf';
+
 const calcProfit = (item) => ((((item?.currentPrice * item?.amount)
     - (item?.buyAvgPrice * item?.amount))
     * 100) / (+item?.amount * +item?.buyAvgPrice)).toFixed(2);
@@ -64,7 +67,7 @@ const mutations = {
 const actions = {
   async getPortfolio({ commit }) {
     try {
-      const res = await axios.get('http://vm3356913.52ssd.had.wf:5000/get-portfolio?id=1', {
+      const res = await axios.get(`http://${api}:5000/get-portfolio?id=1`, {
         headers: {
           withCredentials: true,
           'Access-Control-Allow-Origin': '*',
@@ -80,7 +83,7 @@ const actions = {
 
   async getCharts({ commit }) {
     try {
-      const res = await axios.get('http://vm3356913.52ssd.had.wf:5000/chart-values?id=1', {
+      const res = await axios.get(`http://${api}:5000/chart-values?id=1`, {
         headers: {
           withCredentials: true,
           'Access-Control-Allow-Origin': '*',
@@ -98,7 +101,7 @@ const actions = {
   },
 
   connectToWebSocket({ commit }) {
-    const connection = new WebSocket('ws://vm3356913.52ssd.had.wf:5000/');
+    const connection = new WebSocket(`ws://${api}:5000/`);
     connection.onmessage = (event) => {
       const response = JSON.parse(event.data);
       const { data } = response;

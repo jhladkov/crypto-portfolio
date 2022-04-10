@@ -50,7 +50,7 @@ export default {
   setup() {
     const store = useStore();
 
-    const assetCol = ref(['Name', 'Price', 'Holdings', 'Avg. Buy Price', 'Profit/Loss', 'Actions']);
+    const assetCol = ref(['Name', 'Price', '24H', 'Holdings', 'Avg. Buy Price', 'Profit/Loss', 'Actions']);
     const value = ref('');
     const searchData = computed(() => store.getters['portfolio/searchData']);
     const tokensData = computed(() => store.getters['portfolio/getTokensList']);

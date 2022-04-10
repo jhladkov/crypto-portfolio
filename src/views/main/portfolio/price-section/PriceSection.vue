@@ -15,7 +15,7 @@
           >
         </div>
         <h1 class="price-section__title">
-          ${{ tokenInfo ? priceToken: getTotalPrice }}
+          {{ tokenInfo ? `$${priceToken}`: getTotalPrice }}
         </h1>
         <indicator
           class-name="price-section__profit"

@@ -9,7 +9,7 @@
     <div class="table-td">
       <p>+${{ operationPrice }}</p>
       <p class="table-td__amount increase">
-        +{{ historyList.amount }} {{ historyList.cryptocurrencyId }}
+        +{{ historyList.amount }} {{ historyList.symbol }}
       </p>
     </div>
     <div class="table-td">

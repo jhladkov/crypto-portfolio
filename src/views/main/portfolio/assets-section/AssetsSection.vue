@@ -49,7 +49,6 @@ export default {
 
     const state = reactive({
       WBSKData: store.state.portfolio.WBSKData,
-      connection: null,
       loading: false,
     });
     const tokensData = computed(() => store.getters['portfolio/getTokensList']);

@@ -1,26 +1,18 @@
 <template>
   <section class="assets-section">
     <div class="assets-section__wrapper">
-      <div class="assets-title">
-        {{ title }} Transactions
-      </div>
       <base-loader v-if="loading" />
       <div
         v-else
-        class="table-assets"
       >
-        <div class="table-assets-head">
-          <div
-            v-for="(colName,index) in assetCol"
+        <cols :asset-cols="assetCols">
+          <body-col
+            v-for="(item, index) in tokensData"
             :key="index"
-            class="table-assets-head-col"
-          >
-            {{ colName }}
-          </div>
-        </div>
-        <div class="table-assets-body">
-          <slot />
-        </div>
+            class="table-assets-body-col"
+            :asset="item"
+          />
+        </cols>
       </div>
     </div>
   </section>
@@ -32,17 +24,15 @@ import {
 } from 'vue';
 import { useStore } from 'vuex';
 import BaseLoader from '@/components/base-loader/BaseLoader.vue';
+import BodyCol from '@/components/body-col/BodyCol.vue';
+import Cols from '@/components/cols/Cols.vue';
 
 export default {
   name: 'AssetsSection',
-  components: { BaseLoader },
-  props: {
-    assetCol: Array,
-    title: String,
-    className: {
-      type: String,
-      default: null,
-    },
+  components: {
+    Cols,
+    BodyCol,
+    BaseLoader,
   },
   setup() {
     const store = useStore();
@@ -50,6 +40,7 @@ export default {
     const state = reactive({
       WBSKData: store.state.portfolio.WBSKData,
       loading: false,
+      assetCols: ['Name', 'Price', '24H', 'Holdings', 'Avg. Buy Price', 'Profit/Loss', 'Actions'],
     });
     const tokensData = computed(() => store.getters['portfolio/getTokensList']);
     const loading = computed(() => state.loading);

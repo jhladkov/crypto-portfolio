@@ -21,8 +21,8 @@ export default {
       type: String,
     },
     value: {
-      type: String,
-      default: '0',
+      type: Number,
+      default: 0,
     },
   },
 };

@@ -1,21 +1,26 @@
 <template>
   <div class="container">
+    <button
+      class="go-back"
+      @click="goHome"
+    >
+      Back
+    </button>
     <price-section
       :token-info="tokenInfo"
       :pre-title="`${tokenInfo?.name}(${tokenInfo?.shortName}) Balance`"
     />
     <detail-section :token-info="tokenInfo" />
-    <assets-section
-      :asset-col="assetCol"
-      :title="tokenInfo?.name"
-      class-name="transaction-col"
+    <cols
+      :asset-cols="assetCols"
+      class-name="transactions"
     >
       <transactions-col
         v-for="(list,index) in historyList"
         :key="index"
         :history-list="list"
       />
-    </assets-section>
+    </cols>
   </div>
 </template>
 
@@ -23,25 +28,32 @@
 import PriceSection from '@/views/main/portfolio/price-section/PriceSection.vue';
 import { useStore } from 'vuex';
 import { computed, onBeforeMount, reactive } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import DetailSection from '@/views/main/transactions/details-section/DetailsSection.vue';
-import AssetsSection from '@/views/main/portfolio/assets-section/AssetsSection.vue';
 import TransactionsCol from '@/components/transactions-col/TransactionsCol.vue';
+import Cols from '@/components/cols/Cols.vue';
 
 export default {
   components: {
-    TransactionsCol, AssetsSection, DetailSection, PriceSection,
+    Cols,
+    TransactionsCol,
+    DetailSection,
+    PriceSection,
   },
   setup() {
     const store = useStore();
     const route = useRoute();
+    const router = useRouter();
 
     const state = reactive({
-      assetCol: ['Type', 'Price', 'Amount', 'Actions'],
+      assetCols: ['Type', 'Price', 'Amount', 'Actions'],
     });
     const historyList = computed(() => store.getters['portfolio/getHistoryListByTokenName'](route.params.token));
     const tokenInfo = computed(() => store.getters['portfolio/getSpecificTokenByName'](route.params.token));
-    console.log(tokenInfo);
+
+    const goHome = () => {
+      router.push('/');
+    };
 
     onBeforeMount(async () => {
       await store.dispatch('portfolio/getPortfolio');
@@ -51,6 +63,7 @@ export default {
       ...state,
       tokenInfo,
       historyList,
+      goHome,
     };
   },
 };

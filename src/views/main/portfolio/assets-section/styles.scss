@@ -1,14 +1,3 @@
-.transaction-col{
-  .table-assets-head{
-    grid-template-columns: 1fr max(130px) max(230px) max(230px);
-  }
-  .table-tr{
-    grid-template-columns: 1fr 130px 230px 230px;
-  }
-  .table-td__amount {
-    font-size: 12px;
-  }
-}
 
 .table-assets-head {
   display: grid;

@@ -11,12 +11,15 @@
   }
 
 }
+.block__inner{
+  display: flex;
+  align-items: center;
+  .profit__value{
+    font-size: 14px;
+  }
+}
 
 .price-section__block {
-  .block__inner{
-    display: flex;
-    align-items: center;
-  }
   .price-section__title {
     letter-spacing: 1px;
     font-size: 32px;
@@ -24,6 +27,7 @@
     margin-right: 16px;
   }
 }
+
 
 .price-section__token-img{
   margin-right: 16px;
@@ -36,16 +40,20 @@
   display: flex;
   align-items: center;
 
+
   .info-block__value {
     margin-right: 10px;
     color: $green;
     font-weight: 700;
+    font-size: 14px;
+
   }
 
   .info-block__duration {
-    padding: 5px;
+    padding: 3px 4px;
     color: $gray;
     background: $lightGray;
-    border-radius: 8px;
+    border-radius: 4px;
+    font-size: 12px;
   }
 }

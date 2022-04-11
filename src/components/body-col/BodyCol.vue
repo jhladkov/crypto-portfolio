@@ -39,7 +39,10 @@
       <div class="table-td__profit">
         + ${{ asset.profit }}
       </div>
-      <div :class="[asset.profit_loss_percent > 0 ? 'increase' : 'decrease']">
+      <div
+        class="table-td__percents"
+        :class="[asset.profit_loss_percent > 0 ? 'increase' : 'decrease']"
+      >
         {{ asset.profit_loss_percent }}%
       </div>
     </div>

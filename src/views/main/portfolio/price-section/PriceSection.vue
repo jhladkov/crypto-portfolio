@@ -20,7 +20,7 @@
         <indicator
           class-name="price-section__profit"
           :background="tokenInfo?.change < 0 ? 'down' : 'up'"
-          :value="tokenInfo ? tokenInfo.change : '0,04'"
+          :value="tokenInfo ? tokenInfo.change : 0.04"
         />
       </div>
 

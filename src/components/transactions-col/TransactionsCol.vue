@@ -7,7 +7,9 @@
       ${{ historyList.price }}
     </div>
     <div class="table-td">
-      <p>+${{ operationPrice }}</p>
+      <p class="table-td__operation-price">
+        +${{ operationPrice }}
+      </p>
       <p class="table-td__amount increase">
         +{{ historyList.amount }} {{ historyList.symbol }}
       </p>

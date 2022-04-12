@@ -9,15 +9,20 @@
           {{ getTotalPrice }}
         </h1>
         <indicator
-          class-name="price-section__profit"
+          :class-name="
+            `price-section__profit ${getTotalProfitInPercents > 0 ? 'increase' : 'decrease'}`
+          "
           :background="true"
-          value="0.04"
+          :value="getTotalProfitInPercents"
         />
       </div>
 
       <div class="price-section__inner info-block">
-        <p class="info-block__value">
-          + $25.72
+        <p
+          class="info-block__value"
+          :class="getTotalProfit > 0 ? 'increase' : 'decrease'"
+        >
+          + {{ getTotalProfit }}
         </p>
         <div class="info-block__duration">
           24h
@@ -45,9 +50,13 @@ export default {
   setup() {
     const store = useStore();
     const getTotalPrice = computed(() => store.getters['portfolio/totalPrice']);
+    const getTotalProfit = computed(() => store.getters['portfolio/totalProfit']);
+    const getTotalProfitInPercents = computed(() => store.getters['portfolio/totalProfitInPercents']);
 
     return {
       getTotalPrice,
+      getTotalProfitInPercents,
+      getTotalProfit,
     };
   },
 };

@@ -1,9 +1,17 @@
 
-.background{
+.price-section__profit{
   padding: 7px 14px;
   text-align: center;
   background: $green;
   border-radius: 8px;
   color: $white;
   font-weight: 700;
+}
+
+.price-section__profit.decrease{
+  background: $red;
+  color: $white;
+}
+.price-section__profit.increase{
+  background: $green;
 }

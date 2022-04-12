@@ -12,12 +12,22 @@ const state = {
   chartData: [],
   searchData: [],
   connection: null,
-  totalPrice: 0,
+  totalChangesFor24H: {
+    totalPrice: 0,
+    totalProfit: 0,
+    totalProfitInPercents: 0,
+  },
 };
 
 const getters = {
   totalPrice(state) {
-    return `$${state.totalPrice.toFixed(2)}`;
+    return `$${state.totalChangesFor24H.totalPrice?.toFixed(2)}`;
+  },
+  totalProfit(state) {
+    return `$${state.totalChangesFor24H.totalProfit?.toFixed(2)}`;
+  },
+  totalProfitInPercents(state) {
+    return `$${state.totalChangesFor24H.totalProfitInPercents?.toFixed(2)}`;
   },
   connection(state) {
     return state.connection;
@@ -60,7 +70,13 @@ const mutations = {
     state.searchData = value;
   },
   setTotalPrice(state, value) {
-    state.totalPrice = value;
+    state.totalChangesFor24H.totalPrice = value;
+  },
+  setTotalProfit(state, value) {
+    state.totalChangesFor24H.totalProfit = value;
+  },
+  setTotalProfitInPercents(state, value) {
+    state.totalChangesFor24H.totalProfitInPercents = value;
   },
 };
 

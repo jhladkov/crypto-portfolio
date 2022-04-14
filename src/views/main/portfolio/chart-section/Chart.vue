@@ -17,7 +17,7 @@
       ref="chart"
       width="100%"
       height="250px"
-      :options="testConfig"
+      :options="testConf"
       :series="series"
       @MouseMove="mouseMove"
       @mouseleave="mouseLeave"
@@ -42,19 +42,28 @@ export default {
     const indexes = ['24h', '7d', '1m', '3m', '1y'];
     const duration = ['24H', '7D', '30D', '90D', 'ALL'];
 
+    const chart = ref(null);
+
     const state = reactive({
       series: [],
-      buttonActive: 0,
       lastChanges: 0,
       prevChanges: 0,
-      testConfig: chartConfig,
+      testConf: [],
     });
 
-    const config = { ...state.testConfig };
-
+    const getConfig = computed(() => {
+      const config = { ...chartConfig };
+      if (state.lastChanges - state.prevChanges < 0) {
+        config.colors = ['#ea3943'];
+      } else {
+        config.colors = ['rgb(22, 199, 132)'];
+      }
+      console.log('config', config);
+      return config;
+    });
     const getActiveIndex = computed(() => state.activeIndex || 0);
     const setData = (index) => {
-      console.log('setD', config);
+      console.log(chart.value.options.colors);
       state.series[0] = {
         name: 'main',
         data: store.getters['portfolio/chartData'][`historyChart${indexes[index]}`] || [],
@@ -63,7 +72,6 @@ export default {
     const updateData = (index) => {
       if (activeIndex !== index) {
         state.activeIndex = index;
-        state.buttonActive = index;
         setData(index);
       }
     };
@@ -86,11 +94,6 @@ export default {
       state.lastChanges = chartDataFor24H?.slice(-1)[0]['1'];
       state.prevChanges = chartDataFor24H[0]['1'];
 
-      if (state.lastChanges - state.prevChanges < 0) {
-        console.log(state.lastChanges - state.prevChanges);
-        config.colors = ['dark'];
-        state.testConfig.colors = ['dark'];
-      }
       console.log(state.lastChanges, state.prevChanges);
 
       store.commit('portfolio/setTotalPrice', state.lastChanges); // last changes
@@ -100,12 +103,17 @@ export default {
     };
     watchEffect(() => {
       // config.colors = ['#ea3943'];
+      const test = chartConfig;
       if (state.lastChanges - state.prevChanges < 0) {
-        console.log(state.lastChanges - state.prevChanges);
-        config.colors = ['#ea3943'];
+        console.log('ifiswork', state.lastChanges, state.prevChanges);
+        test.colors = ['#ea3943'];
+        chart.value.options.colors = ['red'];
+        state.testConf = test;
       }
       console.log('watch');
-      console.log(config, state.testConfig);
+      // state.testConf = test;
+      console.log(test);
+      state.testConf = test;
     });
 
     onBeforeMount(async () => {
@@ -119,10 +127,11 @@ export default {
       duration,
       mouseMove,
       updateData,
-      config,
       getActiveIndex,
+      getConfig,
       mouseLeave,
       calculateData,
+      chart,
     };
   },
 };

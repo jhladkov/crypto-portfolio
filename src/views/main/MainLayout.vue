@@ -1,5 +1,8 @@
 <template>
-  <div class="main-layout">
+  <div
+    class="main-layout"
+    :class="{hid: statusModal}"
+  >
     <!--      <Header/>-->
     <div class="main">
       <router-view />
@@ -9,8 +12,21 @@
 
 <script>
 
+import { useStore } from 'vuex';
+import { computed } from 'vue';
+
 export default {
   name: 'MainLayout',
+  setup() {
+    const store = useStore();
+    const statusModal = computed(
+      () => Object.values(store.state.portfolio.modals).some((item) => item === true),
+    );
+
+    return {
+      statusModal,
+    };
+  },
 };
 </script>
 

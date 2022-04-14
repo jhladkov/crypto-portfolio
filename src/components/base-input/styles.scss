@@ -1,0 +1,15 @@
+.input{
+  width: 100%;
+  padding: 0 18px;
+  height: 40px;
+  border: 1px solid $borderInput;
+  border-radius: 8px;
+  outline: 0px;
+  &:hover{
+    border-color: $borderInputHover;
+  }
+  &:focus{
+    border-color: $violet;
+    box-shadow: rgb(230 240 255) 0px 0px 0px 4px;
+  }
+}

@@ -6,7 +6,7 @@
       </p>
       <div class="block__inner">
         <h1 class="price-section__title">
-          {{ getTotalPrice }}
+          ${{ getTotalPrice }}
         </h1>
         <indicator
           :class-name="
@@ -22,7 +22,7 @@
           class="info-block__value"
           :class="getTotalProfit > 0 ? 'increase' : 'decrease'"
         >
-          + {{ getTotalProfit }}
+          + ${{ getTotalProfit }}
         </p>
         <div class="info-block__duration">
           24h
@@ -33,8 +33,14 @@
       <base-button
         value="Add New"
         class-name="price-section__add-crypto"
+        @click="openModal"
       />
     </div>
+    <modal
+      v-if="getModal"
+      title="Add Transaction"
+      type="type"
+    />
   </section>
 </template>
 
@@ -43,20 +49,34 @@ import Indicator from '@/components/indicator/Indicator.vue';
 import BaseButton from '@/components/base-button/BaseButton.vue';
 import { useStore } from 'vuex';
 import { computed } from 'vue';
+import Modal from '@/components/modal/Modal.vue';
 
 export default {
   name: 'PriceSection',
-  components: { BaseButton, Indicator },
+  components: {
+    Modal, BaseButton, Indicator,
+  },
   setup() {
     const store = useStore();
-    const getTotalPrice = computed(() => store.getters['portfolio/totalPrice']);
-    const getTotalProfit = computed(() => store.getters['portfolio/totalProfit']);
-    const getTotalProfitInPercents = computed(() => store.getters['portfolio/totalProfitInPercents']);
+    const getTotalPrice = computed(() => +store.getters['portfolio/totalPrice'].split('').slice(1).join(''));
+    const getTotalProfit = computed(() => +store.getters['portfolio/totalProfit'].split('').slice(1).join(''));
+    const getTotalProfitInPercents = computed(() => store.getters['portfolio/totalProfitInPercents'].split('').slice(1).join(''));
+
+    const searchData = computed(() => store.getters['portfolio/searchData']);
+
+    const getModal = computed(() => store.getters['portfolio/getModal']('Transaction'));
+
+    const openModal = () => {
+      store.commit('portfolio/openModal', 'Transaction');
+    };
 
     return {
       getTotalPrice,
       getTotalProfitInPercents,
       getTotalProfit,
+      getModal,
+      openModal,
+      searchData,
     };
   },
 };

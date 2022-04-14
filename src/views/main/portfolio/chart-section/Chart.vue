@@ -17,8 +17,9 @@
       ref="chart"
       width="100%"
       height="250px"
-      :options="testConfig"
+      :options="getConfig"
       :series="series"
+      type="area"
       @MouseMove="mouseMove"
       @mouseleave="mouseLeave"
     />
@@ -27,7 +28,7 @@
 
 <script>
 import {
-  reactive, ref, onBeforeMount, computed, watchEffect,
+  reactive, ref, onBeforeMount, computed,
 } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import { useStore } from 'vuex';
@@ -44,17 +45,31 @@ export default {
 
     const state = reactive({
       series: [],
-      buttonActive: 0,
       lastChanges: 0,
       prevChanges: 0,
-      testConfig: chartConfig,
     });
 
-    const config = { ...state.testConfig };
+    const chart = ref(null);
+
+    const config = reactive(chartConfig);
+    const getConfig = computed(() => config);
+
+    const recalculateData = (duration) => {
+      const chartDataForDuration = store.getters['portfolio/chartData'][`historyChart${indexes[duration]}`] || [];
+      state.lastChanges = chartDataForDuration[chartDataForDuration.length - 1][1];
+      state.prevChanges = chartDataForDuration[0][1];
+      if (state.lastChanges - state.prevChanges < 0) {
+        config.colors = ['#ea3943'];
+        chart.value.updateOptions(config);
+      } else {
+        config.colors = ['rgb(22, 199, 132)'];
+        chart.value.updateOptions(config);
+      }
+    };
 
     const getActiveIndex = computed(() => state.activeIndex || 0);
     const setData = (index) => {
-      console.log('setD', config);
+      recalculateData(index);
       state.series[0] = {
         name: 'main',
         data: store.getters['portfolio/chartData'][`historyChart${indexes[index]}`] || [],
@@ -63,7 +78,6 @@ export default {
     const updateData = (index) => {
       if (activeIndex !== index) {
         state.activeIndex = index;
-        state.buttonActive = index;
         setData(index);
       }
     };
@@ -81,36 +95,19 @@ export default {
       }
     };
 
-    const calculateData = async () => {
-      const chartDataFor24H = await store.getters['portfolio/chartData'].historyChart24h;
-      state.lastChanges = chartDataFor24H?.slice(-1)[0]['1'];
-      state.prevChanges = chartDataFor24H[0]['1'];
-
-      if (state.lastChanges - state.prevChanges < 0) {
-        console.log(state.lastChanges - state.prevChanges);
-        config.colors = ['dark'];
-        state.testConfig.colors = ['dark'];
+    const initDataFor24H = () => {
+      recalculateData(0);
+      if (state.lastChanges && state.prevChanges) {
+        store.commit('portfolio/setTotalPrice', state.lastChanges); // last changes
+        store.commit('portfolio/setTotalProfit', (state.lastChanges - state.prevChanges));
+        store.commit('portfolio/setTotalProfitInPercents',
+          ((state.lastChanges * 100) / state.prevChanges) - 100);
       }
-      console.log(state.lastChanges, state.prevChanges);
-
-      store.commit('portfolio/setTotalPrice', state.lastChanges); // last changes
-      store.commit('portfolio/setTotalProfit', (state.lastChanges - state.prevChanges));
-      store.commit('portfolio/setTotalProfitInPercents',
-        ((state.lastChanges * 100) / state.prevChanges) - 100);
     };
-    watchEffect(() => {
-      // config.colors = ['#ea3943'];
-      if (state.lastChanges - state.prevChanges < 0) {
-        console.log(state.lastChanges - state.prevChanges);
-        config.colors = ['#ea3943'];
-      }
-      console.log('watch');
-      console.log(config, state.testConfig);
-    });
 
     onBeforeMount(async () => {
       await store.dispatch('portfolio/getCharts');
-      await calculateData();
+      initDataFor24H();
       setData(0);
     });
 
@@ -119,10 +116,10 @@ export default {
       duration,
       mouseMove,
       updateData,
-      config,
       getActiveIndex,
       mouseLeave,
-      calculateData,
+      getConfig,
+      chart,
     };
   },
 };

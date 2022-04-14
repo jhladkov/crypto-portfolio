@@ -11,6 +11,7 @@
             :key="index"
             class="table-assets-body-col"
             :asset="item"
+            @click="goToTransactions(item.name)"
           />
         </cols>
       </div>
@@ -26,6 +27,7 @@ import { useStore } from 'vuex';
 import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 import BodyCol from '@/components/body-col/BodyCol.vue';
 import Cols from '@/components/cols/Cols.vue';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'AssetsSection',
@@ -36,6 +38,7 @@ export default {
   },
   setup() {
     const store = useStore();
+    const router = useRouter();
 
     const state = reactive({
       WBSKData: store.state.portfolio.WBSKData,
@@ -44,6 +47,10 @@ export default {
     });
     const tokensData = computed(() => store.getters['portfolio/getTokensList']);
     const loading = computed(() => state.loading);
+
+    const goToTransactions = (path) => {
+      router.push(`/transactions/${path}`);
+    };
 
     onBeforeMount(async () => {
       state.loading = true;
@@ -54,6 +61,7 @@ export default {
       ...state,
       tokensData,
       loading,
+      goToTransactions,
     };
   },
 };

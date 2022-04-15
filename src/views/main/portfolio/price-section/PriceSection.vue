@@ -40,7 +40,9 @@
       v-if="getModal"
       title="Add Transaction"
       type="type"
-    />
+    >
+      <TransactionModal />
+    </modal>
   </section>
 </template>
 
@@ -50,19 +52,21 @@ import BaseButton from '@/components/base-button/BaseButton.vue';
 import { useStore } from 'vuex';
 import { computed } from 'vue';
 import Modal from '@/components/modal/Modal.vue';
+import TransactionModal from '@/containers/modals/transactions-modal/TransactionModal.vue';
 
 export default {
   name: 'PriceSection',
   components: {
-    Modal, BaseButton, Indicator,
+    TransactionModal,
+    Modal,
+    BaseButton,
+    Indicator,
   },
   setup() {
     const store = useStore();
     const getTotalPrice = computed(() => +store.getters['portfolio/totalPrice'].split('').slice(1).join(''));
     const getTotalProfit = computed(() => +store.getters['portfolio/totalProfit'].split('').slice(1).join(''));
     const getTotalProfitInPercents = computed(() => store.getters['portfolio/totalProfitInPercents'].split('').slice(1).join(''));
-
-    const searchData = computed(() => store.getters['portfolio/searchData']);
 
     const getModal = computed(() => store.getters['portfolio/getModal']('Transaction'));
 
@@ -76,7 +80,6 @@ export default {
       getTotalProfit,
       getModal,
       openModal,
-      searchData,
     };
   },
 };

@@ -17,9 +17,7 @@
           </p>
         </div>
       </div>
-      <div class="modal__inner">
-        <slot />
-      </div>
+      <slot />
     </div>
     <div
       class="background"

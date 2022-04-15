@@ -1,0 +1,70 @@
+.select{
+  position: relative;
+  margin-bottom: 20px;
+  .active-select{
+    border-color: $violet;
+    box-shadow: rgb(230 240 255) 0px 0px 0px 4px;
+    &:hover{
+      border-color: $violet;
+      box-shadow: rgb(230 240 255) 0px 0px 0px 4px;
+    }
+  }
+}
+.select__main-panel{
+  .main-panel__input {
+    max-width: 175px;
+    background: none;
+    height: 45px;
+    border: none;
+    outline: none;
+  }
+}
+
+.select .select__panel{
+  position: absolute;
+  background: $white;
+  z-index: 111111;
+  left: 0;
+  right: 0;
+  top: 100%;
+  min-height: 230px;
+}
+
+.panel-crypto{
+  max-height: 210px;
+  overflow: auto;
+}
+.panel-crypto::-webkit-scrollbar { width: 0; }
+
+
+.panel-crypto__wrapper{
+  padding: 15px 10px;
+  transition: all .3s;
+  &:hover{
+    background: $lightGray;
+  }
+}
+.main-panel__content{
+  padding: 10px;
+}
+
+.panel-crypto__wrapper, .main-panel__content{
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  .panel-crypto__img{
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+  }
+  .panel-crypto__info{
+    display: flex;
+  }
+  .info-token__name{
+    font-weight: 500;
+    margin-right: 5px;
+  }
+  .info-token__symbol{
+    color: $symbol;
+  }
+}

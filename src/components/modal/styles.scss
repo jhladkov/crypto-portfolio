@@ -7,20 +7,42 @@
     right: 0;
     background: $background;
     opacity: .5;
-    z-index: 9;
+    z-index: 12;
   }
 }
 .modal{
   border-radius: 16px;
   padding: 20px;
-  z-index: 10;
+  z-index: 13;
   width: 500px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
   background: $white;
+  .modal__create-transactions{
+    width: 100%;
+    padding: 15px 0;
+  }
+  .modal__total-area{
+    background: $lightGray;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
 }
+.modal__total-area{
+  .total-area__title{
+    color: $MGray;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  .total-area__spent{
+    font-weight: 700;
+    font-size: 24px;
+  }
+}
+
 .modal .modal__title{
   font-weight: 700;
   font-size: 25px;
@@ -73,6 +95,35 @@
     position: absolute;
     left: 7px;
     bottom: 30%;
+  }
+}
+
+.modal__date{
+  padding: 10px;
+  background: $lightGray;
+  border-radius: 8px;
+  margin: 24px 0;
+  position: relative;
+  user-select: none;
+  display: inline-block;
+  color: $gray;
+  font-weight: 700;
+
+  &:hover{
+    .calendar{
+      opacity: 1;
+      visibility: visible;
+      z-index: 16;
+    }
+  }
+  .calendar{
+    transition: all .2s;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    top: -305px;
+    left: 40%;
+    z-index: -1;
   }
 }
 

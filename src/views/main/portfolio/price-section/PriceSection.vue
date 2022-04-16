@@ -29,13 +29,6 @@
         </div>
       </div>
     </div>
-    <div class="price-section__block">
-      <base-button
-        value="Add New"
-        class-name="price-section__add-crypto"
-        @click="openModal"
-      />
-    </div>
     <modal
       v-if="getModal"
       title="Add Transaction"
@@ -43,6 +36,13 @@
     >
       <TransactionModal />
     </modal>
+    <div class="price-section__block">
+      <base-button
+        value="Add New"
+        class-name="price-section__add-crypto"
+        @click="openModal"
+      />
+    </div>
   </section>
 </template>
 
@@ -68,10 +68,10 @@ export default {
     const getTotalProfit = computed(() => +store.getters['portfolio/totalProfit'].split('').slice(1).join(''));
     const getTotalProfitInPercents = computed(() => store.getters['portfolio/totalProfitInPercents'].split('').slice(1).join(''));
 
-    const getModal = computed(() => store.getters['portfolio/getModal']('Transaction'));
+    const getModal = computed(() => store.getters['modal/getModal']('Transaction'));
 
     const openModal = () => {
-      store.commit('portfolio/openModal', 'Transaction');
+      store.commit('modal/openModal', 'Transaction');
     };
 
     return {

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { ModalTypes } from '@/constants/enums';
 
 const api = 'localhost';
 // const api = 'vm3356913.52ssd.had.wf';
@@ -9,10 +8,6 @@ const calcProfit = (item) => ((((item?.currentPrice * item?.amount)
     * 100) / (+item?.amount * +item?.buyAvgPrice)).toFixed(2);
 
 const state = {
-  modals: Object.keys(ModalTypes).reduce((acc, key) => {
-    acc[key] = false;
-    return acc;
-  }, {}),
   WBSKData: [],
   chartData: [],
   searchData: [],
@@ -25,9 +20,6 @@ const state = {
 };
 
 const getters = {
-  getModal(state) {
-    return (type) => state.modals[type];
-  },
   totalPrice(state) {
     return `$${state.totalChangesFor24H.totalPrice?.toFixed(2)}`;
   },
@@ -65,12 +57,6 @@ const getters = {
 };
 
 const mutations = {
-  openModal(state, type) {
-    state.modals[type] = true;
-  },
-  closeModal(state, type) {
-    state.modals[type] = false;
-  },
   setWBSKData(state, value) {
     state.WBSKData = value;
   },

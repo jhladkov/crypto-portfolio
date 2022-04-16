@@ -19,10 +19,6 @@ export default {
       type: String,
       default: 'number',
     },
-    defaultValue: {
-      type: [Number, String],
-      default: null,
-    },
     placeholder: {
       type: String,
       default: null,

@@ -20,7 +20,7 @@ export default {
   setup() {
     const store = useStore();
     const statusModal = computed(
-      () => Object.values(store.state.portfolio.modals).some((item) => item === true),
+      () => Object.values(store.state.modal.modals).some((item) => item === true),
     );
 
     return {

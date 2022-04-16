@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import 'v-calendar/dist/style.css';
+
 
 *, *:after, *:before {
   box-sizing: border-box;
@@ -50,6 +52,23 @@ section{
 img{
   height: 100%;
   width: 100%;
+
 }
 
+.v-enter-active{
+  transition: all 0.3s ease;
+}
 
+.v-leave-active {
+  transform: translateY(0);
+  transition: all 0.3s ease;
+}
+
+.v-enter-from{
+  transform: translateY(-10%);
+  opacity: 0;
+}
+
+.v-leave-to {
+  opacity: 0;
+}

@@ -1,4 +1,4 @@
-.price-section {
+.price-container {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -19,8 +19,8 @@
   }
 }
 
-.price-section__block {
-  .price-section__title {
+.price-container__block {
+  .price-container__title {
     letter-spacing: 1px;
     font-size: 32px;
     color: $black ;
@@ -29,7 +29,7 @@
 }
 
 
-.price-section__token-img{
+.price-container__token-img{
   margin-right: 16px;
   img{
     width: 32px;

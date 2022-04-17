@@ -38,7 +38,7 @@ import AssetsSection from '@/views/main/portfolio/assets-section/AssetsSection.v
 import Chart from '@/views/main/portfolio/chart-section/Chart.vue';
 import { useStore } from 'vuex';
 import {
-  computed, onBeforeMount, onBeforeUnmount, ref, watch,
+  computed, ref, watch,
 } from 'vue';
 import BodyCol from '@/components/body-col/BodyCol.vue';
 
@@ -59,14 +59,6 @@ export default {
       if (newValue === oldValue) return;
       const con = store.getters['portfolio/connection'];
       con.send(JSON.stringify({ method: 'SearchToken', value: newValue }));
-    });
-
-    onBeforeMount(async () => {
-      await store.dispatch('portfolio/connectToWebSocket');
-    });
-
-    onBeforeUnmount(async () => {
-      await store.dispatch('portfolio/disconnectFromWebSocket');
     });
 
     return {

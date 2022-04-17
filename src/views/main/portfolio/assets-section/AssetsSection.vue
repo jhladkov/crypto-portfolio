@@ -49,7 +49,12 @@ export default {
     const loading = computed(() => state.loading);
 
     const goToTransactions = (path) => {
-      router.push(`/transactions/${path}`);
+      router.push({
+        name: 'Transactions',
+        params: {
+          token: path,
+        },
+      });
     };
 
     onBeforeMount(async () => {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const api = 'localhost';
-// const api = 'vm3356913.52ssd.had.wf';
+// const api = 'localhost';
+const api = 'vm3356913.52ssd.had.wf';
 
 const calcProfit = (item) => ((((item?.currentPrice * item?.amount)
     - (item?.buyAvgPrice * item?.amount))
@@ -18,9 +18,6 @@ const state = {
 const getters = {
   totalPrice(state) {
     return `$${state.totalPrice.toFixed(2)}`;
-  },
-  getHistoryListByTokenName(state) {
-    return (tokenName) => state.WBSKData.find((item) => item.name === tokenName)?.historyList;
   },
   getSpecificTokenByName(state, getters) {
     return (tokenName) => getters.getTokensList.find((item) => item.name === tokenName);
@@ -48,6 +45,7 @@ const getters = {
       profit: ((item?.currentPrice * item?.amount)
           - (item?.buyAvgPrice * item?.amount))?.toFixed(2),
       src: item.image,
+      historyList: item?.historyList,
     }));
   },
 };
@@ -123,14 +121,13 @@ const actions = {
     };
 
     connection.onopen = () => {
-      // console.log('Successfully connected to the echo websocket server...');
       connection.send(JSON.stringify({
         method: 'getPortfolio',
         id: 1,
       }));
     };
     connection.onerror = () => {
-      console.log('Error');
+      console.warn('Error');
     };
     commit('setConnection', connection);
   },

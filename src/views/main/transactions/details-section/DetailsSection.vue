@@ -47,7 +47,6 @@ export default {
     const totalProfit = computed(() => usePercentProfit(
       props.tokenInfo?.holdTokens, props.tokenInfo?.avg, props.tokenInfo?.profit,
     ));
-    console.log(props.tokenInfo);
 
     return {
       totalProfit,

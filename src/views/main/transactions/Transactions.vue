@@ -1,31 +1,37 @@
 <template>
   <div class="container">
-    <button
-      class="go-back"
-      @click="goHome"
-    >
-      Back
-    </button>
-    <price-section
-      :token-info="tokenInfo"
-      :pre-title="`${tokenInfo?.name}(${tokenInfo?.shortName}) Balance`"
-    />
-    <detail-section :token-info="tokenInfo" />
-    <cols
-      :asset-cols="assetCols"
-      class-name="transactions"
-    >
-      <transactions-col
-        v-for="(list,index) in historyList"
-        :key="index"
-        :history-list="list"
+    <div v-if="state.loading">
+      Loading
+    </div>
+    <template v-else>
+      <button
+        class="go-back"
+        @click="goHome"
+      >
+        Back
+      </button>
+      <price-container
+        :data="tokenData"
+        :pre-title="preTitle"
+        :show-token-info="true"
       />
-    </cols>
+      <detail-section :token-info="tokenInfo" />
+      <cols
+        :asset-cols="state.assetCols"
+        class-name="transactions"
+      >
+        <transactions-col
+          v-for="(list,index) in historyList"
+          :key="index"
+          :history-list="list"
+        />
+      </cols>
+    </template>
   </div>
 </template>
 
 <script>
-import PriceSection from '@/views/main/portfolio/price-section/PriceSection.vue';
+import PriceContainer from '@/containers/price-container/PriceContainer.vue';
 import { useStore } from 'vuex';
 import { computed, onBeforeMount, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -38,7 +44,7 @@ export default {
     Cols,
     TransactionsCol,
     DetailSection,
-    PriceSection,
+    PriceContainer,
   },
   setup() {
     const store = useStore();
@@ -47,21 +53,31 @@ export default {
 
     const state = reactive({
       assetCols: ['Type', 'Price', 'Amount', 'Actions'],
+      loading: false,
     });
-    const historyList = computed(() => store.getters['portfolio/getHistoryListByTokenName'](route.params.token));
-    const tokenInfo = computed(() => store.getters['portfolio/getSpecificTokenByName'](route.params.token));
+    const tokenInfo = computed(() => store.getters['portfolio/getTokensList'].find((item) => item.name === route.params.token));
+    const historyList = computed(() => tokenInfo.value?.historyList);
+    const tokenData = computed(() => ({
+      src: tokenInfo.value?.src,
+      price: tokenInfo.value?.hold,
+      change: tokenInfo.value?.change,
+    }));
+    const preTitle = computed(() => (`${tokenInfo?.value?.name}(${tokenInfo?.value?.shortName}) Balance`));
 
     const goHome = () => {
-      router.push('/');
+      router.push({ name: 'Portfolio' });
     };
 
     onBeforeMount(async () => {
+      state.loading = true;
       await store.dispatch('portfolio/getPortfolio');
-      await store.dispatch('portfolio/getConnectionToWebSocket');
+      state.loading = false;
     });
     return {
-      ...state,
+      state,
       tokenInfo,
+      tokenData,
+      preTitle,
       historyList,
       goHome,
     };

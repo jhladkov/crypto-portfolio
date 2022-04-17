@@ -14,7 +14,7 @@ export default {
       ),
     },
     {
-      path: '/transactions/:token',
+      path: 'transactions/:token',
       name: 'Transactions',
       component: () => import(
         /* webpackChunkName: "transactions" */

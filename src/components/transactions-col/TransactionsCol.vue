@@ -11,7 +11,7 @@
         +${{ operationPrice }}
       </p>
       <p class="table-td__amount increase">
-        +{{ historyList.amount }} {{ historyList.symbol }}
+        +{{ historyList.amount }} {{ historyList.symbol?.toUpperCase() }}
       </p>
     </div>
     <div class="table-td">

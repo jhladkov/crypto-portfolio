@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const api = 'localhost';
-// const api = 'vm3356913.52ssd.had.wf';
+// const api = 'localhost';
+const api = 'vm3356913.52ssd.had.wf';
 
 const calcProfit = (item) => ((((item?.currentPrice * item?.amount)
     - (item?.buyAvgPrice * item?.amount))

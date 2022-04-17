@@ -41,10 +41,18 @@
         </div>
       </div>
     </div>
-    <div class="price-container__block">
+    <modal
+      v-if="getModal"
+      title="Add Transaction"
+      type="type"
+    >
+      <TransactionModal />
+    </modal>
+    <div class="price-section__block">
       <base-button
         value="Add New"
-        class-name="price-container__add-crypto"
+        class-name="price-section__add-crypto"
+        @click="openModal"
       />
     </div>
   </section>
@@ -53,10 +61,19 @@
 <script>
 import Indicator from '@/components/indicator/Indicator.vue';
 import BaseButton from '@/components/base-button/BaseButton.vue';
+import TransactionModal from '@/containers/modals/transactions-modal/TransactionModal.vue';
+import Modal from '@/components/modal/Modal.vue';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 
 export default {
   name: 'PriceContainer',
-  components: { BaseButton, Indicator },
+  components: {
+    BaseButton,
+    Indicator,
+    TransactionModal,
+    Modal,
+  },
   props: {
     preTitle: {
       type: String,
@@ -70,6 +87,19 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  setup() {
+    const store = useStore();
+    const getModal = computed(() => store.getters['modal/getModal']('Transaction'));
+
+    const openModal = () => {
+      store.commit('modal/openModal', 'Transaction');
+    };
+
+    return {
+      getModal,
+      openModal,
+    };
   },
 };
 </script>

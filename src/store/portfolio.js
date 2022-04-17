@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const api = 'localhost';
-// const api = 'vm3356913.52ssd.had.wf';
+// const api = 'localhost';
+const api = 'vm3356913.52ssd.had.wf';
 
 const calcProfit = (item) => ((((item?.currentPrice * item?.amount)
     - (item?.buyAvgPrice * item?.amount))
@@ -12,25 +12,28 @@ const state = {
   chartData: [],
   searchData: [],
   connection: null,
-  totalChangesFor24H: {
-    totalPrice: 0,
-    totalProfit: 0,
-    totalProfitInPercents: 0,
-  },
+  totalPrice: 0,
 };
 
 const getters = {
+  calculatedTotalPrice(state) {
+    return state.WBSKData.reduce((acc, next) => {
+      acc += Number(next.cryptoHoldings);
+      return acc;
+    }, 0);
+  },
   totalPrice(state) {
-    return `$${state.totalChangesFor24H.totalPrice?.toFixed(2)}`;
+    return state.totalPrice.toFixed(2);
   },
   totalProfit(state) {
-    return `$${state.totalChangesFor24H.totalProfit?.toFixed(2)}`;
+    const data = state.chartData?.historyChart24h;
+    if (!data?.length) return 0;
+    return Number(data[data.length - 1][1] - data[0][1]).toFixed(2);
   },
   totalProfitInPercents(state) {
-    return `$${state.totalChangesFor24H.totalProfitInPercents?.toFixed(2)}`;
-  },
-  getSpecificTokenByName(state, getters) {
-    return (tokenName) => getters.getTokensList.find((item) => item.name === tokenName);
+    const data = state.chartData?.historyChart24h;
+    if (!data?.length) return 0;
+    return (((data[0][1] * 100) / data[data.length - 1][1]) - 100).toFixed(2);
   },
   connection(state) {
     return state.connection;
@@ -74,18 +77,12 @@ const mutations = {
     state.searchData = value;
   },
   setTotalPrice(state, value) {
-    state.totalChangesFor24H.totalPrice = value;
-  },
-  setTotalProfit(state, value) {
-    state.totalChangesFor24H.totalProfit = value;
-  },
-  setTotalProfitInPercents(state, value) {
-    state.totalChangesFor24H.totalProfitInPercents = value;
+    state.totalPrice = value;
   },
 };
 
 const actions = {
-  async getPortfolio({ commit }) {
+  async getPortfolio({ commit, getters }) {
     try {
       const res = await axios.get(`http://${api}:5000/get-portfolio?id=1`, {
         headers: {
@@ -96,6 +93,7 @@ const actions = {
       });
 
       commit('setWBSKData', res.data.tokenList);
+      commit('setTotalPrice', getters.calculatedTotalPrice);
     } catch (err) {
       console.warn(err);
     }

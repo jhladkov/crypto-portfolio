@@ -60,10 +60,10 @@ export default {
       state.prevChanges = chartDataForDuration[0][1];
       if (state.lastChanges - state.prevChanges < 0) {
         config.colors = ['#ea3943'];
-        chart.value.updateOptions(config);
+        chart?.value.updateOptions(config);
       } else {
         config.colors = ['rgb(22, 199, 132)'];
-        chart.value.updateOptions(config);
+        chart?.value.updateOptions(config);
       }
     };
 
@@ -83,9 +83,7 @@ export default {
     };
 
     const mouseLeave = () => {
-      if (state.series[0]?.data) {
-        store.commit('portfolio/setTotalPrice', state.series[0]?.data?.slice(-1)[0]['1']);
-      }
+      store.commit('portfolio/setTotalPrice', store.getters['portfolio/calculatedTotalPrice']);
     };
 
     const mouseMove = (e, chart, opt) => {
@@ -95,19 +93,8 @@ export default {
       }
     };
 
-    const initDataFor24H = () => {
-      recalculateData(0);
-      if (state.lastChanges && state.prevChanges) {
-        store.commit('portfolio/setTotalPrice', state.lastChanges); // last changes
-        store.commit('portfolio/setTotalProfit', (state.lastChanges - state.prevChanges));
-        store.commit('portfolio/setTotalProfitInPercents',
-          ((state.lastChanges * 100) / state.prevChanges) - 100);
-      }
-    };
-
     onBeforeMount(async () => {
       await store.dispatch('portfolio/getCharts');
-      initDataFor24H();
       setData(0);
     });
 

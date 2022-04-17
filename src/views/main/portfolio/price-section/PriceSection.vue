@@ -16,7 +16,8 @@ export default {
     const store = useStore();
     const priceData = computed(() => ({
       price: store.getters['portfolio/totalPrice'],
-      change: 0.04,
+      change: store.getters['portfolio/totalProfitInPercents'],
+      totalProfit: store.getters['portfolio/totalProfit'],
     }));
 
     return {

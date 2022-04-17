@@ -9,8 +9,22 @@
 
 <script>
 
+import { onBeforeMount, onBeforeUnmount } from 'vue';
+import { useStore } from 'vuex';
+
 export default {
   name: 'MainLayout',
+  setup() {
+    const store = useStore();
+
+    onBeforeMount(async () => {
+      await store.dispatch('portfolio/connectToWebSocket');
+    });
+
+    onBeforeUnmount(async () => {
+      await store.dispatch('portfolio/disconnectFromWebSocket');
+    });
+  },
 };
 </script>
 

@@ -19,6 +19,9 @@ const getters = {
   totalPrice(state) {
     return `$${state.totalPrice.toFixed(2)}`;
   },
+  getSpecificTokenByName(state, getters) {
+    return (tokenName) => getters.getTokensList.find((item) => item.name === tokenName);
+  },
   connection(state) {
     return state.connection;
   },
@@ -42,6 +45,7 @@ const getters = {
       profit: ((item?.currentPrice * item?.amount)
           - (item?.buyAvgPrice * item?.amount))?.toFixed(2),
       src: item.image,
+      historyList: item?.historyList,
     }));
   },
 };
@@ -117,14 +121,13 @@ const actions = {
     };
 
     connection.onopen = () => {
-      // console.log('Successfully connected to the echo websocket server...');
       connection.send(JSON.stringify({
         method: 'getPortfolio',
         id: 1,
       }));
     };
     connection.onerror = () => {
-      console.log('Error');
+      console.warn('Error');
     };
     commit('setConnection', connection);
   },

@@ -1,9 +1,15 @@
 
-.background{
+.up,.down{
   padding: 7px 14px;
   text-align: center;
-  background: $green;
   border-radius: 8px;
   color: $white;
   font-weight: 700;
+}
+
+.up{
+  background: $green;
+}
+.down{
+  background: $red;
 }

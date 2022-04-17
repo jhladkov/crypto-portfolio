@@ -1,73 +1,61 @@
 <template>
   <section class="assets-section">
     <div class="assets-section__wrapper">
-      <div class="assets-title">
-        Your Assets
-      </div>
       <base-loader v-if="loading" />
       <div
         v-else
-        class="table-assets"
       >
-        <div class="table-assets-head">
-          <div
-            class="table-assets-head-col"
-          >
-            Name
-          </div>
-          <div class="table-assets-head-col">
-            Price
-          </div>
-          <div class="table-assets-head-col">
-            24H
-          </div>
-          <div class="table-assets-head-col">
-            Holdings
-          </div>
-          <div class="table-assets-head-col">
-            Avg. Buy Price
-          </div>
-          <div class="table-assets-head-col">
-            Profit/Loss
-          </div>
-          <div class="table-assets-head-col">
-            Actions
-          </div>
-        </div>
-        <div class="table-assets-body">
+        <cols :asset-cols="assetCols">
           <body-col
             v-for="(item, index) in tokensData"
             :key="index"
             class="table-assets-body-col"
             :asset="item"
+            @click="goToTransactions(item.name)"
           />
-        </div>
+        </cols>
       </div>
     </div>
   </section>
 </template>
 
 <script>
-import BodyCol from '@/components/body-col/BodyCol.vue';
 import {
   reactive, onBeforeMount, computed,
 } from 'vue';
 import { useStore } from 'vuex';
 import BaseLoader from '@/components/base-loader/BaseLoader.vue';
+import BodyCol from '@/components/body-col/BodyCol.vue';
+import Cols from '@/components/cols/Cols.vue';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'AssetsSection',
-  components: { BaseLoader, BodyCol },
+  components: {
+    Cols,
+    BodyCol,
+    BaseLoader,
+  },
   setup() {
     const store = useStore();
+    const router = useRouter();
 
     const state = reactive({
       WBSKData: store.state.portfolio.WBSKData,
-      connection: null,
       loading: false,
+      assetCols: ['Name', 'Price', '24H', 'Holdings', 'Avg. Buy Price', 'Profit/Loss', 'Actions'],
     });
     const tokensData = computed(() => store.getters['portfolio/getTokensList']);
     const loading = computed(() => state.loading);
+
+    const goToTransactions = (path) => {
+      router.push({
+        name: 'Transactions',
+        params: {
+          token: path,
+        },
+      });
+    };
 
     onBeforeMount(async () => {
       state.loading = true;
@@ -78,6 +66,7 @@ export default {
       ...state,
       tokensData,
       loading,
+      goToTransactions,
     };
   },
 };

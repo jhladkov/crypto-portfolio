@@ -17,9 +17,11 @@
       ref="chart"
       width="100%"
       height="250px"
-      :options="chartConfig"
+      :options="getConfig"
       :series="series"
+      type="area"
       @MouseMove="mouseMove"
+      @mouseleave="mouseLeave"
     />
   </section>
 </template>
@@ -43,11 +45,31 @@ export default {
 
     const state = reactive({
       series: [],
+      lastChanges: 0,
+      prevChanges: 0,
     });
 
-    const getActiveIndex = computed(() => state.activeIndex || 0);
+    const chart = ref(null);
 
+    const config = reactive(chartConfig);
+    const getConfig = computed(() => config);
+
+    const recalculateData = (duration) => {
+      const chartDataForDuration = store.getters['portfolio/chartData'][`historyChart${indexes[duration]}`] || [];
+      state.lastChanges = chartDataForDuration[chartDataForDuration.length - 1][1];
+      state.prevChanges = chartDataForDuration[0][1];
+      if (state.lastChanges - state.prevChanges < 0) {
+        config.colors = ['#ea3943'];
+        chart?.value.updateOptions(config);
+      } else {
+        config.colors = ['rgb(22, 199, 132)'];
+        chart?.value.updateOptions(config);
+      }
+    };
+
+    const getActiveIndex = computed(() => state.activeIndex || 0);
     const setData = (index) => {
+      recalculateData(index);
       state.series[0] = {
         name: 'main',
         data: store.getters['portfolio/chartData'][`historyChart${indexes[index]}`] || [],
@@ -59,12 +81,18 @@ export default {
         setData(index);
       }
     };
+
+    const mouseLeave = () => {
+      store.commit('portfolio/setTotalPrice', store.getters['portfolio/calculatedTotalPrice']);
+    };
+
     const mouseMove = (e, chart, opt) => {
       const data = state?.series[0]?.data[opt?.dataPointIndex];
       if (data?.length === 2 && data[1]) {
         store.commit('portfolio/setTotalPrice', state.series[0].data[opt.dataPointIndex][1]);
       }
     };
+
     onBeforeMount(async () => {
       await store.dispatch('portfolio/getCharts');
       setData(0);
@@ -75,8 +103,10 @@ export default {
       duration,
       mouseMove,
       updateData,
-      chartConfig,
       getActiveIndex,
+      mouseLeave,
+      getConfig,
+      chart,
     };
   },
 };

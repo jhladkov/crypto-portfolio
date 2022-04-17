@@ -16,11 +16,24 @@ const state = {
 };
 
 const getters = {
-  totalPrice(state) {
-    return `$${state.totalPrice.toFixed(2)}`;
+  calculatedTotalPrice(state) {
+    return state.WBSKData.reduce((acc, next) => {
+      acc += Number(next.cryptoHoldings);
+      return acc;
+    }, 0);
   },
-  getSpecificTokenByName(state, getters) {
-    return (tokenName) => getters.getTokensList.find((item) => item.name === tokenName);
+  totalPrice(state) {
+    return state.totalPrice.toFixed(2);
+  },
+  totalProfit(state) {
+    const data = state.chartData?.historyChart24h;
+    if (!data?.length) return 0;
+    return Number(data[data.length - 1][1] - data[0][1]).toFixed(2);
+  },
+  totalProfitInPercents(state) {
+    const data = state.chartData?.historyChart24h;
+    if (!data?.length) return 0;
+    return (((data[0][1] * 100) / data[data.length - 1][1]) - 100).toFixed(2);
   },
   connection(state) {
     return state.connection;
@@ -69,7 +82,7 @@ const mutations = {
 };
 
 const actions = {
-  async getPortfolio({ commit }) {
+  async getPortfolio({ commit, getters }) {
     try {
       const res = await axios.get(`http://${api}:5000/get-portfolio?id=1`, {
         headers: {
@@ -80,6 +93,7 @@ const actions = {
       });
 
       commit('setWBSKData', res.data.tokenList);
+      commit('setTotalPrice', getters.calculatedTotalPrice);
     } catch (err) {
       console.warn(err);
     }

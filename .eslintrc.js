@@ -18,5 +18,6 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'global-require': 'off',
     'vue/require-default-prop': 'off',
+    'prefer-destructuring': 'off',
   },
 };

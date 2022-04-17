@@ -18,8 +18,10 @@
           {{ data.price }}
         </h1>
         <indicator
-          class-name="price-container__profit"
-          :background="data?.change < 0 ? 'down' : 'up'"
+          :class-name="
+            `price-section__profit ${data.totalProfit > 0 ? 'increase' : 'decrease'}`
+          "
+          :background="true"
           :value="data.change"
         />
       </div>
@@ -28,8 +30,11 @@
         v-if="!showTokenInfo"
         class="price-container__inner info-block"
       >
-        <p class="info-block__value">
-          + $25.72
+        <p
+          class="info-block__value"
+          :class="data.totalProfit > 0 ? 'increase' : 'decrease'"
+        >
+          + {{ data.totalProfit }}
         </p>
         <div class="info-block__duration">
           24h

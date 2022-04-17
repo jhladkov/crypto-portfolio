@@ -12,8 +12,8 @@
 
 <script>
 
+import { onBeforeMount, onBeforeUnmount, computed } from 'vue';
 import { useStore } from 'vuex';
-import { computed } from 'vue';
 
 export default {
   name: 'MainLayout',
@@ -23,6 +23,13 @@ export default {
       () => Object.values(store.state.modal.modals).some((item) => item === true),
     );
 
+    onBeforeMount(async () => {
+      await store.dispatch('portfolio/connectToWebSocket');
+    });
+
+    onBeforeUnmount(async () => {
+      await store.dispatch('portfolio/disconnectFromWebSocket');
+    });
     return {
       statusModal,
     };

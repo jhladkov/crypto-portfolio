@@ -1,0 +1,90 @@
+<template>
+  <div class="container">
+    <div v-if="state.loading">
+      Loading
+    </div>
+    <template v-else>
+      <button
+        class="go-back"
+        @click="goHome"
+      >
+        Back
+      </button>
+      <price-container
+        :data="tokenData"
+        :pre-title="preTitle"
+        :show-token-info="true"
+      />
+      <detail-section :token-info="tokenInfo" />
+      <cols
+        :asset-cols="state.assetCols"
+        class-name="transactions"
+      >
+        <transactions-col
+          v-for="(list,index) in historyList"
+          :key="index"
+          :history-list="list"
+        />
+      </cols>
+    </template>
+  </div>
+</template>
+
+<script>
+import PriceContainer from '@/containers/price-container/PriceContainer.vue';
+import { useStore } from 'vuex';
+import { computed, onBeforeMount, reactive } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import DetailSection from '@/views/main/transactions/details-section/DetailsSection.vue';
+import TransactionsCol from '@/components/transactions-col/TransactionsCol.vue';
+import Cols from '@/components/cols/Cols.vue';
+
+export default {
+  components: {
+    Cols,
+    TransactionsCol,
+    DetailSection,
+    PriceContainer,
+  },
+  setup() {
+    const store = useStore();
+    const route = useRoute();
+    const router = useRouter();
+
+    const state = reactive({
+      assetCols: ['Type', 'Price', 'Amount', 'Actions'],
+      loading: false,
+    });
+    const tokenInfo = computed(() => store.getters['portfolio/getTokensList'].find((item) => item.name === route.params.token));
+    const historyList = computed(() => tokenInfo.value?.historyList);
+    const tokenData = computed(() => ({
+      src: tokenInfo.value?.src,
+      price: tokenInfo.value?.hold,
+      change: tokenInfo.value?.change,
+    }));
+    const preTitle = computed(() => (`${tokenInfo?.value?.name}(${tokenInfo?.value?.shortName}) Balance`));
+
+    const goHome = () => {
+      router.push({ name: 'Portfolio' });
+    };
+
+    onBeforeMount(async () => {
+      state.loading = true;
+      await store.dispatch('portfolio/getPortfolio');
+      state.loading = false;
+    });
+    return {
+      state,
+      tokenInfo,
+      tokenData,
+      preTitle,
+      historyList,
+      goHome,
+    };
+  },
+};
+</script>
+
+<style scoped>
+
+</style>

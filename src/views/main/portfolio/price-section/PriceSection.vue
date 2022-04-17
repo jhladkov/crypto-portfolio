@@ -1,88 +1,28 @@
 <template>
-  <section class="section price-section">
-    <div class="price-section__block block">
-      <p class="prise-section__pre-title">
-        Current Balance
-      </p>
-      <div class="block__inner">
-        <h1 class="price-section__title">
-          ${{ getTotalPrice }}
-        </h1>
-        <indicator
-          :class-name="
-            `price-section__profit ${getTotalProfitInPercents > 0 ? 'increase' : 'decrease'}`
-          "
-          :background="true"
-          :value="getTotalProfitInPercents"
-        />
-      </div>
-
-      <div class="price-section__inner info-block">
-        <p
-          class="info-block__value"
-          :class="getTotalProfit > 0 ? 'increase' : 'decrease'"
-        >
-          + ${{ getTotalProfit }}
-        </p>
-        <div class="info-block__duration">
-          24h
-        </div>
-      </div>
-    </div>
-    <modal
-      v-if="getModal"
-      title="Add Transaction"
-      type="type"
-    >
-      <TransactionModal />
-    </modal>
-    <div class="price-section__block">
-      <base-button
-        value="Add New"
-        class-name="price-section__add-crypto"
-        @click="openModal"
-      />
-    </div>
-  </section>
+  <price-container
+    :data="priceData"
+  />
 </template>
 
 <script>
-import Indicator from '@/components/indicator/Indicator.vue';
-import BaseButton from '@/components/base-button/BaseButton.vue';
 import { useStore } from 'vuex';
 import { computed } from 'vue';
-import Modal from '@/components/modal/Modal.vue';
-import TransactionModal from '@/containers/modals/transactions-modal/TransactionModal.vue';
+import PriceContainer from '@/containers/price-container/PriceContainer.vue';
 
 export default {
   name: 'PriceSection',
-  components: {
-    TransactionModal,
-    Modal,
-    BaseButton,
-    Indicator,
-  },
+  components: { PriceContainer },
   setup() {
     const store = useStore();
-    const getTotalPrice = computed(() => +store.getters['portfolio/totalPrice'].split('').slice(1).join(''));
-    const getTotalProfit = computed(() => +store.getters['portfolio/totalProfit'].split('').slice(1).join(''));
-    const getTotalProfitInPercents = computed(() => store.getters['portfolio/totalProfitInPercents'].split('').slice(1).join(''));
-
-    const getModal = computed(() => store.getters['modal/getModal']('Transaction'));
-
-    const openModal = () => {
-      store.commit('modal/openModal', 'Transaction');
-    };
+    const priceData = computed(() => ({
+      price: store.getters['portfolio/totalPrice'],
+      change: store.getters['portfolio/totalProfitInPercents'],
+      totalProfit: store.getters['portfolio/totalProfit'],
+    }));
 
     return {
-      getTotalPrice,
-      getTotalProfitInPercents,
-      getTotalProfit,
-      getModal,
-      openModal,
+      priceData,
     };
   },
 };
 </script>
-
-<style src="./styles.scss" lang="scss"/>

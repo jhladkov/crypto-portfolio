@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="[{background},className]"
+    :class="[background,className]"
     class="profit"
   >
     <p class="profit__value">
@@ -18,12 +18,11 @@ export default {
       default: null,
     },
     background: {
-      type: Boolean,
-      default: false,
+      type: String,
     },
     value: {
-      type: String,
-      default: '0',
+      type: Number,
+      default: 0,
     },
   },
 };

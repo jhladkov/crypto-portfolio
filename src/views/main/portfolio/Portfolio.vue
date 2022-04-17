@@ -18,7 +18,17 @@
       </div>
     </div>
     <chart />
-    <assets-section />
+    <assets-section
+      :asset-col="assetCol"
+      title="Your Assets"
+    >
+      <body-col
+        v-for="(item, index) in tokensData"
+        :key="index"
+        class="table-assets-body-col"
+        :asset="item"
+      />
+    </assets-section>
   </div>
 </template>
 
@@ -28,17 +38,22 @@ import AssetsSection from '@/views/main/portfolio/assets-section/AssetsSection.v
 import Chart from '@/views/main/portfolio/chart-section/Chart.vue';
 import { useStore } from 'vuex';
 import {
-  computed, onBeforeMount, onBeforeUnmount, ref, watch,
+  computed, ref, watch,
 } from 'vue';
+import BodyCol from '@/components/body-col/BodyCol.vue';
 
 export default {
   name: 'Portfolio',
-  components: { Chart, PriceSection, AssetsSection },
+  components: {
+    BodyCol, Chart, PriceSection, AssetsSection,
+  },
   setup() {
     const store = useStore();
 
+    const assetCol = ref(['Name', 'Price', '24H', 'Holdings', 'Avg. Buy Price', 'Profit/Loss', 'Actions']);
     const value = ref('');
     const searchData = computed(() => store.getters['portfolio/searchData']);
+    const tokensData = computed(() => store.getters['portfolio/getTokensList']);
 
     watch(value, async (newValue, oldValue) => {
       if (newValue === oldValue) return;
@@ -46,17 +61,11 @@ export default {
       con.send(JSON.stringify({ method: 'SearchToken', value: newValue }));
     });
 
-    onBeforeMount(async () => {
-      await store.dispatch('portfolio/connectToWebSocket');
-    });
-
-    onBeforeUnmount(async () => {
-      await store.dispatch('portfolio/disconnectFromWebSocket');
-    });
-
     return {
       value,
       searchData,
+      assetCol,
+      tokensData,
     };
   },
 };

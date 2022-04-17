@@ -13,12 +13,30 @@
   }
 }
 
+.table-td.decrease {
+  color: $red;
+}
+
+.table-td.increase {
+  color: $green;
+}
+
 .table-td {
   font-weight: 500;
   padding: 10px;
   text-align: right;
+  color: $lightDark;
 
-  .table-td__profit{
+  .asset-hold-usd {
+    color: $black;
+    margin-bottom: 3px;
+  }
+  .table-td__percents{
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .table-td__profit {
     margin-bottom: 5px;
   }
 
@@ -44,9 +62,14 @@
   font-weight: 600;
   align-items: center;
   grid-gap: 5px;
+
+  .asset-name {
+    color: $lightDark
+  }
 }
 
 .asset-short-name {
+  font-size: 12px;
   font-weight: 400;
   color: rgb(128, 138, 157);
 }
@@ -56,10 +79,3 @@
   font-size: 12px;
 }
 
-.increase {
-  color: $green;
-}
-
-.decrease {
-  color: $red;
-}

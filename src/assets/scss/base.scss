@@ -79,3 +79,9 @@ img{
 .v-leave-to {
   opacity: 0;
 }
+
+.disabled{
+  cursor: not-allowed;
+  background: $lightGray;
+  color: $MGray;
+}

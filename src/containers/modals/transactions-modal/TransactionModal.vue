@@ -89,6 +89,7 @@
           v-model.number="state.addTransactionConfig.quantity"
           class-name="block__input shadow"
           placeholder="0.00"
+          min="0"
         />
       </div>
       <div class="info-inner__block block">
@@ -120,7 +121,7 @@
     </div>
     <div class="modal__total-area total-area">
       <p class="total-area__title">
-        Total {{ state.addTransactionConfig.type === 'Buy' ? 'Spent': 'Received' }}
+        Total {{ state.addTransactionConfig.type === 'Buy' ? 'Spent' : 'Received' }}
       </p>
       <div class="total-area__spent">
         $ {{ getTotalProfit }}
@@ -128,8 +129,12 @@
     </div>
 
     <base-button
-      class-name="modal__create-transactions"
-      value="Add transactions"
+      :disabled="state.addTransactionConfig.quantity > 0 ? false : true"
+      :class-name="[
+        'modal__create-transactions',
+        state.addTransactionConfig.quantity > 0 ? null : 'disabled',
+      ]"
+      value="Add transaction"
       @click="createTransaction"
     />
   </div>
@@ -144,7 +149,10 @@ import { useStore } from 'vuex';
 import BaseButton from '@/components/base-button/BaseButton.vue';
 
 export default {
-  components: { BaseButton, BaseInput },
+  components: {
+    BaseButton,
+    BaseInput,
+  },
   setup() {
     const store = useStore();
     const value = ref('');
@@ -156,15 +164,18 @@ export default {
       initArrayTokens: [],
       selectedToken: {},
       addTransactionConfig: {
+        tokenInfo: {},
         type: 'Buy',
         quantity: 0,
         price_per_coin: 0,
         date: '',
       },
     });
-    // toLocaleString('en-US', { hour: 'numeric', hour12: true }).slice(-2)
     const getDate = computed(
-      () => state.addTransactionConfig.date?.toString()?.split(' ')?.slice(1, 5)?.join(' '),
+      () => state.addTransactionConfig.date?.toString()
+        ?.split(' ')
+        ?.slice(1, 5)
+        ?.join(' '),
     );
     const selectedValue = computed(() => state.selectedToken);
     const getTotalProfit = computed(
@@ -198,14 +209,20 @@ export default {
 
     const selectToken = (token) => {
       state.selectedToken = token;
-      state.addTransactionConfig.price_per_coin = token.current_price;
+      state.addTransactionConfig.tokenInfo = token;
+      state.addTransactionConfig.price_per_coin = token.current_price || 0;
       closeSelect();
     };
 
     const searchData = computed(() => store.getters['portfolio/searchData']);
 
     const createTransaction = () => {
-      state.addTransactionConfig.date = state.addTransactionConfig.date.toGMTString().replace('GMT', state.addTransactionConfig.date.toLocaleString('en-US', { hour: 'numeric', hour12: true }).slice(-2));
+      state.addTransactionConfig.date = state.addTransactionConfig.date.toGMTString()
+        .replace('GMT', state.addTransactionConfig.date.toLocaleString('en-US', {
+          hour: 'numeric',
+          hour12: true,
+        })
+          .slice(-2));
       console.log(state.addTransactionConfig);
       store.commit('modal/closeModal', 'Transaction');
     };
@@ -227,6 +244,7 @@ export default {
         .then((data) => {
           state.initArrayTokens = [...data];
           state.selectedToken = data[0];
+          state.addTransactionConfig.tokenInfo = data[0];
           state.addTransactionConfig.price_per_coin = data[0].current_price;
         });
     });

@@ -108,22 +108,5 @@
   display: inline-block;
   color: $gray;
   font-weight: 700;
-
-  &:hover{
-    .calendar{
-      opacity: 1;
-      visibility: visible;
-      z-index: 16;
-    }
-  }
-  .calendar{
-    transition: all .1s;
-    opacity: 0;
-    visibility: hidden;
-    position: absolute;
-    top: -305px;
-    left: 40%;
-    z-index: -1;
-  }
 }
 

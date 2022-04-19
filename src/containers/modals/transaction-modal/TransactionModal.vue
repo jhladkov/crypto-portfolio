@@ -1,8 +1,11 @@
 <template>
   <div class="modal__inner">
+    <div class="modal__title">
+      Add Transaction
+    </div>
     <div class="modal__actions actions">
       <div
-        v-for="(action,index) in state.actions"
+        v-for="(action,index) in actions"
         :key="index"
         class="actions__block block"
         :class="{'active': index === state.activeIndex}"
@@ -46,7 +49,7 @@
           v-else
           v-model="value"
           v-focus
-          class-name="main-panel__input select-part"
+          class="main-panel__input select-part"
           type="text"
         />
       </div>
@@ -86,8 +89,8 @@
           Quantity
         </p>
         <base-input
-          v-model.number="state.addTransactionConfig.quantity"
-          class-name="block__input shadow"
+          v-model.number="state.addTransactionConfig.amount"
+          class="block__input shadow"
           placeholder="0.00"
           min="0"
         />
@@ -99,29 +102,25 @@
         <div class="block__inner">
           <span>$</span>
           <base-input
-            v-model.number="state.addTransactionConfig.price_per_coin"
-            class-name="block__input shadow"
-            :value="state.addTransactionConfig.price_per_coin"
+            v-model.number="state.addTransactionConfig.price"
+            class="block__input shadow"
+            :value="state.addTransactionConfig.price"
           />
         </div>
       </div>
     </div>
-    <div class="modal__date date">
+    <div
+      class="modal__date date"
+      @click="openCalendarModal"
+    >
       <div class="date__time">
         {{ getDate }}
       </div>
-      <v-date-picker
-        v-model="state.addTransactionConfig.date"
-        :max-date="new Date()"
-        trim-weeks
-        class="calendar"
-        mode="dateTime"
-        locale="en"
-      />
     </div>
     <div class="modal__total-area total-area">
       <p class="total-area__title">
-        Total {{ state.addTransactionConfig.type === 'Buy' ? 'Spent' : 'Received' }}
+        <!--        Total {{ state.addTransactionConfig.type === 'Buy' ? 'Spent' : 'Received' }}-->
+        Total
       </p>
       <div class="total-area__spent">
         $ {{ getTotalProfit }}
@@ -129,10 +128,10 @@
     </div>
 
     <base-button
-      :disabled="state.addTransactionConfig.quantity > 0 ? false : true"
-      :class-name="[
+      :disabled="state.addTransactionConfig.amount > 0 ? false : true"
+      :class="[
         'modal__create-transactions',
-        state.addTransactionConfig.quantity > 0 ? null : 'disabled',
+        state.addTransactionConfig.amount > 0 ? null : 'disabled',
       ]"
       value="Add transaction"
       @click="createTransaction"
@@ -149,6 +148,7 @@ import { useStore } from 'vuex';
 import BaseButton from '@/components/base-button/BaseButton.vue';
 
 export default {
+  name: 'TransactionModal',
   components: {
     BaseButton,
     BaseInput,
@@ -156,35 +156,42 @@ export default {
   setup() {
     const store = useStore();
     const value = ref('');
+    const actions = ['Buy', 'Sell'];
     const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false';
     const state = reactive({
       selectActive: false,
       activeIndex: 0,
-      actions: ['Buy', 'Sell'],
       initArrayTokens: [],
       selectedToken: {},
       addTransactionConfig: {
-        tokenInfo: {},
-        type: 'Buy',
-        quantity: 0,
-        price_per_coin: 0,
-        date: '',
+        cryptocurrencyId: '',
+        amount: 0,
+        price: 0,
+        name: '',
+        symbol: '',
+        timestamp: 0,
       },
     });
+    // const getDate = computed(
+    //   () => state.addTransactionConfig.timestamp?.toString()
+    //     ?.split(' ')
+    //     ?.slice(1, 5)
+    //     ?.join(' '),
+    // );
     const getDate = computed(
-      () => state.addTransactionConfig.date?.toString()
-        ?.split(' ')
-        ?.slice(1, 5)
-        ?.join(' '),
+      () => {
+        const date = new Date(state.addTransactionConfig.timestamp);
+        return date.toString().substring(0, 24);
+      },
     );
     const selectedValue = computed(() => state.selectedToken);
     const getTotalProfit = computed(
-      () => state.addTransactionConfig.quantity * state.addTransactionConfig.price_per_coin,
+      () => state.addTransactionConfig.amount * state.addTransactionConfig.price,
     );
 
     const selectAction = (index) => {
       state.activeIndex = index;
-      state.addTransactionConfig.type = state.actions[index];
+      // state.addTransactionConfig.type = actions[index];
     };
 
     const openSelect = () => {
@@ -192,6 +199,12 @@ export default {
     };
     const closeSelect = () => {
       state.selectActive = false;
+    };
+
+    const openCalendarModal = () => {
+      store.commit('modal/closeModal', 'TransactionModal');
+      store.commit('modal/setCurrentModal', 'CalendarModal');
+      store.commit('modal/openModal', 'CalendarModal');
     };
 
     const compareClickElement = (event) => {
@@ -209,26 +222,23 @@ export default {
 
     const selectToken = (token) => {
       state.selectedToken = token;
-      state.addTransactionConfig.tokenInfo = token;
-      state.addTransactionConfig.price_per_coin = token.current_price || 0;
+      state.addTransactionConfig.price = token.current_price || 0;
+      state.addTransactionConfig.name = token.name;
+      state.addTransactionConfig.cryptocurrencyId = token.id || token.cryptocurrencyId;
+      state.addTransactionConfig.symbol = token.symbol;
       closeSelect();
     };
 
     const searchData = computed(() => store.getters['portfolio/searchData']);
 
     const createTransaction = () => {
-      state.addTransactionConfig.date = state.addTransactionConfig.date.toGMTString()
-        .replace('GMT', state.addTransactionConfig.date.toLocaleString('en-US', {
-          hour: 'numeric',
-          hour12: true,
-        })
-          .slice(-2));
-      console.log(state.addTransactionConfig);
-      store.commit('modal/closeModal', 'Transaction');
+      if (typeof state.addTransactionConfig.timestamp !== 'number') {
+        state.addTransactionConfig.timestamp = state.addTransactionConfig.timestamp.getTime();
+      }
+      store.commit('modal/closeModal', 'TransactionModal');
     };
 
     watch(value, async (newValue, oldValue) => {
-      console.log(searchData);
       if (newValue === oldValue) return;
       const con = store.getters['portfolio/connection'];
       con.send(JSON.stringify({
@@ -238,14 +248,16 @@ export default {
     });
 
     onBeforeMount(() => {
-      state.addTransactionConfig.date = new Date();
+      state.addTransactionConfig.timestamp = new Date().getTime();
       fetch(url)
         .then((res) => res.json())
         .then((data) => {
           state.initArrayTokens = [...data];
           state.selectedToken = data[0];
-          state.addTransactionConfig.tokenInfo = data[0];
-          state.addTransactionConfig.price_per_coin = data[0].current_price;
+          state.addTransactionConfig.name = data[0].name;
+          state.addTransactionConfig.cryptocurrencyId = data[0].id || data[0].cryptocurrencyId;
+          state.addTransactionConfig.symbol = data[0].symbol;
+          state.addTransactionConfig.price = data[0].current_price;
         });
     });
 
@@ -262,6 +274,8 @@ export default {
       getTotalProfit,
       getDate,
       createTransaction,
+      actions,
+      openCalendarModal,
     };
   },
 };

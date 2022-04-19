@@ -1,4 +1,5 @@
 export const ModalTypes = {
-  Transaction: 'Transaction',
+  TransactionModal: 'TransactionModal',
+  CalendarModal: 'CalendarModal',
   Note: 'Note',
 };

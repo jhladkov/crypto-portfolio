@@ -1,25 +1,21 @@
 <template>
   <div
-    class="assets-section"
-    :class="className"
+    class="table-cols"
   >
-    <div class="assets-section__wrapper">
-      <div class="assets-title">
-        Your Assets
-      </div>
+    <div class="table-cols__wrapper">
       <div
-        class="table-assets"
+        class="table-cols__table"
       >
-        <div class="table-assets-head">
+        <div class="table-cols__table-head">
           <div
             v-for="(colName,index) in assetCols"
             :key="index"
-            class="table-assets-head-col"
+            class="table-cols__table-head-col"
           >
             {{ colName }}
           </div>
         </div>
-        <div class="table-assets-body">
+        <div class="table-cols__table-body">
           <slot />
         </div>
       </div>
@@ -30,11 +26,8 @@
 <script>
 
 export default {
+  name: 'TableCols',
   props: {
-    className: {
-      type: String,
-      default: null,
-    },
     assetCols: {
       type: Array,
       default: null,

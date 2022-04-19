@@ -1,7 +1,6 @@
 <template>
   <button
     class="button"
-    :class="className"
   >
     {{ value }}
   </button>
@@ -11,10 +10,6 @@
 export default {
   name: 'BaseButton',
   props: {
-    className: {
-      type: [String, Array],
-      default: null,
-    },
     value: {
       type: String,
       required: true,

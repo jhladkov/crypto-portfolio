@@ -1,0 +1,35 @@
+.transactions{
+  .table-cols__table-head{
+    grid-template-columns: 1fr max(130px) max(230px) max(230px);
+  }
+  .table-tr{
+    grid-template-columns: 1fr 130px 230px 230px;
+  }
+  .table-td__amount {
+    font-size: 12px;
+  }
+}
+
+.table-cols__table-head {
+  display: grid;
+  grid-template-columns: 1fr max(130px) max(100px) max(130px) max(120px) max(160px) max(110px);
+  border-bottom: 1px solid #eff2f5;
+  border-top: 1px solid #eff2f5;
+  font-size: 14px;
+}
+.table-cols__table-head-col {
+  padding: 10px;
+  line-height: 1.5;
+  margin: 0;
+  color: rgb(23, 25, 36);
+  font-weight: 600;
+  font-size: 13px;
+  text-align: right;
+  &:first-child {
+    padding-left: 0;
+    text-align: left;
+  }
+  &:last-child {
+    padding-right: 0;
+  }
+}

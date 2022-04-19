@@ -1,8 +1,6 @@
 <template>
   <div class="container">
-    <div v-if="state.loading">
-      Loading
-    </div>
+    <base-loader v-if="state.loading" />
     <template v-else>
       <button
         class="go-back"
@@ -14,11 +12,12 @@
         :data="tokenData"
         :pre-title="preTitle"
         :show-token-info="true"
+        modal-type="TransactionModal"
       />
       <detail-section :token-info="tokenInfo" />
       <cols
         :asset-cols="state.assetCols"
-        class-name="transactions"
+        class="transactions"
       >
         <transactions-col
           v-for="(list,index) in historyList"
@@ -37,10 +36,12 @@ import { computed, onBeforeMount, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import DetailSection from '@/views/main/transactions/details-section/DetailsSection.vue';
 import TransactionsCol from '@/components/transactions-col/TransactionsCol.vue';
-import Cols from '@/components/cols/Cols.vue';
+import Cols from '@/components/table-cols/TableCols.vue';
+import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 
 export default {
   components: {
+    BaseLoader,
     Cols,
     TransactionsCol,
     DetailSection,

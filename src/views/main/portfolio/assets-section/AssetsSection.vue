@@ -5,6 +5,9 @@
       <div
         v-else
       >
+        <div class="assets-title">
+          Your Assets
+        </div>
         <cols :asset-cols="assetCols">
           <body-col
             v-for="(item, index) in tokensData"
@@ -26,7 +29,7 @@ import {
 import { useStore } from 'vuex';
 import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 import BodyCol from '@/components/body-col/BodyCol.vue';
-import Cols from '@/components/cols/Cols.vue';
+import Cols from '@/components/table-cols/TableCols.vue';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -39,11 +42,11 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
+    const assetCols = ['Name', 'Price', '24H', 'Holdings', 'Avg. Buy Price', 'Profit/Loss', 'Actions'];
 
     const state = reactive({
       WBSKData: store.state.portfolio.WBSKData,
       loading: false,
-      assetCols: ['Name', 'Price', '24H', 'Holdings', 'Avg. Buy Price', 'Profit/Loss', 'Actions'],
     });
     const tokensData = computed(() => store.getters['portfolio/getTokensList']);
     const loading = computed(() => state.loading);
@@ -67,6 +70,7 @@ export default {
       tokensData,
       loading,
       goToTransactions,
+      assetCols,
     };
   },
 };

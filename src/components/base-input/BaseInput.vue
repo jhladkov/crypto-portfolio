@@ -1,7 +1,6 @@
 <template>
   <input
     class="input"
-    :class="className"
     :type="type"
     :placeholder="placeholder"
     @input="$emit('update:modelValue', $event.target.value)"
@@ -11,10 +10,6 @@
 <script>
 export default {
   props: {
-    className: {
-      type: String,
-      default: null,
-    },
     type: {
       type: String,
       default: 'number',

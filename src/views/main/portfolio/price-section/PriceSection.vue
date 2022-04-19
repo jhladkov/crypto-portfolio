@@ -1,6 +1,7 @@
 <template>
   <price-container
     :data="priceData"
+    :modal-type="currentModal"
   />
 </template>
 
@@ -14,6 +15,7 @@ export default {
   components: { PriceContainer },
   setup() {
     const store = useStore();
+    const currentModal = computed(() => store.state.modal.currentModal);
     const priceData = computed(() => ({
       price: store.getters['portfolio/totalPrice'],
       change: store.getters['portfolio/totalProfitInPercents'],
@@ -22,6 +24,7 @@ export default {
 
     return {
       priceData,
+      currentModal,
     };
   },
 };

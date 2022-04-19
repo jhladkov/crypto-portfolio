@@ -1,9 +1,6 @@
 <template>
   <div class="modal-wrapper">
     <div class="modal">
-      <div class="modal__title">
-        {{ title }}
-      </div>
       <slot />
     </div>
     <div
@@ -17,14 +14,18 @@
 import { useStore } from 'vuex';
 
 export default {
+  name: 'Modal',
   props: {
-    title: String,
+    modalType: {
+      type: String,
+      required: true,
+    },
   },
-  setup() {
+  setup(props) {
     const store = useStore();
 
     const closeModal = () => {
-      store.commit('modal/closeModal', 'Transaction');
+      store.commit('modal/closeModal', props.modalType);
     };
 
     return {

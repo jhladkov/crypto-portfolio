@@ -26,6 +26,8 @@ export default {
 
     const closeModal = () => {
       store.commit('modal/closeModal', props.modalType);
+      store.commit('modal/setCurrentModal', 'TransactionModal');
+      store.commit('modal/resetTimestamp');
     };
 
     return {

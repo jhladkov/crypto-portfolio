@@ -114,7 +114,7 @@
       @click="openCalendarModal"
     >
       <div class="date__time">
-        {{ getDate }}
+        {{ getCurrentDate }}
       </div>
     </div>
     <div class="modal__total-area total-area">
@@ -130,7 +130,7 @@
     <base-button
       :disabled="state.addTransactionConfig.amount > 0 ? false : true"
       :class="[
-        'modal__create-transactions',
+        'modal__add',
         state.addTransactionConfig.amount > 0 ? null : 'disabled',
       ]"
       value="Add transaction"
@@ -146,6 +146,7 @@ import {
 } from 'vue';
 import { useStore } from 'vuex';
 import BaseButton from '@/components/base-button/BaseButton.vue';
+import axios from 'axios';
 
 export default {
   name: 'TransactionModal',
@@ -172,15 +173,9 @@ export default {
         timestamp: 0,
       },
     });
-    // const getDate = computed(
-    //   () => state.addTransactionConfig.timestamp?.toString()
-    //     ?.split(' ')
-    //     ?.slice(1, 5)
-    //     ?.join(' '),
-    // );
-    const getDate = computed(
+    const getCurrentDate = computed(
       () => {
-        const date = new Date(state.addTransactionConfig.timestamp);
+        const date = new Date(store.state.modal.timestamp || state.addTransactionConfig.timestamp);
         return date.toString().substring(0, 24);
       },
     );
@@ -188,6 +183,7 @@ export default {
     const getTotalProfit = computed(
       () => state.addTransactionConfig.amount * state.addTransactionConfig.price,
     );
+    const searchData = computed(() => store.getters['portfolio/searchData']);
 
     const selectAction = (index) => {
       state.activeIndex = index;
@@ -229,13 +225,20 @@ export default {
       closeSelect();
     };
 
-    const searchData = computed(() => store.getters['portfolio/searchData']);
-
-    const createTransaction = () => {
+    const createTransaction = async () => {
+      if (store.state.modal.timestamp) {
+        state.addTransactionConfig.timestamp = store.state.modal.timestamp;
+      }
       if (typeof state.addTransactionConfig.timestamp !== 'number') {
         state.addTransactionConfig.timestamp = state.addTransactionConfig.timestamp.getTime();
       }
       store.commit('modal/closeModal', 'TransactionModal');
+      store.commit('modal/resetTimestamp');
+      await axios.post('http://localhost:5000/add-to-portfolio?id=1', {
+        ...state.addTransactionConfig,
+      });
+      await store.dispatch('portfolio/getPortfolio');
+      await store.dispatch('portfolio/getCharts');
     };
 
     watch(value, async (newValue, oldValue) => {
@@ -272,7 +275,7 @@ export default {
       handlerClose,
       selectAction,
       getTotalProfit,
-      getDate,
+      getCurrentDate,
       createTransaction,
       actions,
       openCalendarModal,

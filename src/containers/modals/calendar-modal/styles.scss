@@ -1,0 +1,21 @@
+.calendar{
+  .calendar__header{
+    display: flex;
+  }
+  .calendar__content{
+    margin-bottom: 20px;
+  }
+}
+.calendar__header .calendar__back{
+  padding: 10px;
+  position: relative;
+  margin-right: 20px;
+  &:before{
+    content: '<';
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 22px;
+    cursor: pointer;
+  }
+}

@@ -8,7 +8,7 @@
         <div class="assets-title">
           Your Assets
         </div>
-        <cols :asset-cols="assetCols">
+        <table-cols :asset-cols="assetCols">
           <body-col
             v-for="(item, index) in tokensData"
             :key="index"
@@ -16,7 +16,7 @@
             :asset="item"
             @click="goToTransactions(item.name)"
           />
-        </cols>
+        </table-cols>
       </div>
     </div>
   </section>
@@ -29,13 +29,13 @@ import {
 import { useStore } from 'vuex';
 import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 import BodyCol from '@/components/body-col/BodyCol.vue';
-import Cols from '@/components/table-cols/TableCols.vue';
+import TableCols from '@/components/table-cols/TableCols.vue';
 import { useRouter } from 'vue-router';
 
 export default {
   name: 'AssetsSection',
   components: {
-    Cols,
+    TableCols,
     BodyCol,
     BaseLoader,
   },

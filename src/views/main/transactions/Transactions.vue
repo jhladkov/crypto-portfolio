@@ -15,7 +15,7 @@
         modal-type="TransactionModal"
       />
       <detail-section :token-info="tokenInfo" />
-      <cols
+      <table-cols
         :asset-cols="state.assetCols"
         class="transactions"
       >
@@ -24,7 +24,7 @@
           :key="index"
           :history-list="list"
         />
-      </cols>
+      </table-cols>
     </template>
   </div>
 </template>
@@ -36,13 +36,13 @@ import { computed, onBeforeMount, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import DetailSection from '@/views/main/transactions/details-section/DetailsSection.vue';
 import TransactionsCol from '@/components/transactions-col/TransactionsCol.vue';
-import Cols from '@/components/table-cols/TableCols.vue';
 import BaseLoader from '@/components/base-loader/BaseLoader.vue';
+import TableCols from '@/components/table-cols/TableCols.vue';
 
 export default {
   components: {
+    TableCols,
     BaseLoader,
-    Cols,
     TransactionsCol,
     DetailSection,
     PriceContainer,
@@ -57,7 +57,7 @@ export default {
       loading: false,
     });
     const tokenInfo = computed(() => store.getters['portfolio/getTokensList'].find((item) => item.name === route.params.token));
-    const historyList = computed(() => tokenInfo.value?.historyList);
+    const historyList = computed(() => tokenInfo.value?.historyList?.reverse());
     const tokenData = computed(() => ({
       src: tokenInfo.value?.src,
       price: tokenInfo.value?.hold,

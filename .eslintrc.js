@@ -19,5 +19,6 @@ module.exports = {
     'global-require': 'off',
     'vue/require-default-prop': 'off',
     'prefer-destructuring': 'off',
+    'vue/no-side-effects-in-computed-properties': 'off',
   },
 };

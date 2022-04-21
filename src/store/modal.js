@@ -28,6 +28,9 @@ const mutations = {
   closeModal(state, type) {
     state.modals[type] = false;
   },
+  resetTimestamp(state) {
+    state.timestamp = 0;
+  },
 };
 
 const actions = {

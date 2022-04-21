@@ -1,7 +1,12 @@
 <template>
   <div class="table-tr">
     <div class="table-td asset-name-td">
-      Buy
+      <div class="table-tr__type">
+        Buy
+      </div>
+      <div class="table-tr__date">
+        {{ date }}
+      </div>
     </div>
     <div class="table-td">
       ${{ historyList.price }}
@@ -35,8 +40,11 @@ export default {
     const operationPrice = computed(() => (
       props.historyList.amount * props.historyList.price).toFixed(2));
 
+    const date = new Date(props.historyList.timestamp).toLocaleString();
+
     return {
       operationPrice,
+      date,
     };
   },
 };

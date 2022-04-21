@@ -5,8 +5,14 @@
   .table-tr{
     grid-template-columns: 1fr 130px 230px 230px;
   }
+  .table-tr .table-tr__type{
+    margin-bottom: 10px;
+  }
   .table-td__amount {
     font-size: 12px;
+  }
+  .asset-name-td{
+    display: block;
   }
 }
 

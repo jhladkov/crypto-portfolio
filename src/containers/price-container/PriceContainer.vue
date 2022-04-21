@@ -19,10 +19,10 @@
         </h1>
         <indicator
           :class-name="
-            `price-section__profit ${data.totalProfit > 0 ? 'increase' : 'decrease'}`
+            `price-section__profit ${+data.change > 0 ? 'increase' : 'decrease'}`
           "
           :background="true"
-          :value="data.change"
+          :value="+data.change"
         />
       </div>
 

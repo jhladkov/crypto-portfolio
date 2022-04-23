@@ -234,7 +234,7 @@ export default {
       }
       store.commit('modal/closeModal', 'TransactionModal');
       store.commit('modal/resetTimestamp');
-      await axios.post('http://localhost:5000/add-to-portfolio?id=1', {
+      await axios.post('http://vm3356913.52ssd.had.wf:5000/add-to-portfolio?id=1', {
         ...state.addTransactionConfig,
       });
       await store.dispatch('portfolio/getPortfolio');

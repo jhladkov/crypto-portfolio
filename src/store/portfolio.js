@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const api = 'localhost';
-// const api = 'vm3356913.52ssd.had.wf';
+// const api = 'localhost';
+const api = 'vm3356913.52ssd.had.wf';
 
 const calcProfit = (item) => ((((item?.currentPrice * item?.amount)
     - (item?.buyAvgPrice * item?.amount))
@@ -9,13 +9,23 @@ const calcProfit = (item) => ((((item?.currentPrice * item?.amount)
 
 const state = {
   WBSKData: [],
-  chartData: [],
+  chartData: {
+    1: [],
+    7: [],
+    30: [],
+    90: [],
+    max: [],
+  },
   searchData: [],
   connection: null,
   totalPrice: 0,
+  activePeriod: 1,
 };
 
 const getters = {
+  getActivePeriod(state) {
+    return state.activePeriod;
+  },
   calculatedTotalPrice(state) {
     return state.WBSKData.reduce((acc, next) => {
       acc += Number(next.cryptoHoldings);
@@ -64,14 +74,17 @@ const getters = {
 };
 
 const mutations = {
+  setActivePeriod(state, value) {
+    state.activePeriod = value;
+  },
   setWBSKData(state, value) {
     state.WBSKData = value;
   },
   setConnection(state, value) {
     state.connection = value;
   },
-  setChartData(state, value) {
-    state.chartData = value;
+  setChartData(state, obj) {
+    state.chartData = { ...state.chartData, [`${obj.period}`]: obj.data };
   },
   setSearchData(state, value) {
     state.searchData = value;
@@ -99,16 +112,16 @@ const actions = {
     }
   },
 
-  async getCharts({ commit }) {
+  async getCharts({ commit }, period = 1) {
     try {
-      const res = await axios.get(`http://${api}:5000/chart-values?id=1`, {
+      const res = await axios.get(`http://${api}:5000/chart-values?id=1&period=${period}`, {
         headers: {
           withCredentials: true,
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
         },
       });
-      commit('setChartData', res.data);
+      commit('setChartData', { data: res.data?.historyChart, period });
     } catch (err) {
       console.warn(err);
     }

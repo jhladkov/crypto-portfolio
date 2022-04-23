@@ -7,7 +7,7 @@
         v-for="(value, index) in duration"
         :key="value"
         class="duration-table-block"
-        :class="{'active': index === getActiveIndex}"
+        :class="{'active': index === indexes.findIndex((a) => a === period)}"
         @click="updateData(index)"
       >
         {{ value }}
@@ -40,7 +40,7 @@ export default {
   setup() {
     const store = useStore();
     const activeIndex = ref(0);
-    const indexes = ['24h', '7d', '1m', '3m', '1y'];
+    const indexes = [1, 7, 30, 90, 'max'];
     const duration = ['24H', '7D', '30D', '90D', 'ALL'];
 
     const state = reactive({
@@ -53,9 +53,10 @@ export default {
 
     const config = reactive(chartConfig);
     const getConfig = computed(() => config);
+    const period = computed(() => store.getters['portfolio/getActivePeriod']);
 
-    const recalculateData = (duration) => {
-      const chartDataForDuration = store.getters['portfolio/chartData'][`historyChart${indexes[duration]}`] || [];
+    const recalculateData = () => {
+      const chartDataForDuration = store.getters['portfolio/chartData'][period.value] || [];
       state.lastChanges = chartDataForDuration[chartDataForDuration.length - 1][1];
       state.prevChanges = chartDataForDuration[0][1];
       if (state.lastChanges - state.prevChanges < 0) {
@@ -67,18 +68,20 @@ export default {
       }
     };
 
-    const getActiveIndex = computed(() => state.activeIndex || 0);
-    const setData = (index) => {
-      recalculateData(index);
+    const setData = () => {
+      recalculateData();
       state.series[0] = {
         name: 'main',
-        data: store.getters['portfolio/chartData'][`historyChart${indexes[index]}`] || [],
+        data: store.getters['portfolio/chartData'][period.value] || [],
       };
     };
-    const updateData = (index) => {
+    const updateData = async (index) => {
       if (activeIndex !== index) {
-        state.activeIndex = index;
-        setData(index);
+        store.commit('portfolio/setActivePeriod', indexes[index]);
+        if (!store.getters['portfolio/chartData'][period.value]?.length) {
+          await store.dispatch('portfolio/getCharts', indexes[index]);
+        }
+        setData();
       }
     };
 
@@ -103,7 +106,8 @@ export default {
       duration,
       mouseMove,
       updateData,
-      getActiveIndex,
+      period,
+      indexes,
       mouseLeave,
       getConfig,
       chart,

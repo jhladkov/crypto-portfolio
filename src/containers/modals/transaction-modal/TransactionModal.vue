@@ -128,7 +128,7 @@
     </div>
 
     <base-button
-      :disabled="state.addTransactionConfig.amount > 0 ? false : true"
+      :disabled="state.addTransactionConfig.amount <= 0"
       :class="[
         'modal__add',
         state.addTransactionConfig.amount > 0 ? null : 'disabled',
@@ -255,7 +255,10 @@ export default {
       fetch(url)
         .then((res) => res.json())
         .then((data) => {
-          state.initArrayTokens = [...data];
+          state.initArrayTokens = data.map((item) => {
+            item.symbol = item.symbol.toUpperCase();
+            return item;
+          });
           state.selectedToken = data[0];
           state.addTransactionConfig.name = data[0].name;
           state.addTransactionConfig.cryptocurrencyId = data[0].id || data[0].cryptocurrencyId;

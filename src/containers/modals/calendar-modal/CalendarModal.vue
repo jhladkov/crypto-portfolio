@@ -22,7 +22,11 @@
     </div>
     <base-button
       value="Change Date & Time"
-      class="modal__add"
+      :disabled="!calendarValue"
+      :class="[
+        'modal__add',
+        calendarValue ? null : 'disabled',
+      ]"
       @click="changeTime"
     />
   </div>

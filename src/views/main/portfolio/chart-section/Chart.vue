@@ -13,12 +13,18 @@
         {{ value }}
       </button>
     </div>
+    <div
+      v-if="state.loading"
+      class="chart__loader"
+    >
+      <base-loader />
+    </div>
     <vue-apex-charts
       ref="chart"
       width="100%"
       height="250px"
       :options="getConfig"
-      :series="series"
+      :series="state.series"
       type="area"
       @MouseMove="mouseMove"
       @mouseleave="mouseLeave"
@@ -33,10 +39,11 @@ import {
 import VueApexCharts from 'vue3-apexcharts';
 import { useStore } from 'vuex';
 import { chartConfig } from '@/constants';
+import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 
 export default {
   name: 'Chart',
-  components: { VueApexCharts },
+  components: { BaseLoader, VueApexCharts },
   setup() {
     const store = useStore();
     const activeIndex = ref(0);
@@ -47,6 +54,7 @@ export default {
       series: [],
       lastChanges: 0,
       prevChanges: 0,
+      loading: false,
     });
 
     const chart = ref(null);
@@ -79,7 +87,9 @@ export default {
       if (activeIndex !== index) {
         store.commit('portfolio/setActivePeriod', indexes[index]);
         if (!store.getters['portfolio/chartData'][period.value]?.length) {
+          state.loading = true;
           await store.dispatch('portfolio/getCharts', indexes[index]);
+          state.loading = false;
         }
         setData();
       }
@@ -102,7 +112,7 @@ export default {
     });
 
     return {
-      ...state,
+      state,
       duration,
       mouseMove,
       updateData,

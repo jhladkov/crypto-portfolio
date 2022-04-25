@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// const api = 'localhost';
-const api = 'vm3356913.52ssd.had.wf';
+const api = 'localhost';
+// const api = 'vm3356913.52ssd.had.wf';
 
 const calcProfit = (item) => ((((item?.currentPrice * item?.amount)
     - (item?.buyAvgPrice * item?.amount))
@@ -36,12 +36,12 @@ const getters = {
     return state.totalPrice.toFixed(2);
   },
   totalProfit(state) {
-    const data = state.chartData?.historyChart24h;
+    const data = state.chartData['1'];
     if (!data?.length) return 0;
     return Number(data[data.length - 1][1] - data[0][1]).toFixed(2);
   },
   totalProfitInPercents(state) {
-    const data = state.chartData?.historyChart24h;
+    const data = state.chartData['1'];
     if (!data?.length) return 0;
     return -(((data[0][1] * 100) / data[data.length - 1][1]) - 100).toFixed(2);
   },
@@ -95,6 +95,26 @@ const mutations = {
 };
 
 const actions = {
+  async getParticularTokenPrice(_, payload) {
+    const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${payload}&vs_currencies=usd`).catch(
+      (err) => console.warn(err),
+    );
+    return response.data[`${payload}`].usd;
+  },
+
+  async getInitArrayTokens() {
+    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false';
+    const response = await axios.get(url).catch(
+      (err) => console.warn(err),
+    );
+    return response;
+  },
+
+  async addTokenToPortfolio(_, payload) {
+    await axios.post(`http://${api}:5000/add-to-portfolio?id=1`, {
+      ...payload,
+    });
+  },
   async getPortfolio({ commit, getters }) {
     try {
       const res = await axios.get(`http://${api}:5000/get-portfolio?id=1`, {

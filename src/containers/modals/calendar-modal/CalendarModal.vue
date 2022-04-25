@@ -34,23 +34,19 @@
 
 <script>
 import { ref } from 'vue';
-import { useStore } from 'vuex';
 import BaseButton from '@/components/base-button/BaseButton.vue';
 
 export default {
   name: 'CalendarModal',
   components: { BaseButton },
-  setup() {
-    const store = useStore();
+  setup(props, { emit }) {
     const calendarValue = ref(new Date());
 
     const goBack = () => {
-      store.commit('modal/closeModal', 'CalendarModal');
-      store.commit('modal/openModal', 'TransactionModal');
-      store.commit('modal/setCurrentModal', 'TransactionModal');
+      emit('close');
     };
     const changeTime = () => {
-      store.commit('modal/setTimestamp', calendarValue.value.getTime());
+      emit('setTimestamp', calendarValue.value.getTime());
       goBack();
     };
     return {

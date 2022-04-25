@@ -1,23 +1,65 @@
-.duration-table{
+.chart {
+  position: relative;
+}
+
+.duration-table {
   display: inline-flex;
   padding: 3px;
   border-radius: 8px;
   background: $lightGray;
-  .duration-table-block{
+
+  .duration-table-block {
     transition: all 0.3s ease 0s;
     background: none;
     border: none;
-    padding: 9px 9px ;
+    padding: 9px 9px;
     font-size: 12px;
     color: $MGray;
     cursor: pointer;
-    &:hover{
+
+    &:hover {
       color: $black;
     }
   }
 }
 
-.duration-table .active{
+.chart__loader {
+  position: absolute;
+  z-index: 11111111;
+  top: 22%;
+  bottom: 9%;
+  right: 0;
+  left: 6.5%;
+
+  &:before {
+    content: '';
+    background: $lightGray;
+    position: absolute;
+    opacity: 0.7;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+
+  .loader {
+    top: 55%;
+    left: 47%;
+    transform: translateY(-50%);
+    z-index: 111111111;
+
+    &:after {
+      border-width: 3px;
+      width: 40px;
+      height: 40px;
+    }
+
+  }
+
+  //transform: translate(-50%,-50%);
+}
+
+.duration-table .active {
   background: $white;
   font-weight: 700;
   color: $black;

@@ -1,141 +1,151 @@
 <template>
-  <div class="modal__inner">
-    <div class="modal__title">
-      Add Transaction
-    </div>
-    <div class="modal__actions actions">
-      <div
-        v-for="(action,index) in actions"
-        :key="index"
-        class="actions__block block"
-        :class="{'active': index === state.activeIndex}"
-        @click="selectAction(index)"
-      >
-        <p class="block__value">
-          {{ action }}
-        </p>
-      </div>
-    </div>
+  <div>
     <div
-      class="select select-part"
-      @click="handlerClose"
+      v-show="state.currentModal === 'TransactionModal'"
+      class="modal__inner"
     >
+      <div class="modal__title">
+        Add Transaction
+      </div>
+      <div class="modal__actions actions">
+        <div
+          v-for="(action,index) in actions"
+          :key="index"
+          class="actions__block block"
+          :class="{'active': index === state.activeIndex}"
+          @click="selectAction(index)"
+        >
+          <p class="block__value">
+            {{ action }}
+          </p>
+        </div>
+      </div>
       <div
-        class="select__main-panel main-panel select-part shadow"
-        :class="{'active-select':state.selectActive}"
-        @click="openSelect"
+        class="select select-part"
+        @click="handlerClose"
       >
         <div
-          v-if="!state.selectActive"
-          class="main-panel__content select-part"
-        >
-          <div class="panel-crypto__img">
-            <img
-              width="20"
-              height="20"
-              :src="selectedValue.image"
-            >
-          </div>
-          <div class="panel-crypto__info info-token">
-            <p class="info-token__name">
-              {{ selectedValue.name }}
-            </p>
-            <p class="info-token__symbol">
-              {{ selectedValue.symbol }}
-            </p>
-          </div>
-        </div>
-        <base-input
-          v-else
-          v-model="value"
-          v-focus
-          class="main-panel__input select-part"
-          type="text"
-        />
-      </div>
-      <Transition>
-        <div
-          v-if="state.selectActive"
-          class="select__panel panel-crypto"
+          class="select__main-panel main-panel select-part shadow"
+          :class="{'active-select':state.selectActive}"
+          @click="openSelect"
         >
           <div
-            v-for="(token, key) in value ? searchData : state.initArrayTokens"
-            :key="key"
-            class="panel-crypto__wrapper"
-            @click="selectToken(token)"
+            v-if="!state.selectActive"
+            class="main-panel__content select-part"
           >
             <div class="panel-crypto__img">
               <img
                 width="20"
                 height="20"
-                :src="token.image"
+                :src="selectedValue.image"
               >
             </div>
             <div class="panel-crypto__info info-token">
               <p class="info-token__name">
-                {{ token.name }}
+                {{ selectedValue.name }}
               </p>
               <p class="info-token__symbol">
-                {{ token.symbol }}
+                {{ selectedValue.symbol }}
               </p>
             </div>
           </div>
-        </div>
-      </Transition>
-    </div>
-    <div class="modal__info-inner info-inner">
-      <div class="info-inner__block block">
-        <p class="block__title">
-          Quantity
-        </p>
-        <base-input
-          v-model.number="state.addTransactionConfig.amount"
-          class="block__input shadow"
-          placeholder="0.00"
-          min="0"
-        />
-      </div>
-      <div class="info-inner__block block">
-        <p class="block__title">
-          Price Per Coin
-        </p>
-        <div class="block__inner">
-          <span>$</span>
           <base-input
-            v-model.number="state.addTransactionConfig.price"
-            class="block__input shadow"
-            :value="state.addTransactionConfig.price"
+            v-else
+            v-model="value"
+            v-focus
+            class="main-panel__input select-part"
+            type="text"
           />
         </div>
+        <Transition>
+          <div
+            v-if="state.selectActive"
+            class="select__panel panel-crypto"
+          >
+            <div
+              v-for="(token, key) in value ? searchData : state.initArrayTokens"
+              :key="key"
+              class="panel-crypto__wrapper"
+              @click="selectToken(token)"
+            >
+              <div class="panel-crypto__img">
+                <img
+                  width="20"
+                  height="20"
+                  :src="token.image"
+                >
+              </div>
+              <div class="panel-crypto__info info-token">
+                <p class="info-token__name">
+                  {{ token.name }}
+                </p>
+                <p class="info-token__symbol">
+                  {{ token.symbol }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </Transition>
       </div>
-    </div>
-    <div
-      class="modal__date date"
-      @click="openCalendarModal"
-    >
-      <div class="date__time">
-        {{ getCurrentDate }}
+      <div class="modal__info-inner info-inner">
+        <div class="info-inner__block block">
+          <p class="block__title">
+            Quantity
+          </p>
+          <base-input
+            v-model.number="state.addTransactionConfig.amount"
+            class="block__input shadow"
+            placeholder="0.00"
+            min="0"
+          />
+        </div>
+        <div class="info-inner__block block">
+          <p class="block__title">
+            Price Per Coin
+          </p>
+          <div class="block__inner">
+            <span>$</span>
+            <base-input
+              v-model.number="state.addTransactionConfig.price"
+              class="block__input shadow"
+              :value="state.addTransactionConfig.price"
+            />
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="modal__total-area total-area">
-      <p class="total-area__title">
-        <!--        Total {{ state.addTransactionConfig.type === 'Buy' ? 'Spent' : 'Received' }}-->
-        Total
-      </p>
-      <div class="total-area__spent">
-        $ {{ getTotalProfit }}
+      <div
+        class="modal__date date"
+        @click="changeModal('CalendarModal')"
+      >
+        <div class="date__time">
+          {{ getCurrentDate }}
+        </div>
       </div>
-    </div>
+      <div class="modal__total-area total-area">
+        <p class="total-area__title">
+          Total
+        </p>
+        <div class="total-area__spent">
+          $ {{ getTotalProfit }}
+        </div>
+      </div>
 
-    <base-button
-      :disabled="state.addTransactionConfig.amount <= 0"
-      :class="[
-        'modal__add',
-        state.addTransactionConfig.amount > 0 ? null : 'disabled',
-      ]"
-      value="Add transaction"
-      @click="createTransaction"
-    />
+      <base-button
+        :disabled="state.addTransactionConfig.amount <= 0"
+        :class="[
+          'modal__add',
+          state.addTransactionConfig.amount > 0 ? null : 'disabled',
+        ]"
+        value="Add transaction"
+        @click="createTransaction"
+      />
+    </div>
+    <div v-show="state.currentModal === 'CalendarModal'">
+      <calendar-modal
+        @setTimestamp="setTimestamp"
+        @close="changeModal('TransactionModal')"
+      />
+    </div>
   </div>
 </template>
 
@@ -146,11 +156,12 @@ import {
 } from 'vue';
 import { useStore } from 'vuex';
 import BaseButton from '@/components/base-button/BaseButton.vue';
-import axios from 'axios';
+import CalendarModal from '@/containers/modals/calendar-modal/CalendarModal.vue';
 
 export default {
   name: 'TransactionModal',
   components: {
+    CalendarModal,
     BaseButton,
     BaseInput,
   },
@@ -158,8 +169,8 @@ export default {
     const store = useStore();
     const value = ref('');
     const actions = ['Buy', 'Sell'];
-    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false';
     const state = reactive({
+      currentModal: 'TransactionModal',
       selectActive: false,
       activeIndex: 0,
       initArrayTokens: [],
@@ -187,7 +198,6 @@ export default {
 
     const selectAction = (index) => {
       state.activeIndex = index;
-      // state.addTransactionConfig.type = actions[index];
     };
 
     const openSelect = () => {
@@ -196,11 +206,12 @@ export default {
     const closeSelect = () => {
       state.selectActive = false;
     };
+    const setTimestamp = (value) => {
+      state.addTransactionConfig.timestamp = value;
+    };
 
-    const openCalendarModal = () => {
-      store.commit('modal/closeModal', 'TransactionModal');
-      store.commit('modal/setCurrentModal', 'CalendarModal');
-      store.commit('modal/openModal', 'CalendarModal');
+    const changeModal = (value) => {
+      state.currentModal = value;
     };
 
     const compareClickElement = (event) => {
@@ -218,10 +229,17 @@ export default {
 
     const selectToken = (token) => {
       state.selectedToken = token;
-      state.addTransactionConfig.price = token.current_price || 0;
       state.addTransactionConfig.name = token.name;
       state.addTransactionConfig.cryptocurrencyId = token.id || token.cryptocurrencyId;
       state.addTransactionConfig.symbol = token.symbol;
+      if (token.current_price) {
+        state.addTransactionConfig.price = token.current_price || 0;
+      } else {
+        store.dispatch('portfolio/getParticularTokenPrice', token.cryptocurrencyId)
+          .then((res) => {
+            if (res) state.addTransactionConfig.price = res;
+          });
+      }
       closeSelect();
     };
 
@@ -233,10 +251,7 @@ export default {
         state.addTransactionConfig.timestamp = state.addTransactionConfig.timestamp.getTime();
       }
       store.commit('modal/closeModal', 'TransactionModal');
-      store.commit('modal/resetTimestamp');
-      await axios.post('http://vm3356913.52ssd.had.wf:5000/add-to-portfolio?id=1', {
-        ...state.addTransactionConfig,
-      });
+      await store.dispatch('portfolio/addTokenToPortfolio', { ...state.addTransactionConfig });
       await store.dispatch('portfolio/getPortfolio');
       await store.dispatch('portfolio/getCharts');
     };
@@ -252,18 +267,19 @@ export default {
 
     onBeforeMount(() => {
       state.addTransactionConfig.timestamp = new Date().getTime();
-      fetch(url)
-        .then((res) => res.json())
+
+      store.dispatch('portfolio/getInitArrayTokens')
         .then((data) => {
-          state.initArrayTokens = data.map((item) => {
+          state.initArrayTokens = data.data.map((item) => {
             item.symbol = item.symbol.toUpperCase();
             return item;
           });
-          state.selectedToken = data[0];
-          state.addTransactionConfig.name = data[0].name;
-          state.addTransactionConfig.cryptocurrencyId = data[0].id || data[0].cryptocurrencyId;
-          state.addTransactionConfig.symbol = data[0].symbol;
-          state.addTransactionConfig.price = data[0].current_price;
+          state.selectedToken = data.data[0];
+          state.addTransactionConfig.name = data.data[0].name;
+          state.addTransactionConfig.cryptocurrencyId = data.data[0].id
+            || data.data[0].cryptocurrencyId;
+          state.addTransactionConfig.symbol = data.data[0].symbol;
+          state.addTransactionConfig.price = data.data[0].current_price;
         });
     });
 
@@ -281,7 +297,8 @@ export default {
       getCurrentDate,
       createTransaction,
       actions,
-      openCalendarModal,
+      changeModal,
+      setTimestamp,
     };
   },
 };

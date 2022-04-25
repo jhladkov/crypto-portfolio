@@ -43,11 +43,8 @@
     </div>
     <modal
       v-if="getModal"
-      :modal-type="modalType"
     >
-      <keep-alive>
-        <component :is="modalType" />
-      </keep-alive>
+      <transaction-modal />
     </modal>
     <div class="price-section__block">
       <base-button
@@ -65,10 +62,12 @@ import BaseButton from '@/components/base-button/BaseButton.vue';
 import Modal from '@/components/modal/Modal.vue';
 import { useStore } from 'vuex';
 import { computed } from 'vue';
+import TransactionModal from '@/containers/modals/transaction-modal/TransactionModal.vue';
 
 export default {
   name: 'PriceContainer',
   components: {
+    TransactionModal,
     BaseButton,
     Indicator,
     Modal,
@@ -86,17 +85,13 @@ export default {
       type: Object,
       required: true,
     },
-    modalType: {
-      type: String,
-      required: true,
-    },
   },
-  setup(props) {
+  setup() {
     const store = useStore();
-    const getModal = computed(() => store.getters['modal/getModal'](props.modalType));
+    const getModal = computed(() => store.getters['modal/getModal']('TransactionModal'));
 
     const openModal = () => {
-      store.commit('modal/openModal', props.modalType);
+      store.commit('modal/openModal', 'TransactionModal');
     };
 
     return {

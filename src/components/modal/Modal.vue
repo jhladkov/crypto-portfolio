@@ -15,19 +15,11 @@ import { useStore } from 'vuex';
 
 export default {
   name: 'Modal',
-  props: {
-    modalType: {
-      type: String,
-      required: true,
-    },
-  },
-  setup(props) {
+  setup() {
     const store = useStore();
 
     const closeModal = () => {
-      store.commit('modal/closeModal', props.modalType);
-      store.commit('modal/setCurrentModal', 'TransactionModal');
-      store.commit('modal/resetTimestamp');
+      store.commit('modal/closeModal', 'TransactionModal');
     };
 
     return {

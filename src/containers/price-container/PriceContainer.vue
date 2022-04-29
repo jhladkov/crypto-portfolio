@@ -18,12 +18,19 @@
           {{ data.price }}
         </h1>
         <indicator
-          :class-name="
+          :class="
             `price-section__profit ${+data.change > 0 ? 'increase' : 'decrease'}`
           "
           :background="true"
-          :value="+data.change"
-        />
+          :value="replaceData(+data.change)"
+        >
+          <svg
+            class="price-section__profit-icon"
+            viewBox="0 0 16 28"
+          >
+            <icon-arrow-up />
+          </svg>
+        </indicator>
       </div>
 
       <div
@@ -34,7 +41,7 @@
           class="info-block__value"
           :class="data.totalProfit > 0 ? 'increase' : 'decrease'"
         >
-          + {{ data.totalProfit }}
+          {{ data.totalProfit > 0 ? '+' : '-' }} {{ replaceData(data.totalProfit) }}
         </p>
         <div class="info-block__duration">
           24h
@@ -49,9 +56,16 @@
     <div class="price-section__block">
       <base-button
         value="Add New"
-        class-name="price-section__add-crypto"
+        class="price-section__add-crypto"
         @click="openModal"
-      />
+      >
+        <svg
+          class="button__icon"
+          viewBox="0 0 20 20"
+        >
+          <icon-add />
+        </svg>
+      </base-button>
     </div>
   </section>
 </template>
@@ -63,10 +77,14 @@ import Modal from '@/components/modal/Modal.vue';
 import { useStore } from 'vuex';
 import { computed } from 'vue';
 import TransactionModal from '@/containers/modals/transaction-modal/TransactionModal.vue';
+import IconAdd from '@/assets/icons/user-space/IconAdd.vue';
+import IconArrowUp from '@/assets/icons/user-space/IconArrowUp.vue';
 
 export default {
   name: 'PriceContainer',
   components: {
+    IconArrowUp,
+    IconAdd,
     TransactionModal,
     BaseButton,
     Indicator,
@@ -89,6 +107,9 @@ export default {
   setup() {
     const store = useStore();
     const getModal = computed(() => store.getters['modal/getModal']('TransactionModal'));
+    const replaceData = computed(
+      () => (value) => value.toString().replace('-', ''),
+    );
 
     const openModal = () => {
       store.commit('modal/openModal', 'TransactionModal');
@@ -97,6 +118,7 @@ export default {
     return {
       getModal,
       openModal,
+      replaceData,
     };
   },
 };

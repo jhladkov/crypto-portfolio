@@ -15,6 +15,8 @@
             class="table-assets-body-col"
             :asset="item"
             @click="goToTransactions(item.name)"
+            @remove-token="removeToken"
+            @goToTransactions="goToTransactions"
           />
         </table-cols>
       </div>
@@ -51,6 +53,13 @@ export default {
     const tokensData = computed(() => store.getters['portfolio/getTokensList']);
     const loading = computed(() => state.loading);
 
+    const removeToken = async (tokenName) => {
+      if (tokenName) {
+        await store.dispatch('portfolio/removeToken', tokenName);
+        await store.dispatch('portfolio/getPortfolio');
+        await store.dispatch('portfolio/getCharts');
+      }
+    };
     const goToTransactions = (path) => {
       router.push({
         name: 'Transactions',
@@ -71,6 +80,7 @@ export default {
       loading,
       goToTransactions,
       assetCols,
+      removeToken,
     };
   },
 };

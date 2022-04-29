@@ -15,17 +15,88 @@
 
 .table-td.decrease {
   color: $red;
+  svg{
+    transform: rotate(180deg);
+    fill: $red;
+  }
+}
+.table-td .table-td__percents.decrease {
+  svg{
+    fill: $red;
+    transform: rotate(180deg);
+  }
+}
+.table-td .table-td__percents.increase {
+  svg{
+    fill: $green;
+  }
 }
 
 .table-td.increase {
   color: $green;
+  fill: $green;
+}
+
+.popup{
+  .popup__option{
+    width: 100%;
+    padding: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all .3s;
+    cursor: pointer;
+    border-radius: 8px;
+    &:hover{
+      background: $lightGray;
+    }
+  }
 }
 
 .table-td {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   font-weight: 500;
   padding: 10px;
   text-align: right;
   color: $lightDark;
+
+  .table-td__popup{
+    padding: 5px;
+    position: absolute;
+    z-index: 30;
+    bottom: -85px;
+    border-radius: 8px;
+    box-shadow: 0px 1px 2px rgba(128,138,157,0.12),0px 8px 32px rgba(128,138,157,0.24);
+    right: 0;
+    width: 165px;
+    height: 90px;
+    background: $white;
+  }
+
+  .table-td__actions{
+    fill: $MGray;
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 50%;
+    margin-right: 15px;
+    width: 32px;
+    transition: all .2s;
+    &:hover{
+      box-shadow: rgb(239 242 245) 0px 0px 0px 3px;
+      background: $darkLight;
+    }
+  }
+  .table-td__inner{
+    display: flex;
+    align-items: center;
+  }
+
+  svg{
+    max-width: 10px;
+    margin-right: 5px;
+  }
 
   .asset-hold-usd {
     color: $black;
@@ -58,6 +129,7 @@
 
 .asset-name-td {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   font-weight: 600;
   align-items: center;

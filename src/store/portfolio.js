@@ -95,6 +95,12 @@ const mutations = {
 };
 
 const actions = {
+  async removeToken(_, payload) {
+    await axios.post(`http://${api}:5000/remove-token?id=1`, {
+      cryptocurrencyId: payload.toString().toLowerCase(),
+    });
+  },
+
   async getParticularTokenPrice(_, payload) {
     const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${payload}&vs_currencies=usd`).catch(
       (err) => console.warn(err),

@@ -25,7 +25,14 @@
           class="block__value"
           :class="[totalProfit > 0 ? 'increase' : 'decrease']"
         >
-          {{ totalProfit }}%(${{ tokenInfo?.profit }})
+          <svg
+            class="block__icon"
+            viewBox="0 0 16 28"
+          >
+            <icon-arrow-up />
+          </svg>
+          {{ replaceData(totalProfit) }}%({{ tokenInfo?.profit > 0 ? '+' : '-' }}
+          ${{ replaceData(tokenInfo?.profit) }})
         </p>
       </div>
     </div>
@@ -36,8 +43,10 @@
 
 import { usePercentProfit } from '@/hook/usePercentProfit';
 import { computed } from 'vue';
+import IconArrowUp from '@/assets/icons/user-space/IconArrowUp.vue';
 
 export default {
+  components: { IconArrowUp },
   props: {
     tokenInfo: {
       type: Object,
@@ -47,9 +56,13 @@ export default {
     const totalProfit = computed(() => usePercentProfit(
       props.tokenInfo?.holdTokens, props.tokenInfo?.avg, props.tokenInfo?.profit,
     ));
+    const replaceData = computed(
+      () => (value) => value.toString().replace('-', ''),
+    );
 
     return {
       totalProfit,
+      replaceData,
     };
   },
 };

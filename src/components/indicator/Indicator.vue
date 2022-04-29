@@ -1,8 +1,8 @@
 <template>
   <div
-    :class="[background,className]"
     class="profit"
   >
+    <slot />
     <p class="profit__value">
       {{ value }}%
     </p>
@@ -13,10 +13,6 @@
 export default {
   name: 'Indicator',
   props: {
-    className: {
-      type: String,
-      default: null,
-    },
     background: {
       type: String,
     },

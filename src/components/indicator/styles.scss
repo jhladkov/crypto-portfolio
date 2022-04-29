@@ -1,16 +1,26 @@
 
 .price-section__profit{
+  display: flex;
+  align-items: center;
   padding: 7px 14px;
   text-align: center;
   background: $green;
   border-radius: 8px;
   color: $white;
   font-weight: 700;
+  .price-section__profit-icon{
+    fill: $white;
+    max-width: 10px;
+    margin-right: 5px;
+  }
 }
 
 .price-section__profit.decrease{
   background: $red;
   color: $white;
+  svg{
+    transform: rotate(180deg);
+  }
 }
 .price-section__profit.increase{
   background: $green;

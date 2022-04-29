@@ -1,20 +1,43 @@
-.details__inner{
+.details__inner {
   display: flex;
   align-items: center;
 }
 
-.details__block{
+.details__block {
   margin-right: 40px;
-  &:last-child{
+
+  &:last-child {
     margin-right: 0;
   }
-  .block__value{
+
+  .block__value {
+    display: flex;
+    align-items: center;
     font-weight: 600;
     font-size: 14px;
   }
-  .block__title{
+
+  .block__title {
     color: $gray;
     font-size: 12px;
     margin-bottom: 5px;
+  }
+
+  .block__icon {
+    max-width: 10px;
+    margin-right: 5px;
+  }
+}
+
+.block__value.increase {
+  .block__icon {
+    fill: $green;
+  }
+}
+
+.block__value.decrease {
+  .block__icon {
+    fill: $red;
+    transform: rotate(180deg);
   }
 }

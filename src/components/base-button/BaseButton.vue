@@ -2,6 +2,7 @@
   <button
     class="button"
   >
+    <span><slot /></span>
     {{ value }}
   </button>
 </template>
@@ -13,6 +14,10 @@ export default {
     value: {
       type: String,
       required: true,
+    },
+    className: {
+      type: [String, Array, Object],
+      default: null,
     },
   },
 };

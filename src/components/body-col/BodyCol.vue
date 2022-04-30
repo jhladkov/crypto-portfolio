@@ -79,12 +79,18 @@
           class="popup__option"
           @click.stop="goToTransactions"
         >
+          <svg viewBox="0 0 32 32">
+            <icon-transaction />
+          </svg>
           Transactions
         </div>
         <div
           class="popup__option"
           @click.stop="removeToken"
         >
+          <svg viewBox="0 0 24 24">
+            <icon-trash />
+          </svg>
           Remove Asset
         </div>
       </div>
@@ -96,10 +102,14 @@
 import IconArrowUp from '@/assets/icons/user-space/IconArrowUp.vue';
 import { computed, ref } from 'vue';
 import IconDots from '@/assets/icons/user-space/IconDots.vue';
+import IconTransaction from '@/assets/icons/user-space/IconTransaction.vue';
+import IconTrash from '@/assets/icons/user-space/IconTrash.vue';
 
 export default {
   name: 'BodyCol',
-  components: { IconDots, IconArrowUp },
+  components: {
+    IconTrash, IconTransaction, IconDots, IconArrowUp,
+  },
   props: {
     asset: {
       type: Object,

@@ -39,6 +39,8 @@
 
 .popup{
   .popup__option{
+    display: flex;
+    align-items: center;
     width: 100%;
     padding: 10px;
     font-weight: 600;
@@ -46,6 +48,10 @@
     transition: all .3s;
     cursor: pointer;
     border-radius: 8px;
+    svg{
+      max-width: 18px;
+      margin-right: 10px;
+    }
     &:hover{
       background: $lightGray;
     }

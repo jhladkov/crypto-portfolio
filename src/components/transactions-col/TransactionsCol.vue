@@ -1,5 +1,5 @@
 <template>
-  <div class="table-tr">
+  <div class="table-tr transactions-template">
     <div class="table-td asset-name-td">
       <div class="table-tr__type">
         Buy
@@ -20,16 +20,26 @@
       </p>
     </div>
     <div class="table-td">
-      actions
+      <div class="table-td__inner">
+        <svg viewBox="0 0 32 32">
+          <icon-pencil />
+        </svg>
+        <svg viewBox="0 0 24 24">
+          <icon-trash />
+        </svg>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { computed } from 'vue';
+import IconPencil from '@/assets/icons/user-space/IconPencil.vue';
+import IconTrash from '@/assets/icons/user-space/IconTrash.vue';
 
 export default {
   name: 'TransactionsCol',
+  components: { IconTrash, IconPencil },
   props: {
     historyList: {
       type: Object,

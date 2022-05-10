@@ -182,6 +182,7 @@ export default {
         name: '',
         symbol: '',
         timestamp: 0,
+        type: 'Buy',
       },
     });
     const getCurrentDate = computed(
@@ -197,6 +198,7 @@ export default {
     const searchData = computed(() => store.getters['portfolio/searchData']);
 
     const selectAction = (index) => {
+      state.addTransactionConfig.type = actions[index];
       state.activeIndex = index;
     };
 
@@ -250,6 +252,10 @@ export default {
       if (typeof state.addTransactionConfig.timestamp !== 'number') {
         state.addTransactionConfig.timestamp = state.addTransactionConfig.timestamp.getTime();
       }
+      if (state.addTransactionConfig.type === 'Sell') {
+        state.addTransactionConfig.amount = -state.addTransactionConfig.amount;
+      }
+      console.log(state.addTransactionConfig);
       store.commit('modal/closeModal', 'TransactionModal');
       await store.dispatch('portfolio/addTokenToPortfolio', { ...state.addTransactionConfig });
       await store.dispatch('portfolio/getPortfolio');

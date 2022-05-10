@@ -2,7 +2,7 @@
   <div class="table-tr transactions-template">
     <div class="table-td asset-name-td">
       <div class="table-tr__type">
-        Buy
+        {{ historyList?.type }}
       </div>
       <div class="table-tr__date">
         {{ date }}
@@ -15,8 +15,13 @@
       <p class="table-td__operation-price">
         +${{ operationPrice }}
       </p>
-      <p class="table-td__amount increase">
-        +{{ historyList.amount }} {{ historyList.symbol?.toUpperCase() }}
+      <p
+        class="table-td__amount"
+        :class="historyList?.amount > 0 ? 'increase' : 'decrease'"
+      >
+        {{ historyList?.amount > 0 ? '+': '' }}
+        {{ historyList?.amount }}
+        {{ historyList?.symbol?.toUpperCase() }}
       </p>
     </div>
     <div class="table-td">
@@ -49,7 +54,6 @@ export default {
   setup(props) {
     const operationPrice = computed(() => (
       props.historyList.amount * props.historyList.price).toFixed(2));
-
     const date = new Date(props.historyList.timestamp).toLocaleString();
 
     return {

@@ -58,6 +58,7 @@ const getters = {
     const data = state.WBSKData;
     return data?.map((item) => ({
       name: item?.name,
+      type: item?.type,
       shortName: item?.symbol.toUpperCase(),
       price: item?.currentPrice?.toFixed(2),
       holdTokens: item?.amount?.toFixed(2),
@@ -97,7 +98,7 @@ const mutations = {
 const actions = {
   async removeToken(_, payload) {
     await axios.post(`http://${api}:5000/remove-token?id=1`, {
-      cryptocurrencyId: payload.toString().toLowerCase(),
+      cryptocurrencyId: payload,
     });
   },
 

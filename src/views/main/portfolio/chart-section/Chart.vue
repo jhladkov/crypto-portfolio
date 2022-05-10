@@ -43,7 +43,10 @@ import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 
 export default {
   name: 'Chart',
-  components: { BaseLoader, VueApexCharts },
+  components: {
+    BaseLoader,
+    VueApexCharts,
+  },
   setup() {
     const store = useStore();
     const activeIndex = ref(0);
@@ -69,13 +72,12 @@ export default {
       state.prevChanges = chartDataForDuration[0][1];
       if (state.lastChanges - state.prevChanges < 0) {
         config.colors = ['#ea3943'];
-        chart?.value.updateOptions(config);
+        chart?.value?.updateOptions(config);
       } else {
         config.colors = ['rgb(22, 199, 132)'];
-        chart?.value.updateOptions(config);
+        chart?.value?.updateOptions(config);
       }
     };
-
     const setData = () => {
       recalculateData();
       state.series[0] = {
@@ -83,6 +85,14 @@ export default {
         data: store.getters['portfolio/chartData'][period.value] || [],
       };
     };
+
+    const chartSeries = computed(() => {
+      state.series[0].data = store.getters['portfolio/chartData'][period.value];
+      chart.value.updateSeries(state.series);
+      recalculateData();
+      return store.getters['portfolio/chartData'][period.value];
+    });
+
     const updateData = async (index) => {
       if (activeIndex !== index) {
         store.commit('portfolio/setActivePeriod', indexes[index]);
@@ -108,7 +118,7 @@ export default {
 
     onBeforeMount(async () => {
       await store.dispatch('portfolio/getCharts');
-      setData(0);
+      setData();
     });
 
     return {
@@ -121,6 +131,7 @@ export default {
       mouseLeave,
       getConfig,
       chart,
+      chartSeries,
     };
   },
 };

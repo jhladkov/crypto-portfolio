@@ -140,7 +140,7 @@ export default {
     const removeToken = () => {
       popupStatus.value = false;
       document.removeEventListener('click', handleClosePopup);
-      emit('removeToken', props.asset?.name);
+      emit('removeToken', props.asset.historyList[0].cryptocurrencyId);
     };
 
     return {

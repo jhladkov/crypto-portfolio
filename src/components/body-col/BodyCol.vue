@@ -120,7 +120,7 @@ export default {
     const popupStatus = ref(false);
 
     const replaceData = computed(
-      () => (value) => value.toString().replace('-', ''),
+      () => (value) => value?.toString()?.replace('-', ''),
     );
     const handleClosePopup = () => {
       if (popupStatus.value) {

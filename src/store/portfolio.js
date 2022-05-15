@@ -3,9 +3,35 @@ import axios from 'axios';
 const api = 'localhost';
 // const api = 'vm3356913.52ssd.had.wf';
 
-const calcProfit = (item) => ((((item?.currentPrice * item?.amount)
-    - (item?.buyAvgPrice * item?.amount))
-    * 100) / (+item?.amount * +item?.buyAvgPrice)).toFixed(2);
+const calcProfitByHistoryList = (historyList, tokenInfo) => {
+  if (historyList.length > 1) {
+    const resultArr = [];
+    historyList.forEach((item) => {
+      const initSpentMoney = item.amount * item.price;
+      const currentPrice = item.amount * tokenInfo.currentPrice;
+      const profit = +currentPrice - +initSpentMoney;
+      resultArr.push(profit);
+    });
+    return resultArr.reduce((init, item) => init + item, 0).toFixed(2);
+  }
+  return ((tokenInfo?.currentPrice * tokenInfo?.amount)
+      - (tokenInfo?.buyAvgPrice * tokenInfo?.amount))?.toFixed(2);
+};
+
+const calcProfitInPercent = (historyList, tokenInfo) => {
+  const calcProfit = calcProfitByHistoryList(historyList, tokenInfo);
+  if (historyList.length > 1) {
+    const result = historyList.reduce((init, item) => init + (item.amount * item.price), 0);
+    return ((calcProfit * 100) / result).toFixed(2);
+  }
+  return ((((tokenInfo?.currentPrice * tokenInfo?.amount)
+    - (tokenInfo?.buyAvgPrice * tokenInfo?.amount))
+    * 100) / (+tokenInfo?.amount * +tokenInfo?.buyAvgPrice)).toFixed(2);
+};
+
+// const calcProfitInPercent = (item) => ((((item?.currentPrice * item?.amount)
+//     - (item?.buyAvgPrice * item?.amount))
+//     * 100) / (+item?.amount * +item?.buyAvgPrice)).toFixed(2);
 
 const state = {
   WBSKData: [],
@@ -65,9 +91,8 @@ const getters = {
       change: +item?.priceChangePercentage24h?.toFixed(2),
       hold: item?.cryptoHoldings?.toFixed(2),
       avg: item?.buyAvgPrice?.toFixed(2),
-      profit_loss_percent: calcProfit(item),
-      profit: ((item?.currentPrice * item?.amount)
-          - (item?.buyAvgPrice * item?.amount))?.toFixed(2),
+      profit_loss_percent: calcProfitInPercent(item?.historyList, item),
+      profit: calcProfitByHistoryList(item?.historyList, item),
       src: item.image,
       historyList: item?.historyList,
     }));

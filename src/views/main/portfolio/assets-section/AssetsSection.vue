@@ -17,6 +17,7 @@
             @click="goToTransactions(item.name)"
             @remove-token="removeToken"
             @goToTransactions="goToTransactions"
+            @openModal="openModal"
           />
         </table-cols>
       </div>
@@ -68,6 +69,10 @@ export default {
         },
       });
     };
+    const openModal = (token) => {
+      store.commit('portfolio/setActiveToken', token);
+      store.commit('modal/openModal', 'TransactionModal');
+    };
 
     onBeforeMount(async () => {
       state.loading = true;
@@ -81,6 +86,7 @@ export default {
       goToTransactions,
       assetCols,
       removeToken,
+      openModal,
     };
   },
 };

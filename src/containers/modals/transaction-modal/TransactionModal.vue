@@ -152,7 +152,7 @@
 <script>
 import BaseInput from '@/components/base-input/BaseInput.vue';
 import {
-  computed, reactive, ref, watch, onBeforeMount,
+  computed, reactive, ref, watch, onBeforeMount, onUnmounted,
 } from 'vue';
 import { useStore } from 'vuex';
 import BaseButton from '@/components/base-button/BaseButton.vue';
@@ -215,7 +215,6 @@ export default {
     const changeModal = (value) => {
       state.currentModal = value;
     };
-
     const compareClickElement = (event) => {
       if (!event.target.classList.contains('select-part')) {
         state.selectActive = false;
@@ -229,33 +228,29 @@ export default {
       }
     };
 
-    const selectToken = (token) => {
+    const selectToken = async (token) => {
       state.selectedToken = token;
       state.addTransactionConfig.name = token.name;
       state.addTransactionConfig.cryptocurrencyId = token.id || token.cryptocurrencyId;
-      state.addTransactionConfig.symbol = token.symbol;
+      state.addTransactionConfig.symbol = token.symbol || token.shortName;
       if (token.current_price) {
         state.addTransactionConfig.price = token.current_price || 0;
       } else {
-        store.dispatch('portfolio/getParticularTokenPrice', token.cryptocurrencyId)
-          .then((res) => {
-            if (res) state.addTransactionConfig.price = res;
-          });
+        const res = await store.dispatch(
+          'portfolio/getParticularTokenPrice', token.cryptocurrencyId || token.id,
+        );
+        if (res) state.addTransactionConfig.price = res;
       }
       closeSelect();
     };
 
     const createTransaction = async () => {
-      if (store.state.modal.timestamp) {
-        state.addTransactionConfig.timestamp = store.state.modal.timestamp;
-      }
       if (typeof state.addTransactionConfig.timestamp !== 'number') {
         state.addTransactionConfig.timestamp = state.addTransactionConfig.timestamp.getTime();
       }
       if (state.addTransactionConfig.type === 'Sell') {
         state.addTransactionConfig.amount = -state.addTransactionConfig.amount;
       }
-      console.log(state.addTransactionConfig);
       store.commit('modal/closeModal', 'TransactionModal');
       await store.dispatch('portfolio/addTokenToPortfolio', { ...state.addTransactionConfig });
       await store.dispatch('portfolio/getPortfolio');
@@ -270,23 +265,24 @@ export default {
         value: newValue,
       }));
     });
+    onUnmounted(() => {
+      store.commit('portfolio/resetActiveToken');
+    });
 
-    onBeforeMount(() => {
-      state.addTransactionConfig.timestamp = new Date().getTime();
-
-      store.dispatch('portfolio/getInitArrayTokens')
-        .then((data) => {
-          state.initArrayTokens = data.data.map((item) => {
-            item.symbol = item.symbol.toUpperCase();
-            return item;
-          });
-          state.selectedToken = data.data[0];
-          state.addTransactionConfig.name = data.data[0].name;
-          state.addTransactionConfig.cryptocurrencyId = data.data[0].id
-            || data.data[0].cryptocurrencyId;
-          state.addTransactionConfig.symbol = data.data[0].symbol;
-          state.addTransactionConfig.price = data.data[0].current_price;
-        });
+    onBeforeMount(async () => {
+      if (store.getters['portfolio/getActiveToken']) {
+        state.addTransactionConfig.timestamp = new Date().getTime();
+        selectToken(store.getters['portfolio/getActiveToken']);
+      } else {
+        try {
+          const { addTransactionConfig, initArrayTokens } = await store.dispatch('portfolio/getInitArrayTokens');
+          state.initArrayTokens = initArrayTokens;
+          state.selectedToken = initArrayTokens[0];
+          state.addTransactionConfig = addTransactionConfig;
+        } catch (err) {
+          console.warn(err);
+        }
+      }
     });
 
     return {

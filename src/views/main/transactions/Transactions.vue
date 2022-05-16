@@ -23,6 +23,7 @@
           v-for="(list,index) in historyList"
           :key="index"
           :history-list="list"
+          @removeTransaction="removeTransaction"
         />
       </table-cols>
     </template>
@@ -68,6 +69,15 @@ export default {
     const goHome = () => {
       router.push({ name: 'Portfolio' });
     };
+    const removeTransaction = async (id, cryptocurrencyId) => {
+      if (id && cryptocurrencyId) {
+        await store.dispatch('portfolio/removeTransaction', {
+          id,
+          cryptocurrencyId,
+        });
+      }
+      await store.dispatch('portfolio/getPortfolio');
+    };
 
     onBeforeMount(async () => {
       state.loading = true;
@@ -81,6 +91,7 @@ export default {
       preTitle,
       historyList,
       goHome,
+      removeTransaction,
     };
   },
 };

@@ -67,6 +67,9 @@
         class="table-td__actions"
         @click.stop="activePopup"
       >
+        <button @click="openModal(asset)">
+          +
+        </button>
         <svg viewBox="0 0 15 20">
           <IconDots />
         </svg>
@@ -132,6 +135,9 @@ export default {
       document.addEventListener('click', handleClosePopup);
       popupStatus.value = !popupStatus.value;
     };
+    const openModal = (token) => {
+      emit('openModal', token);
+    };
     const goToTransactions = () => {
       popupStatus.value = false;
       document.removeEventListener('click', handleClosePopup);
@@ -149,6 +155,7 @@ export default {
       popupStatus,
       goToTransactions,
       removeToken,
+      openModal,
     };
   },
 };

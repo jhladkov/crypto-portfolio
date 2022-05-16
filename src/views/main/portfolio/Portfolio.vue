@@ -13,6 +13,11 @@
         :asset="item"
       />
     </assets-section>
+    <modal
+      v-if="getModal"
+    >
+      <transaction-modal />
+    </modal>
   </div>
 </template>
 
@@ -25,11 +30,18 @@ import {
   computed, ref, watch,
 } from 'vue';
 import BodyCol from '@/components/body-col/BodyCol.vue';
+import Modal from '@/components/modal/Modal.vue';
+import TransactionModal from '@/containers/modals/transaction-modal/TransactionModal.vue';
 
 export default {
   name: 'Portfolio',
   components: {
-    BodyCol, Chart, PriceSection, AssetsSection,
+    TransactionModal,
+    BodyCol,
+    Chart,
+    PriceSection,
+    AssetsSection,
+    Modal,
   },
   setup() {
     const store = useStore();
@@ -38,6 +50,7 @@ export default {
     const value = ref('');
     const searchData = computed(() => store.getters['portfolio/searchData']);
     const tokensData = computed(() => store.getters['portfolio/getTokensList']);
+    const getModal = computed(() => store.getters['modal/getModal']('TransactionModal'));
 
     watch(value, async (newValue, oldValue) => {
       if (newValue === oldValue) return;
@@ -50,6 +63,7 @@ export default {
       searchData,
       assetCol,
       tokensData,
+      getModal,
     };
   },
 };

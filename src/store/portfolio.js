@@ -46,11 +46,15 @@ const state = {
   connection: null,
   totalPrice: 0,
   activePeriod: 1,
+  activeToken: null,
 };
 
 const getters = {
   getActivePeriod(state) {
     return state.activePeriod;
+  },
+  getActiveToken(state) {
+    return state.activeToken;
   },
   calculatedTotalPrice(state) {
     return state.WBSKData.reduce((acc, next) => {
@@ -84,7 +88,6 @@ const getters = {
     const data = state.WBSKData;
     return data?.map((item) => ({
       name: item?.name,
-      type: item?.type,
       shortName: item?.symbol.toUpperCase(),
       price: item?.currentPrice?.toFixed(2),
       holdTokens: item?.amount?.toFixed(2),
@@ -95,11 +98,19 @@ const getters = {
       profit: calcProfitByHistoryList(item?.historyList, item),
       src: item.image,
       historyList: item?.historyList,
+      id: item.cryptocurrencyId,
     }));
   },
 };
 
 const mutations = {
+  setActiveToken(state, value) {
+    state.activeToken = { ...value, image: value.src };
+  },
+
+  resetActiveToken(state) {
+    state.activeToken = null;
+  },
   setActivePeriod(state, value) {
     state.activePeriod = value;
   },
@@ -127,11 +138,11 @@ const actions = {
     });
   },
 
-  async getParticularTokenPrice(_, payload) {
-    const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${payload}&vs_currencies=usd`).catch(
+  async getParticularTokenPrice(_, idToken) {
+    const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${idToken}&vs_currencies=usd`).catch(
       (err) => console.warn(err),
     );
-    return response.data[`${payload}`].usd;
+    return response.data[`${idToken}`].usd;
   },
 
   async getInitArrayTokens() {
@@ -139,7 +150,28 @@ const actions = {
     const response = await axios.get(url).catch(
       (err) => console.warn(err),
     );
-    return response;
+    const correctSymbol = response.data.map((item) => {
+      item.symbol = item.symbol.toUpperCase();
+      return item;
+    });
+    return {
+      initArrayTokens: correctSymbol,
+      addTransactionConfig: {
+        name: response.data[0].name,
+        cryptocurrencyId: response.data[0].id || response.data[0].cryptocurrencyId,
+        amount: 0,
+        type: 'Buy',
+        symbol: response.data[0].symbol,
+        price: response.data[0].current_price,
+        timestamp: new Date().getTime(),
+      },
+    };
+  },
+
+  async removeTransaction(_, obj) {
+    await axios.post(`http://${api}:5000/remove-transaction?id=1`, {
+      ...obj,
+    });
   },
 
   async addTokenToPortfolio(_, payload) {

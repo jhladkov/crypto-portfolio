@@ -26,10 +26,16 @@
     </div>
     <div class="table-td">
       <div class="table-td__inner">
-        <svg viewBox="0 0 32 32">
+        <svg
+          viewBox="0 0 32 32"
+          @click.stop="changeTransaction"
+        >
           <icon-pencil />
         </svg>
-        <svg viewBox="0 0 24 24">
+        <svg
+          viewBox="0 0 24 24"
+          @click.stop="removeTransaction"
+        >
           <icon-trash />
         </svg>
       </div>
@@ -51,14 +57,23 @@ export default {
       required: true,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const operationPrice = computed(() => (
       props.historyList.amount * props.historyList.price).toFixed(2));
     const date = new Date(props.historyList.timestamp).toLocaleString();
 
+    const changeTransaction = () => {
+      console.log('change');
+    };
+    const removeTransaction = () => {
+      emit('removeTransaction', props.historyList.id, props.historyList.cryptocurrencyId);
+    };
+
     return {
       operationPrice,
       date,
+      changeTransaction,
+      removeTransaction,
     };
   },
 };

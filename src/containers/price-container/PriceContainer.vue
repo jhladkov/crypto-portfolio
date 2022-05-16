@@ -48,11 +48,6 @@
         </div>
       </div>
     </div>
-    <modal
-      v-if="getModal"
-    >
-      <transaction-modal />
-    </modal>
     <div class="price-section__block">
       <base-button
         value="Add New"
@@ -73,10 +68,8 @@
 <script>
 import Indicator from '@/components/indicator/Indicator.vue';
 import BaseButton from '@/components/base-button/BaseButton.vue';
-import Modal from '@/components/modal/Modal.vue';
 import { useStore } from 'vuex';
 import { computed } from 'vue';
-import TransactionModal from '@/containers/modals/transaction-modal/TransactionModal.vue';
 import IconAdd from '@/assets/icons/user-space/IconAdd.vue';
 import IconArrowUp from '@/assets/icons/user-space/IconArrowUp.vue';
 
@@ -85,10 +78,8 @@ export default {
   components: {
     IconArrowUp,
     IconAdd,
-    TransactionModal,
     BaseButton,
     Indicator,
-    Modal,
   },
   props: {
     preTitle: {
@@ -106,7 +97,6 @@ export default {
   },
   setup() {
     const store = useStore();
-    const getModal = computed(() => store.getters['modal/getModal']('TransactionModal'));
     const replaceData = computed(
       () => (value) => value.toString().replace('-', ''),
     );
@@ -116,7 +106,6 @@ export default {
     };
 
     return {
-      getModal,
       openModal,
       replaceData,
     };

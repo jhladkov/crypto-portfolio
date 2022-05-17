@@ -1,5 +1,6 @@
 <template>
   <price-container
+    modal-type="TransactionModal"
     :data="priceData"
   />
 </template>

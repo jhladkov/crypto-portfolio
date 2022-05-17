@@ -33,14 +33,16 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import BaseButton from '@/components/base-button/BaseButton.vue';
+import { useStore } from 'vuex';
 
 export default {
   name: 'CalendarModal',
   components: { BaseButton },
   setup(props, { emit }) {
-    const calendarValue = ref(new Date());
+    const store = useStore();
+    const calendarValue = ref(new Date(1652713637077));
 
     const goBack = () => {
       emit('close');
@@ -49,6 +51,11 @@ export default {
       emit('setTimestamp', calendarValue.value.getTime());
       goBack();
     };
+    onMounted(() => {
+      if (store.getters['transactions/getChosenTransaction']) {
+        calendarValue.value = store.getters['transactions/getChosenTransaction']?.timestamp;
+      }
+    });
     return {
       goBack,
       calendarValue,

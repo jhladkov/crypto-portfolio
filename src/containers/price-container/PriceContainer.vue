@@ -82,6 +82,9 @@ export default {
     Indicator,
   },
   props: {
+    modalType: {
+      type: String,
+    },
     preTitle: {
       type: String,
       default: 'Current Balance',
@@ -95,14 +98,14 @@ export default {
       required: true,
     },
   },
-  setup() {
+  setup(props) {
     const store = useStore();
     const replaceData = computed(
       () => (value) => value.toString().replace('-', ''),
     );
 
     const openModal = () => {
-      store.commit('modal/openModal', 'TransactionModal');
+      store.commit('modal/openModal', props.modalType);
     };
 
     return {

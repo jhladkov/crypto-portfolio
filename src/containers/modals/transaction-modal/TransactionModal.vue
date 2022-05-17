@@ -273,6 +273,8 @@ export default {
       if (store.getters['portfolio/getActiveToken']) {
         state.addTransactionConfig.timestamp = new Date().getTime();
         selectToken(store.getters['portfolio/getActiveToken']);
+        const { initArrayTokens } = await store.dispatch('portfolio/getInitArrayTokens');
+        state.initArrayTokens = initArrayTokens;
       } else {
         try {
           const { addTransactionConfig, initArrayTokens } = await store.dispatch('portfolio/getInitArrayTokens');

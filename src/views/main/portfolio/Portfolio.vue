@@ -15,6 +15,7 @@
     </assets-section>
     <modal
       v-if="getModal"
+      type-modal="TransactionModal"
     >
       <transaction-modal />
     </modal>

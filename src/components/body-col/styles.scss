@@ -86,9 +86,13 @@
     text-align: center;
     padding: 8px 10px;
     border-radius: 50%;
-    margin-right: 15px;
     width: 32px;
     transition: all .2s;
+    margin-right: 5px;
+    svg{
+      width: 13px;
+      height: 13px;
+    }
     &:hover{
       box-shadow: rgb(239 242 245) 0px 0px 0px 3px;
       background: $darkLight;

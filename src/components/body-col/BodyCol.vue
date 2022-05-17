@@ -63,16 +63,23 @@
       </div>
     </div>
     <div class="table-td">
-      <div
-        class="table-td__actions"
-        @click.stop="activePopup"
-      >
-        <button @click="openModal(asset)">
-          +
-        </button>
-        <svg viewBox="0 0 15 20">
-          <IconDots />
-        </svg>
+      <div class="table-td__inner">
+        <div
+          class="table-td__actions"
+          @click.stop="openModal(asset)"
+        >
+          <svg viewBox="3 0 17 24">
+            <IconPlus />
+          </svg>
+        </div>
+        <div
+          class="table-td__actions"
+          @click.stop="activePopup"
+        >
+          <svg viewBox="0 0 15 20">
+            <IconDots />
+          </svg>
+        </div>
       </div>
       <div
         v-if="popupStatus"
@@ -107,11 +114,16 @@ import { computed, ref } from 'vue';
 import IconDots from '@/assets/icons/user-space/IconDots.vue';
 import IconTransaction from '@/assets/icons/user-space/IconTransaction.vue';
 import IconTrash from '@/assets/icons/user-space/IconTrash.vue';
+import IconPlus from '@/assets/icons/user-space/IconPlus.vue';
 
 export default {
   name: 'BodyCol',
   components: {
-    IconTrash, IconTransaction, IconDots, IconArrowUp,
+    IconPlus,
+    IconTrash,
+    IconTransaction,
+    IconDots,
+    IconArrowUp,
   },
   props: {
     asset: {
@@ -123,7 +135,8 @@ export default {
     const popupStatus = ref(false);
 
     const replaceData = computed(
-      () => (value) => value?.toString()?.replace('-', ''),
+      () => (value) => value?.toString()
+        ?.replace('-', ''),
     );
     const handleClosePopup = () => {
       if (popupStatus.value) {
@@ -141,7 +154,7 @@ export default {
     const goToTransactions = () => {
       popupStatus.value = false;
       document.removeEventListener('click', handleClosePopup);
-      emit('goToTransactions', props.asset?.name);
+      emit('goToTransactions', props.asset?.id);
     };
     const removeToken = () => {
       popupStatus.value = false;

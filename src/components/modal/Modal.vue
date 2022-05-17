@@ -15,11 +15,17 @@ import { useStore } from 'vuex';
 
 export default {
   name: 'Modal',
-  setup() {
+  props: {
+    typeModal: {
+      type: String,
+    },
+  },
+  setup(props) {
     const store = useStore();
 
     const closeModal = () => {
-      store.commit('modal/closeModal', 'TransactionModal');
+      store.commit('modal/closeModal', props.typeModal);
+      store.commit('transactions/setChosenTransaction', null);
     };
 
     return {

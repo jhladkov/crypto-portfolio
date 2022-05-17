@@ -14,7 +14,7 @@
             :key="index"
             class="table-assets-body-col"
             :asset="item"
-            @click="goToTransactions(item.name)"
+            @click="goToTransactions(item.id)"
             @remove-token="removeToken"
             @goToTransactions="goToTransactions"
             @openModal="openModal"

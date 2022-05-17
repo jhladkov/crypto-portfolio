@@ -11,6 +11,9 @@ const getters = {
   getModal(state) {
     return (type) => state.modals[type];
   },
+  getOpenedModal(state) {
+    return Object.entries(state.modals).find((item) => item[1] === true);
+  },
 };
 
 const mutations = {

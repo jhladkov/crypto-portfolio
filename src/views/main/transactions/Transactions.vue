@@ -12,7 +12,7 @@
         :data="tokenData"
         :pre-title="preTitle"
         :show-token-info="true"
-        modal-type="TransactionModal"
+        modal-type="AddModal"
       />
       <detail-section :token-info="tokenInfo" />
       <table-cols
@@ -24,8 +24,16 @@
           :key="index"
           :history-list="list"
           @removeTransaction="removeTransaction"
+          @changeTransaction="changeTransaction"
         />
       </table-cols>
+      <modal
+        v-if="currenModal"
+        :type-modal="state.currentModal"
+      >
+        <add-modal v-if="state.currentModal === 'AddModal'" />
+        <edit-modal v-if="state.currentModal === 'EditModal'" />
+      </modal>
     </template>
   </div>
 </template>
@@ -39,9 +47,15 @@ import DetailSection from '@/views/main/transactions/details-section/DetailsSect
 import TransactionsCol from '@/components/transactions-col/TransactionsCol.vue';
 import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 import TableCols from '@/components/table-cols/TableCols.vue';
+import Modal from '@/components/modal/Modal.vue';
+import AddModal from '@/containers/modals/add-modal/AddModal.vue';
+import EditModal from '@/containers/modals/edit-modal/EditModal.vue';
 
 export default {
   components: {
+    EditModal,
+    AddModal,
+    Modal,
     TableCols,
     BaseLoader,
     TransactionsCol,
@@ -54,10 +68,11 @@ export default {
     const router = useRouter();
 
     const state = reactive({
+      currentModal: store.getters['modal/getOpenedModal'],
       assetCols: ['Type', 'Price', 'Amount', 'Actions'],
       loading: false,
     });
-    const tokenInfo = computed(() => store.getters['portfolio/getTokensList'].find((item) => item.name === route.params.token));
+    const tokenInfo = computed(() => store.getters['portfolio/getTokensList'].find((item) => item.id === route.params.token));
     const historyList = computed(() => tokenInfo.value?.historyList?.reverse());
     const tokenData = computed(() => ({
       src: tokenInfo.value?.src,
@@ -66,8 +81,20 @@ export default {
     }));
     const preTitle = computed(() => (`${tokenInfo?.value?.name}(${tokenInfo?.value?.shortName}) Balance`));
 
+    const getModal = computed(() => store.getters['modal/getModal']('AddModal'));
+    const currenModal = computed(() => {
+      if (store.getters['modal/getOpenedModal']) {
+        state.currentModal = store.getters['modal/getOpenedModal'][0];
+      }
+      return store.getters['modal/getOpenedModal'];
+    });
+
     const goHome = () => {
       router.push({ name: 'Portfolio' });
+    };
+    const changeTransaction = (payload) => {
+      store.commit('modal/openModal', 'EditModal');
+      store.commit('transactions/setChosenTransaction', payload);
     };
     const removeTransaction = async (id, cryptocurrencyId) => {
       if (id && cryptocurrencyId) {
@@ -92,6 +119,9 @@ export default {
       historyList,
       goHome,
       removeTransaction,
+      changeTransaction,
+      getModal,
+      currenModal,
     };
   },
 };

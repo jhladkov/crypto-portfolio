@@ -63,7 +63,11 @@ export default {
     const date = new Date(props.historyList.timestamp).toLocaleString();
 
     const changeTransaction = () => {
-      console.log('change');
+      const data = {
+        timestamp: props.historyList.timestamp,
+        id: props.historyList.id,
+      };
+      emit('changeTransaction', data);
     };
     const removeTransaction = () => {
       emit('removeTransaction', props.historyList.id, props.historyList.cryptocurrencyId);

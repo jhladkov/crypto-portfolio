@@ -132,9 +132,9 @@ const mutations = {
 };
 
 const actions = {
-  async removeToken(_, payload) {
+  async removeToken(_, cryptocurrencyId) {
     await axios.post(`http://${api}:5000/remove-token?id=1`, {
-      cryptocurrencyId: payload,
+      cryptocurrencyId,
     });
   },
 

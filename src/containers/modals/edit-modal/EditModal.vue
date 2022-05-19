@@ -13,8 +13,10 @@ export default {
     const store = useStore();
 
     const changeTransactions = async (data) => {
-      data.timestamp = store.getters['transactions/getChosenTransaction']?.timestamp;
-      if (data.cryptocurrencyId && data.timestamp) {
+      if (!data.timestamp) {
+        data.timestamp = store.getters['transactions/getChosenTransaction']?.timestamp;
+      }
+      if (data) {
         await store.dispatch('transactions/changeTransaction', {
           id: store.getters['transactions/getChosenTransaction'].id,
           timestamp: data.timestamp,

@@ -60,12 +60,13 @@ export default {
   setup(props, { emit }) {
     const operationPrice = computed(() => (
       props.historyList.amount * props.historyList.price).toFixed(2));
-    const date = new Date(props.historyList.timestamp).toLocaleString();
+    const date = computed(() => new Date(props.historyList.timestamp).toLocaleString());
 
     const changeTransaction = () => {
       const data = {
         timestamp: props.historyList.timestamp,
         id: props.historyList.id,
+        amount: props.historyList.amount,
       };
       emit('changeTransaction', data);
     };

@@ -100,7 +100,7 @@ export default {
     const getCurrentDate = computed(
       () => {
         const date = new Date(
-          store.getters['transactions/getChosenTransaction']?.timestamp || state.addTransactionConfig.timestamp,
+          state.addTransactionConfig.timestamp || store.getters['transactions/getChosenTransaction']?.timestamp,
         );
         return date.toString()
           .substring(0, 24);
@@ -133,12 +133,17 @@ export default {
       state.addTransactionConfig.symbol = tokenInfo.value.shortName;
 
       emit('createTransactions', state.addTransactionConfig);
-      store.commit('modal/closeModal', store.getters['modal/getOpenedModal']);
+      store.commit('modal/closeModal', store.getters['modal/getOpenedModal'][0]);
     };
 
     onBeforeMount(async () => {
-      state.addTransactionConfig.timestamp = new Date().getTime();
+      if (!store.state.transactions?.chosenTransaction?.timestamp) {
+        state.addTransactionConfig.timestamp = new Date().getTime();
+      }
       state.addTransactionConfig.price = await store.dispatch('portfolio/getParticularTokenPrice', route.params.token);
+      if (store.state.transactions?.chosenTransaction?.amount) {
+        state.addTransactionConfig.amount = store.state.transactions?.chosenTransaction?.amount;
+      }
     });
 
     return {

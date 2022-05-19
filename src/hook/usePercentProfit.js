@@ -1,4 +1,7 @@
 export const usePercentProfit = (holdTokens, avg, profit) => {
-  const initSpendMoney = +holdTokens * +avg;
-  return ((profit * 100) / initSpendMoney).toFixed(2);
+  if (holdTokens && avg && profit) {
+    const initSpendMoney = +holdTokens * +avg;
+    return ((profit * 100) / initSpendMoney).toFixed(2);
+  }
+  return 0;
 };

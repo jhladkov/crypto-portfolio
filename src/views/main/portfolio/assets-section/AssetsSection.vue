@@ -51,12 +51,17 @@ export default {
       WBSKData: store.state.portfolio.WBSKData,
       loading: false,
     });
-    const tokensData = computed(() => store.getters['portfolio/getTokensList']);
+    const tokensData = computed(() => store.getters['portfolio/getTokensList'].filter((item) => {
+      if (!item.historyList.length) {
+        store.dispatch('portfolio/removeToken', item.id);
+      }
+      return item.historyList.length;
+    }));
     const loading = computed(() => state.loading);
 
-    const removeToken = async (tokenName) => {
-      if (tokenName) {
-        await store.dispatch('portfolio/removeToken', tokenName);
+    const removeToken = async (cryptocurrencyId) => {
+      if (cryptocurrencyId) {
+        await store.dispatch('portfolio/removeToken', cryptocurrencyId);
         await store.dispatch('portfolio/getPortfolio');
         await store.dispatch('portfolio/getCharts');
       }

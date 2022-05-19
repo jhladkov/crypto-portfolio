@@ -14,7 +14,7 @@
           Avg. buy price
         </p>
         <p class="block__value">
-          ${{ tokenInfo?.avg }}
+          ${{ tokenInfo?.avg || 0 }}
         </p>
       </div>
       <div class="details__block block">

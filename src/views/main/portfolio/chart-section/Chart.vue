@@ -117,7 +117,9 @@ export default {
     };
 
     onBeforeMount(async () => {
-      await store.dispatch('portfolio/getCharts');
+      if (!store.getters['portfolio/chartData'][period.value].length) {
+        await store.dispatch('portfolio/getCharts');
+      }
       setData();
     });
 

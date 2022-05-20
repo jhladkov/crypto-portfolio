@@ -19,13 +19,15 @@
         :asset-cols="state.assetCols"
         class="transactions"
       >
-        <transactions-col
-          v-for="(list,index) in historyList"
-          :key="index"
-          :history-list="list"
-          @removeTransaction="removeTransaction"
-          @changeTransaction="changeTransaction"
-        />
+        <div v-if="historyList">
+          <transactions-col
+            v-for="(list,index) in historyList"
+            :key="index"
+            :history-list="list"
+            @removeTransaction="removeTransaction"
+            @changeTransaction="changeTransaction"
+          />
+        </div>
       </table-cols>
       <modal
         v-if="currenModal"

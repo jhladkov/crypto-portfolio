@@ -99,7 +99,7 @@ const getters = {
       src: item.image,
       historyList: item?.historyList,
       id: item.cryptocurrencyId,
-    }));
+    })).sort((a, b) => b.hold - a.hold);
   },
 };
 

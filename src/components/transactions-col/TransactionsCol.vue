@@ -9,18 +9,18 @@
       </div>
     </div>
     <div class="table-td">
-      ${{ historyList.price }}
+      ${{ convertInCorrectData(historyList.price) }}
     </div>
     <div class="table-td">
       <p class="table-td__operation-price">
-        +${{ operationPrice }}
+        {{ operationPrice > 0 ? '+': '-' }}${{ convertInCorrectData(operationPrice) }}
       </p>
       <p
         class="table-td__amount"
         :class="historyList?.amount > 0 ? 'increase' : 'decrease'"
       >
-        {{ historyList?.amount > 0 ? '+': '' }}
-        {{ historyList?.amount }}
+        {{ historyList?.amount > 0 ? '+': '-' }}
+        {{ convertInCorrectData(historyList?.amount) }}
         {{ historyList?.symbol?.toUpperCase() }}
       </p>
     </div>
@@ -62,8 +62,12 @@ export default {
       props.historyList.amount * props.historyList.price).toFixed(2));
     const date = computed(() => new Date(props.historyList.timestamp).toLocaleString());
 
+    const convertInCorrectData = computed(
+      () => (value) => value.toString().replace('-', ''),
+    );
     const changeTransaction = () => {
       const data = {
+        price: props.historyList.price,
         timestamp: props.historyList.timestamp,
         id: props.historyList.id,
         amount: props.historyList.amount,
@@ -79,6 +83,7 @@ export default {
       date,
       changeTransaction,
       removeTransaction,
+      convertInCorrectData,
     };
   },
 };

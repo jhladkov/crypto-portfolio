@@ -72,6 +72,7 @@ const getters = {
   },
   totalProfitInPercents(state) {
     const data = state.chartData['1'];
+    // const data = getters.chartData['1'];
     if (!data?.length) return 0;
     return -(((data[0][1] * 100) / data[data.length - 1][1]) - 100).toFixed(2);
   },

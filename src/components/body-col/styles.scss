@@ -36,6 +36,12 @@
   color: $green;
   fill: $green;
 }
+.table-td.actions-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+
+}
 
 .popup{
   .popup__option{
@@ -81,6 +87,15 @@
     background: $white;
   }
 
+  .table-td__add-tr {
+    fill: $MGray;
+    width: 32px;
+    padding: 8px 10px;
+    svg{
+      width: 15px;
+      height: 15px;
+    }
+  }
   .table-td__actions{
     fill: $MGray;
     text-align: center;
@@ -141,18 +156,19 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  font-weight: 600;
+  font-weight: 500;
   align-items: center;
   grid-gap: 5px;
 
   .asset-name {
-    color: $lightDark
+    color: $lightDark;
+    font-weight: 600;
   }
 }
 
 .asset-short-name {
-  font-size: 12px;
-  font-weight: 400;
+  font-weight: 500;
+  font-size: 14px;
   color: rgb(128, 138, 157);
 }
 

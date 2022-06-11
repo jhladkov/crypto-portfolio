@@ -1,4 +1,8 @@
 
+.transactions-template{
+  padding: 0 20px;
+}
+
 .transactions-template .table-td{
   .table-td__operation-price{
     margin-bottom: 5px;
@@ -19,6 +23,8 @@
 }
 
 .go-back{
+  display: flex;
+  align-items: center;
   font-weight: 600;
   background: $lightGray;
   padding: 7px 20px;
@@ -27,4 +33,8 @@
   border: none;
   cursor: pointer;
   font-size: 12px;
+  svg{
+    margin-right: 10px;
+    max-width: 16px;
+  }
 }

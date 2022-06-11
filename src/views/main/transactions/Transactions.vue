@@ -6,9 +6,13 @@
         class="go-back"
         @click="goHome"
       >
+        <svg viewBox="0 0 24 24">
+          <icon-arrow-back />
+        </svg>
         Back
       </button>
       <price-container
+        button-value="Add Transaction"
         :data="tokenData"
         :pre-title="preTitle"
         :show-token-info="true"
@@ -52,9 +56,11 @@ import TableCols from '@/components/table-cols/TableCols.vue';
 import Modal from '@/components/modal/Modal.vue';
 import AddModal from '@/containers/modals/add-modal/AddModal.vue';
 import EditModal from '@/containers/modals/edit-modal/EditModal.vue';
+import IconArrowBack from '@/assets/icons/user-space/IconArrowBack.vue';
 
 export default {
   components: {
+    IconArrowBack,
     EditModal,
     AddModal,
     Modal,

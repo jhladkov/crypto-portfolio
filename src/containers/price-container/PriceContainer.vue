@@ -15,7 +15,7 @@
           >
         </div>
         <h1 class="price-container__title">
-          {{ data.price }}
+          ${{ convertInCorrectData }}
         </h1>
         <indicator
           :class="
@@ -41,7 +41,7 @@
           class="info-block__value"
           :class="data.totalProfit > 0 ? 'increase' : 'decrease'"
         >
-          {{ data.totalProfit > 0 ? '+' : '-' }} {{ replaceData(data.totalProfit) }}
+          {{ data.totalProfit > 0 ? '+' : '-' }} ${{ replaceData(data.totalProfit) }}
         </p>
         <div class="info-block__duration">
           24h
@@ -50,7 +50,7 @@
     </div>
     <div class="price-section__block">
       <base-button
-        value="Add New"
+        :value="buttonValue"
         class="price-section__add-crypto"
         @click="openModal"
       >
@@ -85,6 +85,7 @@ export default {
     modalType: {
       type: String,
     },
+    buttonValue: String,
     preTitle: {
       type: String,
       default: 'Current Balance',
@@ -101,9 +102,11 @@ export default {
   setup(props) {
     const store = useStore();
     const replaceData = computed(
-      () => (value) => value.toString().replace('-', ''),
+      () => (value) => value.toString().replace('-', '').replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     );
-
+    const convertInCorrectData = computed(
+      () => props.data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+    );
     const openModal = () => {
       store.commit('modal/openModal', props.modalType);
     };
@@ -111,6 +114,7 @@ export default {
     return {
       openModal,
       replaceData,
+      convertInCorrectData,
     };
   },
 };

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="state.currentModal === 'AddModal'">
+    <div v-if="state.currentModal !== 'CalendarModal'">
       <div class="modal__info-inner info-inner">
         <div class="info-inner__block block">
           <p class="block__title">
@@ -45,19 +45,15 @@
         </div>
       </div>
       <base-button
-        :disabled="state.addTransactionConfig.amount <= 0"
-        :class="[
-          'modal__add',
-          state.addTransactionConfig.amount > 0 ? null : 'disabled',
-        ]"
-        value="Add transaction"
+        class="modal__add"
+        :value="buttonValue"
         @click="createTransaction"
       />
     </div>
     <div v-show="state.currentModal === 'CalendarModal'">
       <calendar-modal
         @setTimestamp="setTimestamp"
-        @close="changeModal('AddModal')"
+        @close="changeModal(getOpenedModal)"
       />
     </div>
   </div>
@@ -80,13 +76,19 @@ export default {
     BaseInput,
     BaseButton,
   },
+  props: {
+    buttonValue: {
+      type: String,
+      default: 'Add',
+    },
+  },
   setup(_, { emit }) {
     const store = useStore();
     const route = useRoute();
     const value = ref('');
     const actions = ['Buy', 'Sell'];
     const state = reactive({
-      currentModal: 'AddModal',
+      currentModal: '',
       addTransactionConfig: {
         cryptocurrencyId: route.params.token,
         amount: 0,
@@ -106,15 +108,16 @@ export default {
           .substring(0, 24);
       },
     );
+    const getOpenedModal = computed(() => store.getters['modal/getOpenedModal'][0]);
     const getTotalProfit = computed(
-      () => state.addTransactionConfig.amount * state.addTransactionConfig.price,
+      () => (state.addTransactionConfig.amount * state.addTransactionConfig.price).toFixed(2),
     );
     const setTimestamp = (value) => {
       state.addTransactionConfig.timestamp = value;
     };
 
     const changeModal = (value) => {
-      if (value === 'AddModal') {
+      if (value === getOpenedModal.value) {
         emit('CalendarWasActive', false);
       } else {
         emit('CalendarWasActive', true);
@@ -140,9 +143,13 @@ export default {
       if (!store.state.transactions?.chosenTransaction?.timestamp) {
         state.addTransactionConfig.timestamp = new Date().getTime();
       }
-      state.addTransactionConfig.price = await store.dispatch('portfolio/getParticularTokenPrice', route.params.token);
       if (store.state.transactions?.chosenTransaction?.amount) {
         state.addTransactionConfig.amount = store.state.transactions?.chosenTransaction?.amount;
+      }
+      if (!store.state.transactions?.chosenTransaction?.price) {
+        state.addTransactionConfig.price = await store.dispatch('portfolio/getParticularTokenPrice', route.params.token);
+      } else {
+        state.addTransactionConfig.price = store.state.transactions?.chosenTransaction?.price;
       }
     });
 
@@ -150,6 +157,7 @@ export default {
       state,
       value,
       getTotalProfit,
+      getOpenedModal,
       getCurrentDate,
       createTransaction,
       actions,

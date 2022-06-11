@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="table-td">
-      ${{ asset.price }}
+      ${{ replaceData(asset.price) }}
     </div>
     <div
       class="table-td"
@@ -32,14 +32,14 @@
     </div>
     <div class="table-td asset-hold">
       <div class="asset-hold-usd">
-        ${{ asset.hold }}
+        ${{ replaceData(asset.hold) }}
       </div>
       <div class="asset-hold-tokens">
-        {{ asset.holdTokens }} {{ asset.shortName }}
+        {{ replaceData(asset.holdTokens) }} {{ asset.shortName }}
       </div>
     </div>
     <div class="table-td">
-      ${{ asset.avg }}
+      ${{ replaceData(asset.avg) }}
     </div>
     <div
       class="table-td"
@@ -62,16 +62,21 @@
         </div>
       </div>
     </div>
-    <div class="table-td">
+    <div class="table-td actions-wrapper">
       <div class="table-td__inner">
         <div
-          class="table-td__actions"
+          class="table-td__add-tr"
           @click.stop="openModal(asset)"
         >
           <svg viewBox="3 0 17 24">
             <IconPlus />
           </svg>
         </div>
+      </div>
+      <div
+        tabindex="-1"
+        @blur="popupStatus = false"
+      >
         <div
           class="table-td__actions"
           @click.stop="activePopup"
@@ -80,28 +85,28 @@
             <IconDots />
           </svg>
         </div>
-      </div>
-      <div
-        v-if="popupStatus"
-        class="table-td__popup popup"
-      >
         <div
-          class="popup__option"
-          @click.stop="goToTransactions"
+          v-if="popupStatus"
+          class="table-td__popup popup"
         >
-          <svg viewBox="0 0 32 32">
-            <icon-transaction />
-          </svg>
-          Transactions
-        </div>
-        <div
-          class="popup__option"
-          @click.stop="removeToken"
-        >
-          <svg viewBox="0 0 24 24">
-            <icon-trash />
-          </svg>
-          Remove Asset
+          <div
+            class="popup__option"
+            @click.stop="goToTransactions"
+          >
+            <svg viewBox="0 0 32 32">
+              <icon-transaction />
+            </svg>
+            Transactions
+          </div>
+          <div
+            class="popup__option"
+            @click.stop="removeToken"
+          >
+            <svg viewBox="0 0 24 24">
+              <icon-trash />
+            </svg>
+            Remove Asset
+          </div>
         </div>
       </div>
     </div>
@@ -136,16 +141,9 @@ export default {
 
     const replaceData = computed(
       () => (value) => value?.toString()
-        ?.replace('-', ''),
+        ?.replace('-', '').replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     );
-    const handleClosePopup = () => {
-      if (popupStatus.value) {
-        popupStatus.value = false;
-        document.removeEventListener('click', handleClosePopup);
-      }
-    };
     const activePopup = () => {
-      document.addEventListener('click', handleClosePopup);
       popupStatus.value = !popupStatus.value;
     };
     const openModal = (token) => {
@@ -153,12 +151,10 @@ export default {
     };
     const goToTransactions = () => {
       popupStatus.value = false;
-      document.removeEventListener('click', handleClosePopup);
       emit('goToTransactions', props.asset?.id);
     };
     const removeToken = () => {
       popupStatus.value = false;
-      document.removeEventListener('click', handleClosePopup);
       emit('removeToken', props.asset.historyList[0].cryptocurrencyId);
     };
 

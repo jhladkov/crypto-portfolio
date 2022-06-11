@@ -22,6 +22,7 @@
         </div>
       </div>
       <content-modal
+        button-value="Add Transaction"
         @CalendarWasActive="calendarWasActive"
         @createTransactions="createTransactions"
       />

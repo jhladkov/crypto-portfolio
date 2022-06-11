@@ -1,5 +1,6 @@
 <template>
   <price-container
+    button-value="Add New"
     modal-type="TransactionModal"
     :data="priceData"
   />

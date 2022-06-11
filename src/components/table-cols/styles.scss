@@ -1,5 +1,6 @@
 .transactions{
   .table-cols__table-head{
+    padding: 0 20px;
     grid-template-columns: 1fr max(130px) max(230px) max(230px);
   }
   .table-tr{
@@ -28,8 +29,8 @@
   line-height: 1.5;
   margin: 0;
   color: rgb(23, 25, 36);
-  font-weight: 600;
-  font-size: 13px;
+  font-weight: 700;
+  font-size: 12px;
   text-align: right;
   &:first-child {
     padding-left: 0;

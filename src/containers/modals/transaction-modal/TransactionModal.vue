@@ -25,6 +25,7 @@
         @click="handlerClose"
       >
         <div
+          v-if="state.initArrayTokens.length"
           class="select__main-panel main-panel select-part shadow"
           :class="{'active-select':state.selectActive}"
           @click="openSelect"
@@ -56,6 +57,12 @@
             class="main-panel__input select-part"
             type="text"
           />
+        </div>
+        <div
+          v-else
+          class="modal__loader"
+        >
+          <base-loader />
         </div>
         <Transition>
           <div
@@ -130,15 +137,18 @@
         </div>
       </div>
 
-      <base-button
-        :disabled="state.addTransactionConfig.amount <= 0"
-        :class="[
-          'modal__add',
-          state.addTransactionConfig.amount > 0 ? null : 'disabled',
-        ]"
-        value="Add transaction"
-        @click="createTransaction"
-      />
+      <div class="modal__create">
+        <base-loader v-if="state.transactionStatus" />
+        <base-button
+          :disabled="!!state.transactionStatus || state.addTransactionConfig.amount <= 0"
+          :class="[
+            'modal__add',
+            state.addTransactionConfig.amount > 0 ? null : 'disabled',
+          ]"
+          value="Add transaction"
+          @click="createTransaction"
+        />
+      </div>
     </div>
     <div v-show="state.currentModal === 'CalendarModal'">
       <calendar-modal
@@ -157,10 +167,12 @@ import {
 import { useStore } from 'vuex';
 import BaseButton from '@/components/base-button/BaseButton.vue';
 import CalendarModal from '@/containers/modals/calendar-modal/CalendarModal.vue';
+import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 
 export default {
   name: 'TransactionModal',
   components: {
+    BaseLoader,
     CalendarModal,
     BaseButton,
     BaseInput,
@@ -175,6 +187,7 @@ export default {
       activeIndex: 0,
       initArrayTokens: [],
       selectedToken: {},
+      transactionStatus: false,
       addTransactionConfig: {
         cryptocurrencyId: '',
         amount: 0,
@@ -193,7 +206,7 @@ export default {
     );
     const selectedValue = computed(() => state.selectedToken);
     const getTotalProfit = computed(
-      () => state.addTransactionConfig.amount * state.addTransactionConfig.price,
+      () => (state.addTransactionConfig.amount * state.addTransactionConfig.price).toFixed(2),
     );
     const searchData = computed(() => store.getters['portfolio/searchData']);
 
@@ -245,15 +258,16 @@ export default {
     };
 
     const createTransaction = async () => {
+      state.transactionStatus = 'start';
       if (typeof state.addTransactionConfig.timestamp !== 'number') {
         state.addTransactionConfig.timestamp = state.addTransactionConfig.timestamp.getTime();
       }
       if (state.addTransactionConfig.type === 'Sell') {
         state.addTransactionConfig.amount = -state.addTransactionConfig.amount;
       }
-      store.commit('modal/closeModal', 'TransactionModal');
       await store.dispatch('portfolio/addTokenToPortfolio', { ...state.addTransactionConfig });
       await store.dispatch('portfolio/getPortfolio');
+      store.commit('modal/closeModal', 'TransactionModal');
       await store.dispatch('portfolio/getCharts');
     };
 

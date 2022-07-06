@@ -42,6 +42,7 @@ const state = {
     90: [],
     max: [],
   },
+  accountInfo: undefined,
   searchData: [],
   connection: null,
   totalPrice: 0,
@@ -108,6 +109,9 @@ const mutations = {
   setActiveToken(state, value) {
     state.activeToken = { ...value, image: value.src };
   },
+  setAccountInfo(state, value) {
+    state.accountInfo = value;
+  },
 
   resetActiveToken(state) {
     state.activeToken = null;
@@ -137,6 +141,15 @@ const actions = {
     await axios.post(`http://${api}:5000/remove-token?id=1`, {
       cryptocurrencyId,
     });
+  },
+
+  async googleAuth({ commit }, userInfo) {
+    const res = await axios.post(`http://${api}:5000/auth`, {
+      ...userInfo,
+    });
+    if (res) {
+      commit('setAccountInfo', res.data);
+    }
   },
 
   async getParticularTokenPrice(_, idToken) {
@@ -213,7 +226,7 @@ const actions = {
   },
 
   disconnectFromWebSocket({ state }) {
-    state.connection.close('Close');
+    state.connection?.close('Close');
   },
 
   connectToWebSocket({ commit }) {

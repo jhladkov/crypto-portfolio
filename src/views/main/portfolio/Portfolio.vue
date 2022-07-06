@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <portfolio-panel />
     <price-section />
     <chart />
     <assets-section
@@ -33,10 +34,12 @@ import {
 import BodyCol from '@/components/body-col/BodyCol.vue';
 import Modal from '@/components/modal/Modal.vue';
 import TransactionModal from '@/containers/modals/transaction-modal/TransactionModal.vue';
+import PortfolioPanel from '@/views/main/portfolio/portfolioPanel-section/PortfolioPanel.vue';
 
 export default {
   name: 'Portfolio',
   components: {
+    PortfolioPanel,
     TransactionModal,
     BodyCol,
     Chart,

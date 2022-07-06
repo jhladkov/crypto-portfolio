@@ -1,6 +1,7 @@
 <template>
   <button
     class="button"
+    :class="className"
   >
     <span><slot /></span>
     {{ value }}

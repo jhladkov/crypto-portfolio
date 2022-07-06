@@ -21,5 +21,13 @@ export default {
         '../views/main/transactions/Transactions.vue'
       ),
     },
+    {
+      path: 'portfolio-auth',
+      name: 'PortfolioAuth',
+      component: () => import(
+        /* webpackChunkName: "auth" */
+        '../views/main/portfolio-auth/PortfolioAuth.vue'
+      ),
+    },
   ],
 };

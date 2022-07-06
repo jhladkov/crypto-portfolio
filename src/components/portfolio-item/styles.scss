@@ -1,0 +1,17 @@
+.portfolio-panel__inner{
+  .item__title{
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .item__value{
+    font-size: 12px;
+    color: $MGray;
+  }
+  .item__line{
+    width: 100%;
+    background: $lightGray;
+    height: 1px;
+    margin: 30px 0;
+  }
+}

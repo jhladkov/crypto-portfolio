@@ -59,6 +59,7 @@ const getters = {
   },
   calculatedTotalPrice(state) {
     return state.WBSKData.reduce((acc, next) => {
+      console.log(next);
       acc += Number(next.cryptoHoldings);
       return acc;
     }, 0);
@@ -138,7 +139,7 @@ const mutations = {
 
 const actions = {
   async removeToken(_, cryptocurrencyId) {
-    await axios.post(`http://${api}:5000/remove-token?id=1`, {
+    await axios.post(`http://${api}:5000/remove-token?token=${localStorage.getItem('token')}`, {
       cryptocurrencyId,
     });
   },
@@ -148,7 +149,10 @@ const actions = {
       ...userInfo,
     });
     if (res) {
-      commit('setAccountInfo', res.data);
+      commit('setAccountInfo', {
+        ...res.data,
+        token: localStorage.getItem('token'),
+      });
     }
   },
 
@@ -183,27 +187,28 @@ const actions = {
   },
 
   async removeTransaction(_, obj) {
-    await axios.post(`http://${api}:5000/remove-transaction?id=1`, {
+    await axios.post(`http://${api}:5000/remove-transaction?token=${localStorage.getItem('token')}`, {
       ...obj,
     });
   },
 
   async addTokenToPortfolio(_, payload) {
-    await axios.post(`http://${api}:5000/add-to-portfolio?id=1`, {
+    await axios.post(`http://${api}:5000/add-to-portfolio?token=${localStorage.getItem('token')}`, {
       ...payload,
     });
   },
   async getPortfolio({ commit, getters }) {
     try {
-      const res = await axios.get(`http://${api}:5000/get-portfolio?id=1`, {
+      const res = await axios.get(`http://${api}:5000/get-portfolio?token=${localStorage.getItem('token')}`, {
         headers: {
           withCredentials: true,
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
         },
       });
+      console.log(res.data[0].cryptocurrencies[0]);
 
-      commit('setWBSKData', res.data.tokenList);
+      commit('setWBSKData', res.data[0].cryptocurrencies[0]);
       commit('setTotalPrice', getters.calculatedTotalPrice);
     } catch (err) {
       console.warn(err);
@@ -212,7 +217,7 @@ const actions = {
 
   async getCharts({ commit }, period = 1) {
     try {
-      const res = await axios.get(`http://${api}:5000/chart-values?id=1&period=${period}`, {
+      const res = await axios.get(`http://${api}:5000/chart-values?id=1&period=${period}`, { // TODO: rewrite
         headers: {
           withCredentials: true,
           'Access-Control-Allow-Origin': '*',

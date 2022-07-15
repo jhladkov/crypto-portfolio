@@ -57,7 +57,18 @@
         <svg
           class="button__icon"
           viewBox="0 0 20 20"
-        >
+        ><base-button
+           :value="buttonValue"
+           class="price-section__add-crypto"
+           @click="openModal"
+         >
+           <svg
+             class="button__icon"
+             viewBox="0 0 20 20"
+           >
+             <icon-add />
+           </svg>
+         </base-button>
           <icon-add />
         </svg>
       </base-button>

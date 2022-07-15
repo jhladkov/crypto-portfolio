@@ -30,6 +30,7 @@ import jwtDecode from 'jwt-decode';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { googleAuth } from '@/helpers/googleAuth';
+import { onBeforeMount } from 'vue';
 
 export default {
   name: 'AboutPortfolio',
@@ -45,11 +46,17 @@ export default {
       const userInfo = {
         email: decodedToken.email,
         name: decodedToken.name,
+        picture: decodedToken.picture,
       };
       await store.dispatch('portfolio/googleAuth', userInfo);
 
       router.push('/');
     };
+    onBeforeMount(() => {
+      if (localStorage.getItem('token')) {
+        router.push('/');
+      }
+    });
 
     return {
       googleAuth,

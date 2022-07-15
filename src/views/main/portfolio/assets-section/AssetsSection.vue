@@ -27,7 +27,7 @@
 
 <script>
 import {
-  reactive, onBeforeMount, computed,
+  reactive, computed,
 } from 'vue';
 import { useStore } from 'vuex';
 import BaseLoader from '@/components/base-loader/BaseLoader.vue';
@@ -49,7 +49,6 @@ export default {
 
     const state = reactive({
       WBSKData: store.state.portfolio.WBSKData,
-      loading: false,
     });
     const tokensData = computed(() => store.getters['portfolio/getTokensList'].filter((item) => {
       if (!item.historyList.length) {
@@ -57,10 +56,11 @@ export default {
       }
       return item.historyList.length;
     }));
-    const loading = computed(() => state.loading);
+    const loading = computed(() => store.state.portfolio.loading);
 
     const removeToken = async (cryptocurrencyId) => {
       if (cryptocurrencyId) {
+        store.commit('portfolio/setLoading', true);
         await store.dispatch('portfolio/removeToken', cryptocurrencyId);
         await store.dispatch('portfolio/getPortfolio');
         await store.dispatch('portfolio/getCharts');
@@ -79,11 +79,11 @@ export default {
       store.commit('modal/openModal', 'TransactionModal');
     };
 
-    onBeforeMount(async () => {
-      state.loading = true;
-      await store.dispatch('portfolio/getPortfolio');
-      state.loading = false;
-    });
+    // onBeforeMount(async () => {
+    //   state.loading = true;
+    //   await store.dispatch('portfolio/getPortfolio');
+    //   state.loading = false;
+    // });
     return {
       ...state,
       tokensData,

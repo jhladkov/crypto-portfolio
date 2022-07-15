@@ -20,7 +20,7 @@ const mutations = {
 
 const actions = {
   async changeTransaction(_, payload) {
-    await axios.post(`http://${api}:5000/change-transaction?id=1`, {
+    await axios.post(`http://${api}:5000/change-transaction?token=${localStorage.getItem('token')}`, {
       ...payload,
     });
   },

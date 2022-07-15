@@ -45,6 +45,7 @@ const state = {
   accountInfo: undefined,
   searchData: [],
   connection: null,
+  loading: false,
   totalPrice: 0,
   activePeriod: 1,
   activeToken: null,
@@ -54,12 +55,14 @@ const getters = {
   getActivePeriod(state) {
     return state.activePeriod;
   },
+  getAccountInfo(state) {
+    return state.accountInfo;
+  },
   getActiveToken(state) {
     return state.activeToken;
   },
   calculatedTotalPrice(state) {
     return state.WBSKData.reduce((acc, next) => {
-      console.log(next);
       acc += Number(next.cryptoHoldings);
       return acc;
     }, 0);
@@ -113,7 +116,9 @@ const mutations = {
   setAccountInfo(state, value) {
     state.accountInfo = value;
   },
-
+  setLoading(state, value) {
+    state.loading = value;
+  },
   resetActiveToken(state) {
     state.activeToken = null;
   },
@@ -151,7 +156,6 @@ const actions = {
     if (res) {
       commit('setAccountInfo', {
         ...res.data,
-        token: localStorage.getItem('token'),
       });
     }
   },
@@ -199,6 +203,7 @@ const actions = {
   },
   async getPortfolio({ commit, getters }) {
     try {
+      commit('setLoading', true);
       const res = await axios.get(`http://${api}:5000/get-portfolio?token=${localStorage.getItem('token')}`, {
         headers: {
           withCredentials: true,
@@ -206,10 +211,10 @@ const actions = {
           'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
         },
       });
-      console.log(res.data[0].cryptocurrencies[0]);
 
-      commit('setWBSKData', res.data[0].cryptocurrencies[0]);
+      commit('setWBSKData', res.data[0].cryptocurrencies);
       commit('setTotalPrice', getters.calculatedTotalPrice);
+      commit('setLoading', false);
     } catch (err) {
       console.warn(err);
     }
@@ -217,7 +222,7 @@ const actions = {
 
   async getCharts({ commit }, period = 1) {
     try {
-      const res = await axios.get(`http://${api}:5000/chart-values?id=1&period=${period}`, { // TODO: rewrite
+      const res = await axios.get(`http://${api}:5000/chart-values?token=${localStorage.getItem('token')}&period=${period}`, { // TODO: rewrite
         headers: {
           withCredentials: true,
           'Access-Control-Allow-Origin': '*',

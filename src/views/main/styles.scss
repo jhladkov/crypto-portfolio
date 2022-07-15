@@ -5,6 +5,11 @@
 .header{
   padding: 20px 0;
   border-bottom: 1px solid $lightGray;
+  &:hover{
+    .header__user{
+      right: 15px;
+    }
+  }
   .header__wrapper{
     display: flex;
     justify-content: space-between;
@@ -13,3 +18,29 @@
     max-width: 30px;
   }
 }
+
+.header__user{
+  display: flex;
+  align-items: center;
+  transition: all .3s;
+  position: absolute;
+  right: -60px;
+  .user__img{
+    max-width: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 20px;
+    img{
+      height: 100%;
+      display: block;
+    }
+  }
+  .user__info{
+    display: flex;
+    flex-direction: column;
+    .exit{
+      background: $red;
+    }
+  }
+}
+

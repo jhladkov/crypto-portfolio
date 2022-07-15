@@ -266,8 +266,8 @@ export default {
         state.addTransactionConfig.amount = -state.addTransactionConfig.amount;
       }
       await store.dispatch('portfolio/addTokenToPortfolio', { ...state.addTransactionConfig });
-      await store.dispatch('portfolio/getPortfolio');
       store.commit('modal/closeModal', 'TransactionModal');
+      await store.dispatch('portfolio/getPortfolio');
       await store.dispatch('portfolio/getCharts');
     };
 

@@ -114,6 +114,7 @@ const mutations = {
     state.activeToken = { ...value, image: value.src };
   },
   setAccountInfo(state, value) {
+    console.log('val', value);
     state.accountInfo = value;
   },
   setLoading(state, value) {
@@ -196,12 +197,22 @@ const actions = {
     });
   },
 
+  async createPortfolio({ commit }, name) {
+    if (name) {
+      const res = await axios.post(`http://${api}:5000/create-portfolio?token=${localStorage.getItem('token')}`, {
+        name,
+      });
+      commit('setAccountInfo', res.data);
+      console.log(res.data);
+    }
+  },
+
   async addTokenToPortfolio(_, payload) {
     await axios.post(`http://${api}:5000/add-to-portfolio?token=${localStorage.getItem('token')}`, {
       ...payload,
     });
   },
-  async getPortfolio({ commit, getters }) {
+  async getPortfolio({ commit, state, getters }) {
     try {
       commit('setLoading', true);
       const res = await axios.get(`http://${api}:5000/get-portfolio?token=${localStorage.getItem('token')}`, {
@@ -211,7 +222,9 @@ const actions = {
           'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
         },
       });
-
+      const accountInfo = { ...state.accountInfo };
+      accountInfo.portfolios = res.data;
+      commit('setAccountInfo', accountInfo);
       commit('setWBSKData', res.data[0].cryptocurrencies);
       commit('setTotalPrice', getters.calculatedTotalPrice);
       commit('setLoading', false);

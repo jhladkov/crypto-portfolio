@@ -1,18 +1,36 @@
 <template>
   <div class="portfolio-panel__inner item">
     <div class="item__title">
-      My Main Portfolio
+      {{ name }}
     </div>
     <div class="item__value">
-      ≈$0
+      ≈${{ totalPrice }}
     </div>
     <div class="item__line" />
   </div>
 </template>
 
 <script>
-export default {
+import { computed } from 'vue';
 
+export default {
+  name: 'PortfolioItem',
+  props: {
+    name: String,
+    price: {
+      type: Number,
+      default: 0,
+    },
+  },
+  setup(props) {
+    const totalPrice = computed(
+      () => props.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+    );
+
+    return {
+      totalPrice,
+    };
+  },
 };
 </script>
 

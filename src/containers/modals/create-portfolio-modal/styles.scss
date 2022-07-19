@@ -1,0 +1,18 @@
+.create-modal{
+  input{
+    height: 40px;
+  }
+}
+.content{
+  .content__title{
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  .content__checker{
+    margin: 10px 0 30px 0;
+    font-weight: 500;
+    color: $MGray;
+    font-size: 12px;
+  }
+}

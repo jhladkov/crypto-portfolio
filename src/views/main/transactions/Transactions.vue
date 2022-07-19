@@ -34,7 +34,7 @@
         </div>
       </table-cols>
       <modal
-        v-if="currenModal"
+        v-if="currentModal"
         :type-modal="state.currentModal"
       >
         <add-modal v-if="state.currentModal === 'AddModal'" />
@@ -89,8 +89,8 @@ export default {
     }));
     const preTitle = computed(() => (`${tokenInfo?.value?.name}(${tokenInfo?.value?.shortName}) Balance`));
 
-    const getModal = computed(() => store.getters['modal/getModal']('AddModal'));
-    const currenModal = computed(() => {
+    // const getModal = computed(() => store.getters['modal/getModal']('AddModal'));
+    const currentModal = computed(() => {
       if (store.getters['modal/getOpenedModal']) {
         state.currentModal = store.getters['modal/getOpenedModal'][0];
       }
@@ -129,8 +129,8 @@ export default {
       goHome,
       removeTransaction,
       changeTransaction,
-      getModal,
-      currenModal,
+      // getModal,
+      currentModal,
     };
   },
 };

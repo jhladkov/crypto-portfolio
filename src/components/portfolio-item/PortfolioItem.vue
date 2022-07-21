@@ -6,7 +6,7 @@
     <div class="item__value">
       ≈${{ totalPrice }}
     </div>
-    <div class="item__line" />
+    <!--    <div class="item__line" />-->
   </div>
 </template>
 

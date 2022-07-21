@@ -43,6 +43,7 @@ const state = {
     max: [],
   },
   accountInfo: undefined,
+  selectedPortfolio: undefined,
   searchData: [],
   connection: null,
   loading: false,
@@ -60,6 +61,9 @@ const getters = {
   },
   getActiveToken(state) {
     return state.activeToken;
+  },
+  getTotalPortfoliosPrice(state) {
+    return state.accountInfo?.portfolios?.reduce((sum, item) => sum + +item.totalPrice, 0);
   },
   calculatedTotalPrice(state) {
     return state.WBSKData.reduce((acc, next) => {
@@ -114,8 +118,11 @@ const mutations = {
     state.activeToken = { ...value, image: value.src };
   },
   setAccountInfo(state, value) {
-    console.log('val', value);
     state.accountInfo = value;
+  },
+  setSelectedPortfolio(state, value) {
+    localStorage.setItem('selectedPortfolio', value);
+    state.selectedPortfolio = value;
   },
   setLoading(state, value) {
     state.loading = value;
@@ -147,6 +154,7 @@ const actions = {
   async removeToken(_, cryptocurrencyId) {
     await axios.post(`http://${api}:5000/remove-token?token=${localStorage.getItem('token')}`, {
       cryptocurrencyId,
+      id: localStorage.getItem('selectedPortfolio'),
     });
   },
 
@@ -194,6 +202,7 @@ const actions = {
   async removeTransaction(_, obj) {
     await axios.post(`http://${api}:5000/remove-transaction?token=${localStorage.getItem('token')}`, {
       ...obj,
+      id: localStorage.getItem('selectedPortfolio'),
     });
   },
 
@@ -203,13 +212,16 @@ const actions = {
         name,
       });
       commit('setAccountInfo', res.data);
-      console.log(res.data);
     }
   },
 
   async addTokenToPortfolio(_, payload) {
     await axios.post(`http://${api}:5000/add-to-portfolio?token=${localStorage.getItem('token')}`, {
       ...payload,
+    }, {
+      params: {
+        id: localStorage.getItem('selectedPortfolio'),
+      },
     });
   },
   async getPortfolio({ commit, state, getters }) {
@@ -221,11 +233,19 @@ const actions = {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
         },
+        params: {
+          id: localStorage.getItem('selectedPortfolio'),
+        },
       });
       const accountInfo = { ...state.accountInfo };
       accountInfo.portfolios = res.data;
+      if (!state.selectedPortfolio) {
+        commit('setSelectedPortfolio', +localStorage.getItem('selectedPortfolio') || res.data[0].id);
+      }
+      const currentPortfolio = res.data.filter((item) => +item.id === +localStorage.getItem('selectedPortfolio'))[0];
+
       commit('setAccountInfo', accountInfo);
-      commit('setWBSKData', res.data[0].cryptocurrencies);
+      commit('setWBSKData', currentPortfolio.cryptocurrencies);
       commit('setTotalPrice', getters.calculatedTotalPrice);
       commit('setLoading', false);
     } catch (err) {
@@ -240,6 +260,9 @@ const actions = {
           withCredentials: true,
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
+        },
+        params: {
+          id: localStorage.getItem('selectedPortfolio'),
         },
       });
       commit('setChartData', { data: res.data?.historyChart, period });

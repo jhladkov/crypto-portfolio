@@ -20,5 +20,7 @@ module.exports = {
     'vue/require-default-prop': 'off',
     'prefer-destructuring': 'off',
     'vue/no-side-effects-in-computed-properties': 'off',
+    'vue/require-valid-default-prop': 'off',
+    'no-plusplus': 'off',
   },
 };

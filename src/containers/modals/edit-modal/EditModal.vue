@@ -42,7 +42,7 @@ export default {
           amount: data.amount,
         });
         store.commit('transactions/setChosenTransaction', null);
-        await store.dispatch('portfolio/getPortfolio');
+        // await store.dispatch('portfolio/getPortfolio');
         await store.dispatch('portfolio/getPortfolio'); // TODO: Тут тоже 2 раза
         await store.dispatch('portfolio/getCharts');
       }

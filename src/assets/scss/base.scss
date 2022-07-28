@@ -1,4 +1,5 @@
 @import 'v-calendar/dist/style.css';
+@import "animations";
 //@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"); //TODO: Err
 *, *:after, *:before {
   box-sizing: border-box;
@@ -91,3 +92,17 @@ hr{
   background: $lightGray;
   color: $MGray;
 }
+.show{
+  animation-name: show;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+.hide{
+  overflow: hidden;
+  animation-name: hide;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+
+

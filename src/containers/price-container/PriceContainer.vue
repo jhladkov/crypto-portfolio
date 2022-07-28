@@ -116,7 +116,7 @@ export default {
       () => (value) => value.toString().replace('-', '').replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     );
     const convertInCorrectData = computed(
-      () => props.data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+      () => props.data?.price?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     );
     const openModal = () => {
       store.commit('modal/openModal', props.modalType);

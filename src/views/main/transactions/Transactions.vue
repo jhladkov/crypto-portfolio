@@ -111,7 +111,6 @@ export default {
           cryptocurrencyId,
         });
       }
-      await store.dispatch('portfolio/getPortfolio');
       await store.dispatch('portfolio/getPortfolio'); // TODO: Приходиться вызывать 2 раза(хз почему)
     };
 

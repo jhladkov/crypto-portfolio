@@ -1,34 +1,96 @@
 <template>
-  <div class="portfolio-panel__inner item">
-    <div class="item__title">
-      {{ name }}
+  <div
+    class="portfolio-panel__inner item"
+    tabindex="-1"
+    @blur="openPopup = false"
+  >
+    <div class="item__inner">
+      <div
+        class="item__img"
+        :style="{ background: randomColor }"
+      >
+        <span>{{ name[0].toUpperCase() }}</span>
+      </div>
+      <div>
+        <div class="item__title">
+          {{ name }}
+        </div>
+        <div class="item__value">
+          ≈${{ totalPrice }}
+        </div>
+      </div>
     </div>
-    <div class="item__value">
-      ≈${{ totalPrice }}
+    <div
+      v-if="popupOptions"
+      class="icon-dots"
+      @click.stop="openPopup = !openPopup"
+    >
+      <svg
+        viewBox="0 0 20 20"
+      >
+        <icon-dots />
+      </svg>
     </div>
-    <!--    <div class="item__line" />-->
+    <popup
+      v-if="openPopup && popupOptions"
+      class="item__popup"
+      :options="popupOptions"
+      @action="handlePopup"
+    />
   </div>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
+import Popup from '@/components/popup/Popup.vue';
+import IconDots from '@/assets/icons/user-space/IconDots.vue';
 
 export default {
   name: 'PortfolioItem',
+  components: { IconDots, Popup },
   props: {
     name: String,
     price: {
       type: Number,
       default: 0,
     },
+    popupOptions: {
+      type: Array,
+      default: [],
+    },
+    id: Number,
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const openPopup = ref(false);
+
     const totalPrice = computed(
       () => props.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     );
 
+    const randomColor = computed(() => {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    });
+
+    const handlePopup = (action) => {
+      openPopup.value = false;
+      if (action === 'edit') {
+        emit('edit', props.id);
+      }
+      if (action === 'removePortfolio') {
+        emit('removePortfolio', props.id);
+      }
+    };
+
     return {
+      handlePopup,
       totalPrice,
+      randomColor,
+      openPopup,
     };
   },
 };

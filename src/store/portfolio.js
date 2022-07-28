@@ -202,7 +202,10 @@ const actions = {
   async removeTransaction(_, obj) {
     await axios.post(`http://${api}:5000/remove-transaction?token=${localStorage.getItem('token')}`, {
       ...obj,
-      id: localStorage.getItem('selectedPortfolio'),
+    }, {
+      params: {
+        id: localStorage.getItem('selectedPortfolio'),
+      },
     });
   },
 

@@ -22,6 +22,10 @@ const actions = {
   async changeTransaction(_, payload) {
     await axios.post(`http://${api}:5000/change-transaction?token=${localStorage.getItem('token')}`, {
       ...payload,
+    }, {
+      params: {
+        id: localStorage.getItem('selectedPortfolio'),
+      },
     });
   },
 };

@@ -24,7 +24,7 @@
       width="100%"
       height="250px"
       :options="getConfig"
-      :series="state.series"
+      :series="compSeries"
       type="area"
       @MouseMove="mouseMove"
       @mouseleave="mouseLeave"
@@ -85,13 +85,17 @@ export default {
         data: store.getters['portfolio/chartData'][period.value] || [],
       };
     };
+    const compSeries = computed(() => ([{
+      name: 'main',
+      data: store.getters['portfolio/chartData'][period.value] || [],
+    }]));
 
-    const chartSeries = computed(() => {
-      state.series[0].data = store.getters['portfolio/chartData'][period.value];
-      chart.value.updateSeries(state.series);
-      recalculateData();
-      return store.getters['portfolio/chartData'][period.value];
-    });
+    // const chartSeries = computed(() => {
+    //   state.series[0].data = store.getters['portfolio/chartData'][period.value];
+    //   chart.value.updateSeries(state.series);
+    //   recalculateData();
+    //   return store.getters['portfolio/chartData'][period.value];
+    // });
 
     const updateData = async (index) => {
       if (activeIndex !== index) {
@@ -133,7 +137,8 @@ export default {
       mouseLeave,
       getConfig,
       chart,
-      chartSeries,
+      compSeries,
+      // chartSeries,
     };
   },
 };

@@ -7,7 +7,10 @@
   border-bottom: 1px solid $lightGray;
   &:hover{
     .header__user{
-      right: 15px;
+      .exit{
+        top: -15px;
+        left: 0;
+      }
     }
   }
   .header__wrapper{
@@ -23,9 +26,8 @@
   display: flex;
   align-items: center;
   transition: all .3s;
-  position: absolute;
-  right: -60px;
   .user__img{
+    transition: all .3s;
     max-width: 30px;
     border-radius: 50%;
     overflow: hidden;
@@ -36,9 +38,14 @@
     }
   }
   .user__info{
+    position: relative;
     display: flex;
     flex-direction: column;
     .exit{
+      transition: all .3s;
+      position: absolute;
+      top: -100px;
+      left: 0;
       background: $red;
     }
   }

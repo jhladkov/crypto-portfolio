@@ -1,0 +1,32 @@
+@keyframes hide {
+  0%{
+    max-height: 1000px;
+  }
+  100%{
+    max-height: 0;
+  }
+}
+@keyframes show {
+  0%{
+    max-height: 0;
+  }
+  100%{
+    max-height: 1000px;
+  }
+}
+@keyframes rotateUp {
+  0%{
+    transform: rotate(-90deg);
+  }
+  100%{
+    transform: rotate(90deg);
+  }
+}
+@keyframes rotateDown {
+  0%{
+    transform: rotate(90deg);
+  }
+  100%{
+    transform: rotate(-90deg);
+  }
+}

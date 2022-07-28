@@ -1,4 +1,12 @@
 .portfolio-panel{
+  .portfolio-panel__wrapper{
+    position: relative;
+    max-width: 1060px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
   .portfolio-panel__line{
     width: 100%;
     background: $lightGray;
@@ -6,10 +14,13 @@
     margin: 30px 0;
   }
   .check-mark{
+    position: absolute;
+    left: 23%;
     max-width: 16px;
     fill: $blue;
   }
   .portfolio-panel__item{
+    position: relative;
     padding: 10px;
     display: flex;
     align-items: center;
@@ -18,8 +29,87 @@
     transition: all .3s;
     margin-bottom: 10px;
     &:hover{
-      background: $lightGray;
+      background: $lightGray--l;
+    }
+    .icon-dots{
+      padding: 10px 10px 8px 10px;
+      border-radius: 50%;
+      &:hover{
+        box-shadow: rgb(239 242 245) 0px 0px 0px 3px;
+        background: rgb(248, 250, 253);
+      }
+      svg{
+        max-width: 16px;
+      }
+    }
+  }
+  .portfolio-panel__create{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 13px 20px;
+    transition: all .3s;
+    &:hover{
+      background: $lightGray--l;
+      p{
+        color: $blue;
+      }
+      svg{
+        fill: $blue;
+      }
+    }
+    svg{
+      transition: all .3s;
+      margin-right: 20px;
+      max-width: 16px;
+    }
+    p{
+      transition: all .3s;
+    }
+  }
+  .all-info{
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .portfolio-panel__inner{
+      justify-content: flex-start;
+      width: auto;
+    }
+    .all-info__display{
+      animation-duration: 0.5s;
+      cursor: pointer;
+      border-radius: 4px;
+      position: relative;
+      width: 17px;
+      height: 17px;
+      background: $svg--display;
+      svg{
+        position: absolute;
+        top: 15%;
+        left: 25%;
+        fill: $white;
+        max-width: 12px;
+      }
     }
   }
 }
+
+.all-info__display.rotateUp{
+  animation-name: rotateUp;
+  animation-fill-mode: forwards;
+}
+
+.all-info__display.rotateDown{
+  animation-name: rotateDown;
+  animation-fill-mode: forwards;
+}
+
+.portfolio-panel__content{
+  position: relative;
+}
+
+
 

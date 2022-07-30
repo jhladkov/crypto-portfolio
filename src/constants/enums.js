@@ -3,4 +3,5 @@ export const ModalTypes = {
   AddModal: 'AddModal',
   EditModal: 'EditModal',
   CreatePortfolioModal: 'CreatePortfolioModal',
+  EditPortfolioModal: 'EditPortfolioModal',
 };

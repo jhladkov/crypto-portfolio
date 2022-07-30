@@ -77,6 +77,10 @@
       :type-modal="currentModal[0]"
     >
       <create-portfolio-modal v-if="currentModal[0] === 'CreatePortfolioModal'" />
+      <edit-portfolio-modal
+        v-if="currentModal[0] === 'EditPortfolioModal'"
+        :id="editModalId"
+      />
     </modal>
   </section>
 </template>
@@ -91,10 +95,12 @@ import IconCheckMark from '@/assets/icons/user-space/IconCheckMark.vue';
 import IconAdd from '@/assets/icons/user-space/IconAdd.vue';
 import IconBriefCase from '@/assets/icons/user-space/IconBriefCase.vue';
 import IconArrowBack from '@/assets/icons/user-space/IconArrowBack.vue';
+import EditPortfolioModal from '@/containers/modals/edit-portfolio-modal/EditPortfolioModal.vue';
 
 export default {
   name: 'PortfolioPanel',
   components: {
+    EditPortfolioModal,
     IconArrowBack,
     IconBriefCase,
     IconAdd,
@@ -105,16 +111,17 @@ export default {
   },
   setup() {
     const store = useStore();
+    const portfolios = computed(() => store.getters['portfolio/getAccountInfo']?.portfolios);
     const popupOptions = [
       {
-        value: 'Edit', action: 'edit', viewBox: '0 0 32 32', path: 'M27 0c2.761 0 5 2.239 5 5 0 1.126-0.372 2.164-1 3l-2 2-7-7 2-2c0.836-0.628 1.874-1 3-1zM2 23l-2 9 9-2 18.5-18.5-7-7-18.5 18.5zM22.362 11.362l-14 14-1.724-1.724 14-14 1.724 1.724z',
+        value: 'Edit', exceptions: [], action: 'edit', viewBox: '0 0 32 32', path: 'M27 0c2.761 0 5 2.239 5 5 0 1.126-0.372 2.164-1 3l-2 2-7-7 2-2c0.836-0.628 1.874-1 3-1zM2 23l-2 9 9-2 18.5-18.5-7-7-18.5 18.5zM22.362 11.362l-14 14-1.724-1.724 14-14 1.724 1.724z',
       },
       {
-        value: 'Remove', action: 'removePortfolio', viewBox: '0 0 24 24', path: 'M18 7v13c0 0.276-0.111 0.525-0.293 0.707s-0.431 0.293-0.707 0.293h-10c-0.276 0-0.525-0.111-0.707-0.293s-0.293-0.431-0.293-0.707v-13zM17 5v-1c0-0.828-0.337-1.58-0.879-2.121s-1.293-0.879-2.121-0.879h-4c-0.828 0-1.58 0.337-2.121 0.879s-0.879 1.293-0.879 2.121v1h-4c-0.552 0-1 0.448-1 1s0.448 1 1 1h1v13c0 0.828 0.337 1.58 0.879 2.121s1.293 0.879 2.121 0.879h10c0.828 0 1.58-0.337 2.121-0.879s0.879-1.293 0.879-2.121v-13h1c0.552 0 1-0.448 1-1s-0.448-1-1-1zM9 5v-1c0-0.276 0.111-0.525 0.293-0.707s0.431-0.293 0.707-0.293h4c0.276 0 0.525 0.111 0.707 0.293s0.293 0.431 0.293 0.707v1z',
+        value: 'Remove', exceptions: [portfolios?.value[0]?.id], action: 'removePortfolio', viewBox: '0 0 24 24', path: 'M18 7v13c0 0.276-0.111 0.525-0.293 0.707s-0.431 0.293-0.707 0.293h-10c-0.276 0-0.525-0.111-0.707-0.293s-0.293-0.431-0.293-0.707v-13zM17 5v-1c0-0.828-0.337-1.58-0.879-2.121s-1.293-0.879-2.121-0.879h-4c-0.828 0-1.58 0.337-2.121 0.879s-0.879 1.293-0.879 2.121v1h-4c-0.552 0-1 0.448-1 1s0.448 1 1 1h1v13c0 0.828 0.337 1.58 0.879 2.121s1.293 0.879 2.121 0.879h10c0.828 0 1.58-0.337 2.121-0.879s0.879-1.293 0.879-2.121v-13h1c0.552 0 1-0.448 1-1s-0.448-1-1-1zM9 5v-1c0-0.276 0.111-0.525 0.293-0.707s0.431-0.293 0.707-0.293h4c0.276 0 0.525 0.111 0.707 0.293s0.293 0.431 0.293 0.707v1z',
       },
     ];
     const hide = ref(false);
-    const portfolios = computed(() => store.getters['portfolio/getAccountInfo']?.portfolios);
+    const editModalId = ref(0);
     const totalPortfoliosPrice = computed(() => +store.getters['portfolio/getTotalPortfoliosPrice'].toFixed(2));
     const fixedData = computed(() => (portfolio) => portfolio.totalPrice?.toFixed(2) || 0);
     const currentPortfolioId = computed(
@@ -134,11 +141,14 @@ export default {
     const showPortfolios = () => {
       hide.value = !hide.value;
     };
-    const editPortfolio = () => { // id
-
+    const editPortfolio = (portfolioId) => { // id
+      editModalId.value = portfolioId;
+      store.commit('modal/openModal', 'EditPortfolioModal');
     };
-    const removePortfolio = () => { // id
-
+    const removePortfolio = async (portfolioId) => { // id
+      await store.dispatch('portfolio/removePortfolio', portfolioId);
+      await store.dispatch('portfolio/getPortfolio');
+      await store.dispatch('portfolio/getCharts');
     };
 
     return {
@@ -153,6 +163,7 @@ export default {
       editPortfolio,
       showPortfolios,
       openModal,
+      editModalId,
       changePortfolio,
     };
   },

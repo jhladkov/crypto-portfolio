@@ -198,7 +198,19 @@ const actions = {
       },
     };
   },
-
+  async removePortfolio({ state, commit }, portfolioId) {
+    if (portfolioId === state.selectedPortfolio) {
+      localStorage.setItem('selectedPortfolio', state.accountInfo.portfolios[0].id);
+      commit('setSelectedPortfolio', state.accountInfo.portfolios[0].id);
+    }
+    if (portfolioId) {
+      await axios.post(`http://${api}:5000/remove-portfolio?token=${localStorage.getItem('token')}`, {}, {
+        params: {
+          id: portfolioId,
+        },
+      });
+    }
+  },
   async removeTransaction(_, obj) {
     await axios.post(`http://${api}:5000/remove-transaction?token=${localStorage.getItem('token')}`, {
       ...obj,
@@ -207,6 +219,18 @@ const actions = {
         id: localStorage.getItem('selectedPortfolio'),
       },
     });
+  },
+
+  async changePortfolioName(_, { newName, portfolioId }) {
+    if (newName) {
+      await axios.post(`http://${api}:5000/change-portfolio-name?token=${localStorage.getItem('token')}`, {
+        newName,
+      }, {
+        params: {
+          id: portfolioId,
+        },
+      });
+    }
   },
 
   async createPortfolio({ commit }, name) {

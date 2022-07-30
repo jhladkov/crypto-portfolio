@@ -21,7 +21,7 @@
       </div>
     </div>
     <div
-      v-if="popupOptions"
+      v-if="options"
       class="icon-dots"
       @click.stop="openPopup = !openPopup"
     >
@@ -32,9 +32,9 @@
       </svg>
     </div>
     <popup
-      v-if="openPopup && popupOptions"
+      v-if="openPopup && options"
       class="item__popup"
-      :options="popupOptions"
+      :options="options"
       @action="handlePopup"
     />
   </div>
@@ -62,7 +62,9 @@ export default {
   },
   setup(props, { emit }) {
     const openPopup = ref(false);
-
+    const options = computed(
+      () => props.popupOptions.filter((item) => props.id !== +item.exceptions[0]),
+    );
     const totalPrice = computed(
       () => props.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     );
@@ -91,6 +93,7 @@ export default {
       totalPrice,
       randomColor,
       openPopup,
+      options,
     };
   },
 };

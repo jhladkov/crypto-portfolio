@@ -40,10 +40,11 @@ export default {
     const store = useStore();
     const portfolioName = ref('');
 
-    const createPortfolio = () => {
+    const createPortfolio = async () => {
       if (portfolioName.value.trim().length > 0) {
-        store.dispatch('portfolio/createPortfolio', portfolioName.value);
+        await store.dispatch('portfolio/createPortfolio', portfolioName.value);
         store.commit('modal/closeModal', 'CreatePortfolioModal');
+        await store.dispatch('portfolio/getPortfolio');
       }
     };
 

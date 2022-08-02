@@ -265,10 +265,14 @@ export default {
       if (state.addTransactionConfig.type === 'Sell') {
         state.addTransactionConfig.amount = -state.addTransactionConfig.amount;
       }
+      store.commit('portfolio/setLoading', { value: true, loadingName: 'assetSectionLoading' });
+      store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
       await store.dispatch('portfolio/addTokenToPortfolio', { ...state.addTransactionConfig });
       store.commit('modal/closeModal', 'TransactionModal');
       await store.dispatch('portfolio/getPortfolio');
+      store.commit('portfolio/setLoading', { value: false, loadingName: 'assetSectionLoading' });
       await store.dispatch('portfolio/getCharts');
+      store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
     };
 
     watch(value, async (newValue, oldValue) => {

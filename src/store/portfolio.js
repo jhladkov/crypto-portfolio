@@ -46,7 +46,13 @@ const state = {
   selectedPortfolio: undefined,
   searchData: [],
   connection: null,
-  loading: false,
+  loadingState: {
+    chartLoading: false,
+    assetSectionLoading: false,
+    transactionsLoading: false,
+    portfolioLoading: false,
+    portfolioPanelLoading: false,
+  },
   totalPrice: 0,
   activePeriod: 1,
   activeToken: null,
@@ -124,8 +130,8 @@ const mutations = {
     localStorage.setItem('selectedPortfolio', value);
     state.selectedPortfolio = value;
   },
-  setLoading(state, value) {
-    state.loading = value;
+  setLoading(state, { value, loadingName }) {
+    state.loadingState[loadingName] = value;
   },
   resetActiveToken(state) {
     state.activeToken = null;
@@ -253,7 +259,6 @@ const actions = {
   },
   async getPortfolio({ commit, state, getters }) {
     try {
-      commit('setLoading', true);
       const res = await axios.get(`http://${api}:5000/get-portfolio?token=${localStorage.getItem('token')}`, {
         headers: {
           withCredentials: true,
@@ -274,7 +279,6 @@ const actions = {
       commit('setAccountInfo', accountInfo);
       commit('setWBSKData', currentPortfolio.cryptocurrencies);
       commit('setTotalPrice', getters.calculatedTotalPrice);
-      commit('setLoading', false);
     } catch (err) {
       console.warn(err);
     }

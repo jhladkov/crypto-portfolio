@@ -58,8 +58,10 @@ export default {
         newName: portfolioName.value || currentPortfolioName.value,
         portfolioId: props.id,
       });
-      await store.dispatch('portfolio/getPortfolio');
+      store.commit('portfolio/setLoading', { value: true, loadingName: 'portfolioPanelLoading' });
       store.commit('modal/closeModal', 'EditPortfolioModal');
+      await store.dispatch('portfolio/getPortfolio');
+      store.commit('portfolio/setLoading', { value: false, loadingName: 'portfolioPanelLoading' });
     };
 
     return {

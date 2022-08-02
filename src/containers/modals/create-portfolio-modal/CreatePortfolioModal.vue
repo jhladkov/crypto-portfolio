@@ -42,9 +42,11 @@ export default {
 
     const createPortfolio = async () => {
       if (portfolioName.value.trim().length > 0) {
-        await store.dispatch('portfolio/createPortfolio', portfolioName.value);
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'portfolioPanelLoading' });
         store.commit('modal/closeModal', 'CreatePortfolioModal');
+        await store.dispatch('portfolio/createPortfolio', portfolioName.value);
         await store.dispatch('portfolio/getPortfolio');
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'portfolioPanelLoading' });
       }
     };
 

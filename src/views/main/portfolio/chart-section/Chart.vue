@@ -14,8 +14,9 @@
       </button>
     </div>
     <div
-      v-if="state.loading"
-      class="chart__loader"
+      v-if="loading"
+      v-animation
+      class="area__loader"
     >
       <base-loader />
     </div>
@@ -57,7 +58,6 @@ export default {
       series: [],
       lastChanges: 0,
       prevChanges: 0,
-      loading: false,
     });
 
     const chart = ref(null);
@@ -65,6 +65,7 @@ export default {
     const config = reactive(chartConfig);
     const getConfig = computed(() => config);
     const period = computed(() => store.getters['portfolio/getActivePeriod']);
+    const loading = computed(() => store.state.portfolio.loadingState.chartLoading);
 
     const recalculateData = () => {
       const chartDataForDuration = store.getters['portfolio/chartData'][period.value] || [];
@@ -90,20 +91,13 @@ export default {
       data: store.getters['portfolio/chartData'][period.value] || [],
     }]));
 
-    // const chartSeries = computed(() => {
-    //   state.series[0].data = store.getters['portfolio/chartData'][period.value];
-    //   chart.value.updateSeries(state.series);
-    //   recalculateData();
-    //   return store.getters['portfolio/chartData'][period.value];
-    // });
-
     const updateData = async (index) => {
       if (activeIndex !== index) {
         store.commit('portfolio/setActivePeriod', indexes[index]);
         if (!store.getters['portfolio/chartData'][period.value]?.length) {
-          state.loading = true;
+          loading.value = true;
           await store.dispatch('portfolio/getCharts', indexes[index]);
-          state.loading = false;
+          loading.value = false;
         }
         setData();
       }
@@ -114,15 +108,17 @@ export default {
     };
 
     const mouseMove = (e, chart, opt) => {
-      const data = state?.series[0]?.data[opt?.dataPointIndex];
+      const data = compSeries.value[0]?.data[opt?.dataPointIndex];
       if (data?.length === 2 && data[1]) {
-        store.commit('portfolio/setTotalPrice', state.series[0].data[opt.dataPointIndex][1]);
+        store.commit('portfolio/setTotalPrice', compSeries.value[0].data[opt.dataPointIndex][1]);
       }
     };
 
     onBeforeMount(async () => {
       if (!store.getters['portfolio/chartData'][period.value].length) {
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
         await store.dispatch('portfolio/getCharts');
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
       }
       setData();
     });
@@ -138,6 +134,7 @@ export default {
       getConfig,
       chart,
       compSeries,
+      loading,
       // chartSeries,
     };
   },

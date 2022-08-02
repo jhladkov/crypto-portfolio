@@ -103,6 +103,49 @@ hr{
   animation-duration: 0.5s;
   animation-fill-mode: forwards;
 }
+.before-enter{
+  transform: translateX(-500px);
+}
+
+.enter{
+  transform: translateX(0);
+}
+.area__loader {
+  transition: all .3s;
+  position: absolute;
+  z-index: 11;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  &:before {
+    content: '';
+    background: $lightGray;
+    position: absolute;
+    opacity: 0.7;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+
+  .loader {
+    top: 55%;
+    left: 47%;
+    transform: translateY(-50%);
+    z-index: 111111111;
+
+    &:after {
+      border-width: 3px;
+      width: 40px;
+      height: 40px;
+    }
+
+  }
+
+  //transform: translate(-50%,-50%);
+}
 
 
 

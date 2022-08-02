@@ -1,10 +1,8 @@
 <template>
   <section class="assets-section">
     <div class="assets-section__wrapper">
-      <base-loader v-if="loading" />
-      <div
-        v-else
-      >
+      <!--      <base-loader v-if="loading" />-->
+      <div>
         <div class="assets-title">
           Your Assets
         </div>
@@ -21,6 +19,13 @@
           />
         </table-cols>
       </div>
+      <div
+        v-if="loading"
+        v-animation
+        class="area__loader"
+      >
+        <base-loader />
+      </div>
     </div>
   </section>
 </template>
@@ -30,17 +35,17 @@ import {
   reactive, computed,
 } from 'vue';
 import { useStore } from 'vuex';
-import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 import BodyCol from '@/components/body-col/BodyCol.vue';
 import TableCols from '@/components/table-cols/TableCols.vue';
 import { useRouter } from 'vue-router';
+import BaseLoader from '@/components/base-loader/BaseLoader.vue';
 
 export default {
   name: 'AssetsSection',
   components: {
+    BaseLoader,
     TableCols,
     BodyCol,
-    BaseLoader,
   },
   setup() {
     const store = useStore();
@@ -56,14 +61,21 @@ export default {
       }
       return item.historyList.length;
     }));
-    const loading = computed(() => store.state.portfolio.loading);
+    const loading = computed(() => store.state.portfolio.loadingState.assetSectionLoading);
 
     const removeToken = async (cryptocurrencyId) => {
       if (cryptocurrencyId) {
-        store.commit('portfolio/setLoading', true);
+        store.commit('portfolio/setLoading', {
+          value: true,
+          loadingName: 'assetSectionLoading',
+        });
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'assetSectionLoading' });
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
         await store.dispatch('portfolio/removeToken', cryptocurrencyId);
         await store.dispatch('portfolio/getPortfolio');
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'assetSectionLoading' });
         await store.dispatch('portfolio/getCharts');
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
       }
     };
     const goToTransactions = (path) => {

@@ -23,41 +23,6 @@
   }
 }
 
-.chart__loader {
-  position: absolute;
-  z-index: 11111111;
-  top: 22%;
-  bottom: 9%;
-  right: 0;
-  left: 6.5%;
-
-  &:before {
-    content: '';
-    background: $lightGray;
-    position: absolute;
-    opacity: 0.7;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-  }
-
-  .loader {
-    top: 55%;
-    left: 47%;
-    transform: translateY(-50%);
-    z-index: 111111111;
-
-    &:after {
-      border-width: 3px;
-      width: 40px;
-      height: 40px;
-    }
-
-  }
-
-  //transform: translate(-50%,-50%);
-}
 
 .duration-table .active {
   background: $white;

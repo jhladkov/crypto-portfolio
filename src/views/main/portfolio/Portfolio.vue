@@ -17,7 +17,7 @@
       </assets-section>
     </div>
     <div
-      v-else-if="!tokensData.length && !loading"
+      v-else-if="!tokensData.length"
       class="empty-block"
     >
       <div class="empty-block__title">
@@ -40,7 +40,7 @@
       </base-button>
     </div>
     <div
-      v-else
+      v-else-if="loading"
       class="loader"
     >
       <base-loader />
@@ -92,7 +92,7 @@ export default {
     const searchData = computed(() => store.getters['portfolio/searchData']);
     const tokensData = computed(() => store.getters['portfolio/getTokensList']);
     const getModal = computed(() => store.getters['modal/getModal']('TransactionModal'));
-    const loading = computed(() => store.state.portfolio.loading);
+    const loading = computed(() => store.state.portfolio.loadingState.portfolioLoading);
 
     const openModal = () => {
       store.commit('modal/openModal', 'TransactionModal');
@@ -106,7 +106,13 @@ export default {
 
     onBeforeMount(async () => {
       if (!store.getters['portfolio/getTokensList'].length) {
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'portfolioLoading' });
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'assetSectionLoading' });
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'portfolioPanelLoading' });
         await store.dispatch('portfolio/getPortfolio');
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'portfolioLoading' });
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'assetSectionLoading' });
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'portfolioPanelLoading' });
       }
     });
 

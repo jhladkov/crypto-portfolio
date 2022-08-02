@@ -66,9 +66,13 @@ export default {
         data.amount = -data.amount;
       }
       if (data) {
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'assetSectionLoading' });
         await store.dispatch('portfolio/addTokenToPortfolio', { ...data, type: state.type });
         await store.dispatch('portfolio/getPortfolio');
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'assetSectionLoading' });
         await store.dispatch('portfolio/getCharts');
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
       }
     };
 

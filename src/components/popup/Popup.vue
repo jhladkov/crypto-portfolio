@@ -1,5 +1,6 @@
 <template>
   <div
+    v-animation
     class="popup"
   >
     <div

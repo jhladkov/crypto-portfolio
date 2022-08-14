@@ -19,11 +19,4 @@ const router = createRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   console.log(to);
-//   if (!localStorage.getItem('token')) {
-//     next('/portfolio-auth');
-//   }
-// });
-
 export default router;

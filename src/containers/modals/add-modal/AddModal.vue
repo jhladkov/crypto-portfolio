@@ -68,10 +68,12 @@ export default {
       if (data) {
         store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
         store.commit('portfolio/setLoading', { value: true, loadingName: 'assetSectionLoading' });
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'transactionsLoading' });
         await store.dispatch('portfolio/addTokenToPortfolio', { ...data, type: state.type });
         await store.dispatch('portfolio/getPortfolio');
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'transactionsLoading' });
         store.commit('portfolio/setLoading', { value: false, loadingName: 'assetSectionLoading' });
-        await store.dispatch('portfolio/getCharts');
+        await store.dispatch('portfolio/getCharts', store.getters['portfolio/getActivePeriod']);
         store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
       }
     };

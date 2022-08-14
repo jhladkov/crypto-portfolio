@@ -74,7 +74,7 @@ export default {
         await store.dispatch('portfolio/removeToken', cryptocurrencyId);
         await store.dispatch('portfolio/getPortfolio');
         store.commit('portfolio/setLoading', { value: false, loadingName: 'assetSectionLoading' });
-        await store.dispatch('portfolio/getCharts');
+        await store.dispatch('portfolio/getCharts', store.getters['portfolio/getActivePeriod']);
         store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
       }
     };

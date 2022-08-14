@@ -303,29 +303,31 @@ const actions = {
   },
 
   disconnectFromWebSocket({ state }) {
-    state.connection?.close('Close');
+    state.connection?.close(1000, 'Close');
   },
 
-  connectToWebSocket({ commit }) {
+  connectToWebSocket({ commit, state }) {
     const connection = new WebSocket(`ws://${api}:5000/`);
     connection.onmessage = (event) => {
       const response = JSON.parse(event.data);
       const { data } = response;
       if (response?.action === 'portfolio') {
-        commit('setWBSKData', data.tokenList);
+        const tokens = data.filter((item) => +item.id === +localStorage.getItem('selectedPortfolio'))[0]?.cryptocurrencies;
+        commit('setWBSKData', tokens);
       }
       if (response?.action === 'chart') {
-        commit('setChartData', data);
+        commit('setChartData', response);
       }
       if (response?.action === 'search') {
         commit('setSearchData', data);
       }
     };
-
     connection.onopen = () => {
       connection.send(JSON.stringify({
         method: 'getPortfolio',
-        id: 1,
+        token: localStorage.getItem('token'),
+        portfolioId: localStorage.getItem('selectedPortfolio') || 0,
+        period: state.activePeriod || 1,
       }));
     };
     connection.onerror = () => {

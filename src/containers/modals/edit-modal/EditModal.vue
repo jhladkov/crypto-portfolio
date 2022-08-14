@@ -42,9 +42,14 @@ export default {
           amount: data.amount,
         });
         store.commit('transactions/setChosenTransaction', null);
-        // await store.dispatch('portfolio/getPortfolio');
-        await store.dispatch('portfolio/getPortfolio'); // TODO: Тут тоже 2 раза
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'transactionsLoading' });
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'assetSectionLoading' });
+        store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
+        await store.dispatch('portfolio/getPortfolio');
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'transactionsLoading' });
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'assetSectionLoading' });
         await store.dispatch('portfolio/getCharts');
+        store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
       }
     };
 

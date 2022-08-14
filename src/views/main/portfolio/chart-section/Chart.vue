@@ -20,6 +20,14 @@
     >
       <base-loader />
     </div>
+    <div
+      v-if="noData"
+      class="chart__empty no-data"
+    >
+      <p class="no-data__info">
+        There is no data
+      </p>
+    </div>
     <vue-apex-charts
       ref="chart"
       width="100%"
@@ -35,7 +43,7 @@
 
 <script>
 import {
-  reactive, ref, onBeforeMount, computed,
+  reactive, ref, onBeforeMount, computed, onBeforeUpdate,
 } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import { useStore } from 'vuex';
@@ -66,26 +74,35 @@ export default {
     const getConfig = computed(() => config);
     const period = computed(() => store.getters['portfolio/getActivePeriod']);
     const loading = computed(() => store.state.portfolio.loadingState.chartLoading);
+    const noData = computed(() => {
+      if (store.state.portfolio.chartData[store.getters['portfolio/getActivePeriod']].length <= 1 && !loading.value) {
+        return true;
+      }
+      return false;
+    });
 
+    // TODO: come up with it sth
     const recalculateData = () => {
       const chartDataForDuration = store.getters['portfolio/chartData'][period.value] || [];
-      state.lastChanges = chartDataForDuration[chartDataForDuration.length - 1][1];
-      state.prevChanges = chartDataForDuration[0][1];
-      if (state.lastChanges - state.prevChanges < 0) {
-        config.colors = ['#ea3943'];
-        chart?.value?.updateOptions(config);
-      } else {
-        config.colors = ['rgb(22, 199, 132)'];
-        chart?.value?.updateOptions(config);
+      if (chartDataForDuration.length) {
+        state.lastChanges = chartDataForDuration[chartDataForDuration?.length - 1][1];
+        state.prevChanges = chartDataForDuration[0][1];
+        if (state.lastChanges - state.prevChanges < 0) {
+          config.colors = ['#ea3943'];
+          chart?.value?.updateOptions(config);
+        } else {
+          config.colors = ['rgb(22, 199, 132)'];
+          chart?.value?.updateOptions(config);
+        }
       }
     };
-    const setData = () => {
-      recalculateData();
-      state.series[0] = {
-        name: 'main',
-        data: store.getters['portfolio/chartData'][period.value] || [],
-      };
-    };
+    // const setData = () => {
+    //   recalculateData();
+    //   state.series[0] = {
+    //     name: 'main',
+    //     data: store.getters['portfolio/chartData'][period.value] || [],
+    //   };
+    // };
     const compSeries = computed(() => ([{
       name: 'main',
       data: store.getters['portfolio/chartData'][period.value] || [],
@@ -95,11 +112,11 @@ export default {
       if (activeIndex !== index) {
         store.commit('portfolio/setActivePeriod', indexes[index]);
         if (!store.getters['portfolio/chartData'][period.value]?.length) {
-          loading.value = true;
+          store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
           await store.dispatch('portfolio/getCharts', indexes[index]);
-          loading.value = false;
+          store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
         }
-        setData();
+        // setData();
       }
     };
 
@@ -114,13 +131,16 @@ export default {
       }
     };
 
+    onBeforeUpdate(() => {
+      recalculateData();
+    });
     onBeforeMount(async () => {
       if (!store.getters['portfolio/chartData'][period.value].length) {
         store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
         await store.dispatch('portfolio/getCharts');
         store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
       }
-      setData();
+      // setData();
     });
 
     return {
@@ -135,6 +155,7 @@ export default {
       chart,
       compSeries,
       loading,
+      noData,
       // chartSeries,
     };
   },

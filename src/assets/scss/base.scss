@@ -147,5 +147,23 @@ hr{
   //transform: translate(-50%,-50%);
 }
 
+.no-data{
+  position: absolute;
+  z-index: 11;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(239,242,245, .7);
+
+  .no-data__info{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 12;
+  }
+}
+
 
 

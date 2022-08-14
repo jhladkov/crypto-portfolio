@@ -42,7 +42,7 @@ export default {
   components: { BaseButton },
   setup(props, { emit }) {
     const store = useStore();
-    const calendarValue = ref(new Date(1652713637077));
+    const calendarValue = ref(new Date());
 
     const goBack = () => {
       emit('close');

@@ -23,6 +23,13 @@
         :asset-cols="state.assetCols"
         class="transactions"
       >
+        <div
+          v-if="loading"
+          v-animation
+          class="area__loader"
+        >
+          <base-loader />
+        </div>
         <div v-if="historyList">
           <transactions-col
             v-for="(list,index) in historyList"
@@ -88,6 +95,7 @@ export default {
       change: tokenInfo.value?.change,
     }));
     const preTitle = computed(() => (`${tokenInfo?.value?.name}(${tokenInfo?.value?.shortName}) Balance`));
+    const loading = computed(() => store.state.portfolio.loadingState.transactionsLoading);
 
     // const getModal = computed(() => store.getters['modal/getModal']('AddModal'));
     const currentModal = computed(() => {
@@ -105,13 +113,16 @@ export default {
       store.commit('transactions/setChosenTransaction', payload);
     };
     const removeTransaction = async (id, cryptocurrencyId) => {
+      store.commit('portfolio/setLoading', { value: true, loadingName: 'transactionsLoading' });
       if (id && cryptocurrencyId) {
         await store.dispatch('portfolio/removeTransaction', {
           id,
           cryptocurrencyId,
         });
       }
-      await store.dispatch('portfolio/getPortfolio'); // TODO: Приходиться вызывать 2 раза(хз почему)
+      await store.dispatch('portfolio/getPortfolio');
+      store.commit('portfolio/setLoading', { value: false, loadingName: 'transactionsLoading' });
+      await store.dispatch('portfolio/getCharts');
     };
 
     onBeforeMount(async () => {
@@ -126,6 +137,7 @@ export default {
       preTitle,
       historyList,
       goHome,
+      loading,
       removeTransaction,
       changeTransaction,
       // getModal,
@@ -136,5 +148,7 @@ export default {
 </script>
 
 <style scoped>
-
+.transactions{
+  position: relative;
+}
 </style>

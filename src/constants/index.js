@@ -1,5 +1,7 @@
 import { numberFormater } from '@/helpers/general';
 
+export const API_URL = 'http://localhost:5000';
+
 export const chartConfig = {
   theme: {
     mode: 'light', // "dark"

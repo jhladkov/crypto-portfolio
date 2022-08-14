@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Gateway } from '@/setup/axios';
 
 const api = 'localhost';
 // const api = 'vm3356913.52ssd.had.wf';
@@ -206,7 +207,6 @@ const actions = {
   },
   async removePortfolio({ state, commit }, portfolioId) {
     if (portfolioId === state.selectedPortfolio) {
-      localStorage.setItem('selectedPortfolio', state.accountInfo.portfolios[0].id);
       commit('setSelectedPortfolio', state.accountInfo.portfolios[0].id);
     }
     if (portfolioId) {
@@ -259,22 +259,17 @@ const actions = {
   },
   async getPortfolio({ commit, state, getters }) {
     try {
-      const res = await axios.get(`http://${api}:5000/get-portfolio?token=${localStorage.getItem('token')}`, {
-        headers: {
-          withCredentials: true,
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
-        },
+      const data = await Gateway.get('get-portfolio', {
         params: {
           id: localStorage.getItem('selectedPortfolio'),
         },
       });
       const accountInfo = { ...state.accountInfo };
-      accountInfo.portfolios = res.data;
+      accountInfo.portfolios = data;
       if (!state.selectedPortfolio) {
-        commit('setSelectedPortfolio', +localStorage.getItem('selectedPortfolio') || res.data[0].id);
+        commit('setSelectedPortfolio', +localStorage.getItem('selectedPortfolio') || data[0].id);
       }
-      const currentPortfolio = res.data.filter((item) => +item.id === +localStorage.getItem('selectedPortfolio'))[0];
+      const currentPortfolio = data.filter((item) => +item.id === +localStorage.getItem('selectedPortfolio'))[0];
 
       commit('setAccountInfo', accountInfo);
       commit('setWBSKData', currentPortfolio.cryptocurrencies);

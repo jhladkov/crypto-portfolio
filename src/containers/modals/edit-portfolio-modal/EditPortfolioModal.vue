@@ -60,7 +60,7 @@ export default {
       });
       store.commit('portfolio/setLoading', { value: true, loadingName: 'portfolioPanelLoading' });
       store.commit('modal/closeModal', 'EditPortfolioModal');
-      await store.dispatch('portfolio/getPortfolio');
+      await store.dispatch('portfolio/findPortfolio');
       store.commit('portfolio/setLoading', { value: false, loadingName: 'portfolioPanelLoading' });
     };
 

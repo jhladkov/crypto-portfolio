@@ -26,7 +26,6 @@
 
 <script>
 import BaseButton from '@/components/base-button/BaseButton.vue';
-import jwtDecode from 'jwt-decode';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { googleAuth } from '@/helpers/googleAuth';
@@ -41,14 +40,8 @@ export default {
 
     const handleResponse = async (res) => {
       const token = res.credential;
-      const decodedToken = jwtDecode(token);
       localStorage.setItem('token', res.credential);
-      const userInfo = {
-        email: decodedToken.email,
-        name: decodedToken.name,
-        picture: decodedToken.picture,
-      };
-      await store.dispatch('portfolio/googleAuth', userInfo);
+      await store.dispatch('portfolio/checkUser', token);
 
       router.push('/');
     };

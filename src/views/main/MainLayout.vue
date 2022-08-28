@@ -57,7 +57,6 @@ import { onBeforeMount, onBeforeUnmount, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import BaseButton from '@/components/base-button/BaseButton.vue';
-import jwtDecode from 'jwt-decode';
 import { googleAuth } from '@/helpers/googleAuth';
 
 export default {
@@ -73,19 +72,14 @@ export default {
 
     const handleResponse = async (res) => {
       const token = res.credential;
-      const decodedToken = jwtDecode(token);
       localStorage.setItem('token', res.credential);
-      const userInfo = {
-        email: decodedToken.email,
-        name: decodedToken.name,
-        picture: decodedToken.picture,
-      };
-      await store.dispatch('portfolio/googleAuth', userInfo);
+      await store.dispatch('portfolio/checkUser', token);
 
       router.push('/');
     };
     const exitFromAccount = () => {
-      store.commit('portfolio/setAccountInfo', undefined);
+      // store.commit('portfolio/setAccountInfo', undefined);
+      store.commit('portfolio/resetStore');
       localStorage.removeItem('token');
       router.push({ name: 'PortfolioAuth' });
     };
@@ -94,18 +88,19 @@ export default {
       if (!localStorage.getItem('token')) {
         router.push({ name: 'PortfolioAuth' });
       } else {
-        const decode = jwtDecode(localStorage.getItem('token'));
-        await store.dispatch('portfolio/googleAuth', {
-          name: decode.name,
-          email: decode.email,
-          picture: decode.picture,
-        });
-        await store.dispatch('portfolio/connectToWebSocket');
+        // const decode = jwtDecode(localStorage.getItem('token'));
+        await store.dispatch('portfolio/checkUser', localStorage.getItem('token'));
+        // await store.dispatch('portfolio/googleAuth', {
+        //   name: decode.name,
+        //   email: decode.email,
+        //   picture: decode.picture,
+        // });
+        // await store.dispatch('portfolio/connectToWebSocket');
       }
     });
 
     onBeforeUnmount(async () => {
-      await store.dispatch('portfolio/disconnectFromWebSocket');
+      // await store.dispatch('portfolio/disconnectFromWebSocket');
     });
     return {
       statusModal,

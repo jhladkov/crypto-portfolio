@@ -54,6 +54,7 @@ export default {
       type: Number,
       default: 0,
     },
+    exception: Number,
     popupOptions: {
       type: Array,
       default: [],
@@ -63,7 +64,9 @@ export default {
   setup(props, { emit }) {
     const openPopup = ref(false);
     const options = computed(
-      () => props.popupOptions.filter((item) => props.id !== +item.exceptions[0]),
+      () => (+props.id === +props.exception ? [{
+        value: 'Edit', action: 'edit', viewBox: '0 0 32 32', path: 'M27 0c2.761 0 5 2.239 5 5 0 1.126-0.372 2.164-1 3l-2 2-7-7 2-2c0.836-0.628 1.874-1 3-1zM2 23l-2 9 9-2 18.5-18.5-7-7-18.5 18.5zM22.362 11.362l-14 14-1.724-1.724 14-14 1.724 1.724z',
+      }] : props.popupOptions),
     );
     const totalPrice = computed(
       () => props.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),

@@ -120,14 +120,14 @@ export default {
           cryptocurrencyId,
         });
       }
-      await store.dispatch('portfolio/getPortfolio');
+      await store.dispatch('portfolio/findPortfolio');
       store.commit('portfolio/setLoading', { value: false, loadingName: 'transactionsLoading' });
       await store.dispatch('portfolio/getCharts');
     };
 
     onBeforeMount(async () => {
       state.loading = true;
-      await store.dispatch('portfolio/getPortfolio');
+      await store.dispatch('portfolio/findPortfolio');
       state.loading = false;
     });
     return {

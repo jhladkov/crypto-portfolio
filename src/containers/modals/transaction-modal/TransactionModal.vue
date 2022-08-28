@@ -270,7 +270,7 @@ export default {
       store.commit('portfolio/setLoading', { value: true, loadingName: 'transactionsLoading' });
       await store.dispatch('portfolio/addTokenToPortfolio', { ...state.addTransactionConfig });
       store.commit('modal/closeModal', 'TransactionModal');
-      await store.dispatch('portfolio/getPortfolio');
+      await store.dispatch('portfolio/findPortfolio');
       store.commit('portfolio/setLoading', { value: false, loadingName: 'assetSectionLoading' });
       store.commit('portfolio/setLoading', { value: false, loadingName: 'transactionsLoading' });
       await store.dispatch('portfolio/getCharts', store.getters['portfolio/getActivePeriod']);

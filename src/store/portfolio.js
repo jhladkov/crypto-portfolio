@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Gateway } from '@/setup/axios';
+// import { Gateway } from '@/setup/axios';
 
 const api = 'localhost';
 // const api = 'vm3356913.52ssd.had.wf';
@@ -124,8 +124,35 @@ const mutations = {
   setActiveToken(state, value) {
     state.activeToken = { ...value, image: value.src };
   },
+  resetStore(state) {
+    state.WBSKData = [];
+    state.chartData = {
+      1: [],
+      7: [],
+      30: [],
+      90: [],
+      max: [],
+    };
+    state.accountInfo = undefined;
+    state.selectedPortfolio = undefined;
+    state.searchData = [];
+    state.connection = null;
+    state.loadingState = {
+      chartLoading: false,
+      assetSectionLoading: false,
+      transactionsLoading: false,
+      portfolioLoading: false,
+      portfolioPanelLoading: false,
+    };
+    state.totalPrice = 0;
+    state.activePeriod = 1;
+    state.activeToken = null;
+  },
   setAccountInfo(state, value) {
     state.accountInfo = value;
+  },
+  setPortfolios(state, value) {
+    state.accountInfo.portfolios = value;
   },
   setSelectedPortfolio(state, value) {
     localStorage.setItem('selectedPortfolio', value);
@@ -165,14 +192,13 @@ const actions = {
     });
   },
 
-  async googleAuth({ commit }, userInfo) {
-    const res = await axios.post(`http://${api}:5000/auth`, {
-      ...userInfo,
-    });
+  async checkUser({ commit }, token) {
+    const res = await axios.post(`http://${api}:5000/check-user`, { token });
     if (res) {
       commit('setAccountInfo', {
         ...res.data,
       });
+      // commit('setSelectedPortfolio', res.data?.portfolios[0]?.id);
     }
   },
 
@@ -257,22 +283,32 @@ const actions = {
       },
     });
   },
-  async getPortfolio({ commit, state, getters }) {
+  async getPortfolios({ commit }) {
+    const res = await axios.get(`http://${api}:5000/get-portfolios?token=${localStorage.getItem('token')}`);
+    commit('setPortfolios', res.data);
+  },
+  async findPortfolio({
+    commit, state, getters, dispatch,
+  }) {
     try {
-      const data = await Gateway.get('get-portfolio', {
+      const res = await axios.get(`http://${api}:5000/find-portfolio?token=${localStorage.getItem('token')}`, {
+        headers: {
+          withCredentials: true,
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
+        },
         params: {
           id: localStorage.getItem('selectedPortfolio'),
         },
       });
-      const accountInfo = { ...state.accountInfo };
-      accountInfo.portfolios = data;
+      // const accountInfo = { ...state.accountInfo };
+      // accountInfo.portfolios = res.data;
       if (!state.selectedPortfolio) {
-        commit('setSelectedPortfolio', +localStorage.getItem('selectedPortfolio') || data[0].id);
+        commit('setSelectedPortfolio', +localStorage.getItem('selectedPortfolio') || res.data.id);
       }
-      const currentPortfolio = data.filter((item) => +item.id === +localStorage.getItem('selectedPortfolio'))[0];
-
-      commit('setAccountInfo', accountInfo);
-      commit('setWBSKData', currentPortfolio.cryptocurrencies);
+      // commit('setAccountInfo', accountInfo);
+      dispatch('getPortfolios');
+      commit('setWBSKData', res.data.cryptocurrencies);
       commit('setTotalPrice', getters.calculatedTotalPrice);
     } catch (err) {
       console.warn(err);

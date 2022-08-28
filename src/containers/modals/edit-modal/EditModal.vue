@@ -45,7 +45,7 @@ export default {
         store.commit('portfolio/setLoading', { value: true, loadingName: 'transactionsLoading' });
         store.commit('portfolio/setLoading', { value: true, loadingName: 'assetSectionLoading' });
         store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
-        await store.dispatch('portfolio/getPortfolio');
+        await store.dispatch('portfolio/findPortfolio');
         store.commit('portfolio/setLoading', { value: false, loadingName: 'transactionsLoading' });
         store.commit('portfolio/setLoading', { value: false, loadingName: 'assetSectionLoading' });
         await store.dispatch('portfolio/getCharts');

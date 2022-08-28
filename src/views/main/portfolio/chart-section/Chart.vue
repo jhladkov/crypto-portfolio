@@ -75,7 +75,7 @@ export default {
     const period = computed(() => store.getters['portfolio/getActivePeriod']);
     const loading = computed(() => store.state.portfolio.loadingState.chartLoading);
     const noData = computed(() => {
-      if (store.state.portfolio.chartData[store.getters['portfolio/getActivePeriod']].length <= 1 && !loading.value) {
+      if (store.state.portfolio.chartData[store.getters['portfolio/getActivePeriod']]?.length <= 1 && !loading.value) {
         return true;
       }
       return false;
@@ -135,7 +135,7 @@ export default {
       recalculateData();
     });
     onBeforeMount(async () => {
-      if (!store.getters['portfolio/chartData'][period.value].length) {
+      if (!store.getters['portfolio/chartData'][period.value]?.length) {
         store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
         await store.dispatch('portfolio/getCharts');
         store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });

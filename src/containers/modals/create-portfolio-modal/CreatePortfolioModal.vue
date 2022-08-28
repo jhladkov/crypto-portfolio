@@ -45,7 +45,7 @@ export default {
         store.commit('portfolio/setLoading', { value: true, loadingName: 'portfolioPanelLoading' });
         store.commit('modal/closeModal', 'CreatePortfolioModal');
         await store.dispatch('portfolio/createPortfolio', portfolioName.value);
-        await store.dispatch('portfolio/getPortfolio');
+        await store.dispatch('portfolio/getPortfolios');
         store.commit('portfolio/setLoading', { value: false, loadingName: 'portfolioPanelLoading' });
       }
     };

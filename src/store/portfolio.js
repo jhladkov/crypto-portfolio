@@ -1,5 +1,5 @@
 import axios from 'axios';
-// import { Gateway } from '@/setup/axios';
+import { Gateway } from '@/setup/axios';
 
 const api = 'localhost';
 // const api = 'vm3356913.52ssd.had.wf';
@@ -186,17 +186,17 @@ const mutations = {
 
 const actions = {
   async removeToken(_, cryptocurrencyId) {
-    await axios.post(`http://${api}:5000/remove-token?token=${localStorage.getItem('token')}`, {
+    await Gateway.post('remove-token', {
       cryptocurrencyId,
       id: localStorage.getItem('selectedPortfolio'),
     });
   },
 
-  async checkUser({ commit }, token) {
-    const res = await axios.post(`http://${api}:5000/check-user`, { token });
+  async checkUser({ commit }) {
+    const res = await Gateway.post('check-user');
     if (res) {
       commit('setAccountInfo', {
-        ...res.data,
+        ...res,
       });
       // commit('setSelectedPortfolio', res.data?.portfolios[0]?.id);
     }
@@ -236,7 +236,7 @@ const actions = {
       commit('setSelectedPortfolio', state.accountInfo.portfolios[0].id);
     }
     if (portfolioId) {
-      await axios.post(`http://${api}:5000/remove-portfolio?token=${localStorage.getItem('token')}`, {}, {
+      await Gateway.post('remove-portfolio', {}, {
         params: {
           id: portfolioId,
         },
@@ -244,7 +244,7 @@ const actions = {
     }
   },
   async removeTransaction(_, obj) {
-    await axios.post(`http://${api}:5000/remove-transaction?token=${localStorage.getItem('token')}`, {
+    await Gateway.post('remove-transaction', {
       ...obj,
     }, {
       params: {
@@ -255,7 +255,7 @@ const actions = {
 
   async changePortfolioName(_, { newName, portfolioId }) {
     if (newName) {
-      await axios.post(`http://${api}:5000/change-portfolio-name?token=${localStorage.getItem('token')}`, {
+      await Gateway.post('change-portfolio-name', {
         newName,
       }, {
         params: {
@@ -267,15 +267,15 @@ const actions = {
 
   async createPortfolio({ commit }, name) {
     if (name) {
-      const res = await axios.post(`http://${api}:5000/create-portfolio?token=${localStorage.getItem('token')}`, {
+      const res = await Gateway.post('create-portfolio', {
         name,
       });
-      commit('setAccountInfo', res.data);
+      commit('setAccountInfo', res);
     }
   },
 
   async addTokenToPortfolio(_, payload) {
-    await axios.post(`http://${api}:5000/add-to-portfolio?token=${localStorage.getItem('token')}`, {
+    await Gateway.post('add-to-portfolio', {
       ...payload,
     }, {
       params: {
@@ -284,19 +284,14 @@ const actions = {
     });
   },
   async getPortfolios({ commit }) {
-    const res = await axios.get(`http://${api}:5000/get-portfolios?token=${localStorage.getItem('token')}`);
-    commit('setPortfolios', res.data);
+    const res = await Gateway.get('get-portfolios');
+    commit('setPortfolios', res);
   },
   async findPortfolio({
     commit, state, getters, dispatch,
   }) {
     try {
-      const res = await axios.get(`http://${api}:5000/find-portfolio?token=${localStorage.getItem('token')}`, {
-        headers: {
-          withCredentials: true,
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
-        },
+      const res = await Gateway.get('find-portfolio', {
         params: {
           id: localStorage.getItem('selectedPortfolio'),
         },
@@ -304,11 +299,11 @@ const actions = {
       // const accountInfo = { ...state.accountInfo };
       // accountInfo.portfolios = res.data;
       if (!state.selectedPortfolio) {
-        commit('setSelectedPortfolio', +localStorage.getItem('selectedPortfolio') || res.data.id);
+        commit('setSelectedPortfolio', +localStorage.getItem('selectedPortfolio') || res.id);
       }
       // commit('setAccountInfo', accountInfo);
       dispatch('getPortfolios');
-      commit('setWBSKData', res.data.cryptocurrencies);
+      commit('setWBSKData', res.cryptocurrencies);
       commit('setTotalPrice', getters.calculatedTotalPrice);
     } catch (err) {
       console.warn(err);
@@ -317,17 +312,13 @@ const actions = {
 
   async getCharts({ commit }, period = 1) {
     try {
-      const res = await axios.get(`http://${api}:5000/chart-values?token=${localStorage.getItem('token')}&period=${period}`, { // TODO: rewrite
-        headers: {
-          withCredentials: true,
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, HEAD, OPTIONS',
-        },
+      const res = await Gateway.get('chart-values', { // TODO: rewrite
         params: {
           id: localStorage.getItem('selectedPortfolio'),
+          period,
         },
       });
-      commit('setChartData', { data: res.data?.historyChart, period });
+      commit('setChartData', { data: res?.historyChart, period });
     } catch (err) {
       console.warn(err);
     }

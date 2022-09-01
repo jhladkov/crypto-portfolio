@@ -9,9 +9,9 @@ export const Gateway = axios.create({
     token: localStorage.getItem('token'),
     withCredentials: true,
   },
-  params: {
-    token: localStorage.getItem('token'),
-  },
+  // params: {
+  //   token: localStorage.getItem('token'),
+  // },
 });
 
 export const Gateway2 = axios.create({

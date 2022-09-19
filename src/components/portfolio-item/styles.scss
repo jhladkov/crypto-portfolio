@@ -1,0 +1,45 @@
+.portfolio-panel__inner{
+  width: 100%;
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  .item__img{
+    position: relative;
+    margin-right: 20px;
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+    background: $blue;
+    svg{
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 18px;
+      fill: $white;
+    }
+    span{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: $white;
+    }
+  }
+  .item__inner{
+    display: flex;
+  }
+  .item__title{
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .item__value{
+    font-size: 12px;
+    color: $MGray;
+  }
+  .item__popup{
+    left: 78%;
+    top: -25px;
+  }
+}

@@ -1,0 +1,40 @@
+
+.transactions-template{
+  padding: 0 20px;
+}
+
+.transactions-template .table-td{
+  .table-td__operation-price{
+    margin-bottom: 5px;
+  }
+  .table-td__inner{
+    display: flex;
+    align-items: center;
+    svg{
+      cursor: pointer;
+      fill: $MGray;
+      max-width: 12px;
+      margin-right: 20px;
+      &:last-child{
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+.go-back{
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  background: $lightGray;
+  padding: 7px 20px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  svg{
+    margin-right: 10px;
+    max-width: 16px;
+  }
+}

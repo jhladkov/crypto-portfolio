@@ -1,0 +1,58 @@
+.price-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .price-container__pre-title {
+    color: $gray;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+}
+.block__inner{
+  display: flex;
+  align-items: center;
+  .profit__value{
+    font-size: 14px;
+  }
+}
+
+.price-container__block {
+  .price-container__title {
+    letter-spacing: 1px;
+    font-size: 32px;
+    color: $black ;
+    margin-right: 16px;
+  }
+}
+
+
+.price-container__token-img{
+  margin-right: 16px;
+  img{
+    width: 32px;
+    height: 32px;
+  }
+}
+.info-block {
+  display: flex;
+  align-items: center;
+
+
+  .info-block__value {
+    margin-right: 10px;
+    font-weight: 700;
+    font-size: 14px;
+
+  }
+
+  .info-block__duration {
+    padding: 3px 4px;
+    color: $gray;
+    background: $lightGray;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+}

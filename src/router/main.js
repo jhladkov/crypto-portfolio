@@ -13,5 +13,21 @@ export default {
         '../views/main/portfolio/Portfolio.vue'
       ),
     },
+    {
+      path: 'transactions/:token',
+      name: 'Transactions',
+      component: () => import(
+        /* webpackChunkName: "transactions" */
+        '../views/main/transactions/Transactions.vue'
+      ),
+    },
+    {
+      path: 'portfolio-auth',
+      name: 'PortfolioAuth',
+      component: () => import(
+        /* webpackChunkName: "auth" */
+        '../views/main/portfolio-auth/PortfolioAuth.vue'
+      ),
+    },
   ],
 };

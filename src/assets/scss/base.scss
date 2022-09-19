@@ -1,0 +1,169 @@
+@import 'v-calendar/dist/style.css';
+@import "animations";
+//@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"); //TODO: Err
+*, *:after, *:before {
+  box-sizing: border-box;
+}
+body{
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', '-apple-system', 'BlinkMacSystemFont', "segoe ui", 'Roboto', 'Helvetica', 'Arial', 'sans-serif';
+  min-height: 100%;
+}
+html{
+  min-height: 100%;
+}
+
+.container{
+  max-width: 1060px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+li, ul{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: black;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+.main{
+  padding: 30px 0;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+}
+.main-wrapper{
+  flex: 1 0 auto;
+}
+a {
+  text-decoration: none;
+}
+
+svg{
+  width: 100%;
+}
+p{
+  margin: 0;
+}
+
+section{
+  margin-bottom: 30px;
+}
+img{
+  height: 100%;
+  width: 100%;
+
+}
+hr{
+  background: $MGray;
+}
+
+.v-enter-active{
+  transition: all 0.3s ease;
+}
+
+.v-leave-active {
+  transform: translateY(0);
+  transition: all 0.3s ease;
+}
+
+.increase {
+  color: $green;
+}
+
+.v-enter-from {
+  transform: translateY(-10%);
+  opacity: 0;
+}
+.decrease {
+  color: $red;
+}
+
+.v-leave-to {
+  opacity: 0;
+}
+
+.disabled{
+  cursor: not-allowed;
+  background: $lightGray;
+  color: $MGray;
+}
+.show{
+  animation-name: show;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+.hide{
+  overflow: hidden;
+  animation-name: hide;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+.before-enter{
+  transform: translateX(-500px);
+}
+
+.enter{
+  transform: translateX(0);
+}
+.area__loader {
+  transition: all .3s;
+  position: absolute;
+  z-index: 11;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  &:before {
+    content: '';
+    background: $lightGray;
+    position: absolute;
+    opacity: 0.7;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+
+  .loader {
+    top: 55%;
+    left: 47%;
+    transform: translateY(-50%);
+    z-index: 111111111;
+
+    &:after {
+      border-width: 3px;
+      width: 40px;
+      height: 40px;
+    }
+
+  }
+
+  //transform: translate(-50%,-50%);
+}
+
+.no-data{
+  position: absolute;
+  z-index: 11;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(239,242,245, .7);
+
+  .no-data__info{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 12;
+  }
+}
+
+
+

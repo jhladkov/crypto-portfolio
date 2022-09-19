@@ -1,0 +1,16 @@
+.empty-block{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  .empty-block__title{
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .empty-block__subtitle{
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: $MGray;
+  }
+}

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { Gateway } from '@/setup/axios';
 
 const api = 'localhost';
 
@@ -20,9 +20,10 @@ const mutations = {
 
 const actions = {
   async changeTransaction(_, payload) {
-    await axios.post(`http://${api}:5000/change-transaction?token=${localStorage.getItem('token')}`, {
+    await Gateway.post(`http://${api}:5000/change-transaction`, {
       ...payload,
     }, {
+      headers: { token: localStorage.getItem('token') },
       params: {
         id: localStorage.getItem('selectedPortfolio'),
       },

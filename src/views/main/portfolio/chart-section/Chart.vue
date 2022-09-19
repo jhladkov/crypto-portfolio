@@ -25,7 +25,7 @@
       class="chart__empty no-data"
     >
       <p class="no-data__info">
-        There is no data
+        There is no data (will be later)
       </p>
     </div>
     <vue-apex-charts
@@ -43,7 +43,7 @@
 
 <script>
 import {
-  reactive, ref, onBeforeMount, computed, onBeforeUpdate,
+  reactive, ref, onBeforeMount, computed, onBeforeUpdate, onMounted,
 } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import { useStore } from 'vuex';
@@ -73,36 +73,31 @@ export default {
     const config = reactive(chartConfig);
     const getConfig = computed(() => config);
     const period = computed(() => store.getters['portfolio/getActivePeriod']);
-    const loading = computed(() => store.state.portfolio.loadingState.chartLoading);
+    const loading = computed(() => store.getters['portfolio/getLoadingState'].chartLoading);
     const noData = computed(() => {
       if (store.state.portfolio.chartData[store.getters['portfolio/getActivePeriod']]?.length <= 1 && !loading.value) {
         return true;
       }
       return false;
     });
-
-    // TODO: come up with it sth
     const recalculateData = () => {
-      const chartDataForDuration = store.getters['portfolio/chartData'][period.value] || [];
-      if (chartDataForDuration.length) {
-        state.lastChanges = chartDataForDuration[chartDataForDuration?.length - 1][1];
-        state.prevChanges = chartDataForDuration[0][1];
-        if (state.lastChanges - state.prevChanges < 0) {
-          config.colors = ['#ea3943'];
-          chart?.value?.updateOptions(config);
-        } else {
-          config.colors = ['rgb(22, 199, 132)'];
-          chart?.value?.updateOptions(config);
+      try {
+        const chartDataForDuration = store.getters['portfolio/chartData'][period.value] || [];
+        if (chartDataForDuration.length) {
+          state.lastChanges = chartDataForDuration[chartDataForDuration?.length - 1][1];
+          state.prevChanges = chartDataForDuration[0][1];
+          if (state.lastChanges - state.prevChanges < 0) {
+            config.colors = ['#ea3943'];
+            chart?.value?.updateOptions(config);
+          } else {
+            config.colors = ['rgb(22, 199, 132)'];
+            chart?.value?.updateOptions(config);
+          }
         }
+      } catch (err) {
+        console.warn('catch err');
       }
     };
-    // const setData = () => {
-    //   recalculateData();
-    //   state.series[0] = {
-    //     name: 'main',
-    //     data: store.getters['portfolio/chartData'][period.value] || [],
-    //   };
-    // };
     const compSeries = computed(() => ([{
       name: 'main',
       data: store.getters['portfolio/chartData'][period.value] || [],
@@ -112,9 +107,15 @@ export default {
       if (activeIndex !== index) {
         store.commit('portfolio/setActivePeriod', indexes[index]);
         if (!store.getters['portfolio/chartData'][period.value]?.length) {
-          store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
+          store.commit('portfolio/setLoading', {
+            value: true,
+            loadingName: 'chartLoading',
+          });
           await store.dispatch('portfolio/getCharts', indexes[index]);
-          store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
+          store.commit('portfolio/setLoading', {
+            value: false,
+            loadingName: 'chartLoading',
+          });
         }
         // setData();
       }
@@ -130,15 +131,23 @@ export default {
         store.commit('portfolio/setTotalPrice', compSeries.value[0].data[opt.dataPointIndex][1]);
       }
     };
-
+    onMounted(() => {
+      recalculateData();
+    });
     onBeforeUpdate(() => {
       recalculateData();
     });
     onBeforeMount(async () => {
       if (!store.getters['portfolio/chartData'][period.value]?.length) {
-        store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
+        store.commit('portfolio/setLoading', {
+          value: true,
+          loadingName: 'chartLoading',
+        });
         await store.dispatch('portfolio/getCharts');
-        store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
+        store.commit('portfolio/setLoading', {
+          value: false,
+          loadingName: 'chartLoading',
+        });
       }
       // setData();
     });

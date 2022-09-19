@@ -61,7 +61,7 @@ export default {
       }
       return item.historyList.length;
     }));
-    const loading = computed(() => store.state.portfolio.loadingState.assetSectionLoading);
+    const loading = computed(() => store.getters['portfolio/getLoadingState'].assetSectionLoading);
 
     const removeToken = async (cryptocurrencyId) => {
       if (cryptocurrencyId) {
@@ -90,12 +90,6 @@ export default {
       store.commit('portfolio/setActiveToken', token);
       store.commit('modal/openModal', 'TransactionModal');
     };
-
-    // onBeforeMount(async () => {
-    //   state.loading = true;
-    //   await store.dispatch('portfolio/getPortfolio');
-    //   state.loading = false;
-    // });
     return {
       ...state,
       tokensData,

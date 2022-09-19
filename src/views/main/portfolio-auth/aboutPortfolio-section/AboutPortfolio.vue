@@ -41,11 +41,11 @@ export default {
     const handleResponse = async (res) => {
       const token = res.credential;
       localStorage.setItem('token', res.credential);
-      await store.dispatch('portfolio/checkUser', token);
+      await store.dispatch('auth/checkUser', token);
 
       router.push('/');
     };
-    onBeforeMount(() => {
+    onBeforeMount(async () => {
       if (localStorage.getItem('token')) {
         router.push('/');
       }

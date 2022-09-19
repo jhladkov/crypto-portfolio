@@ -46,7 +46,7 @@ export default {
   setup(props) {
     const store = useStore();
     const currentPortfolioName = () => {
-      const portfolio = store.state.portfolio.accountInfo.portfolios.find(
+      const portfolio = store.state.portfolio.portfolios.find(
         (item) => +item.id === +props.id,
       );
       return portfolio?.name || '';

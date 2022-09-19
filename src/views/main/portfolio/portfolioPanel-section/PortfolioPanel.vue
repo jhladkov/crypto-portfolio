@@ -1,7 +1,7 @@
 <template>
   <section class="portfolio-panel">
     <div
-      v-if="portfolios?.length > 1"
+      v-if="panelData?.length > 1"
       class="portfolio-panel__all all-info"
     >
       <div class="portfolio-panel__inner item">
@@ -31,7 +31,7 @@
       </div>
     </div>
     <div
-      v-if="portfolios?.length >= 1"
+      v-if="panelData?.length >= 1"
       class="portfolio-panel__line"
     />
 
@@ -51,7 +51,7 @@
             :name="portfolio.name"
             :price="fixedData(portfolio)"
             :popup-options="popupOptions"
-            :exception="portfolios[0].id"
+            :exception="panelData[0].id"
             @edit="editPortfolio"
             @removePortfolio="removePortfolio"
           />
@@ -122,8 +122,7 @@ export default {
   },
   setup() {
     const store = useStore();
-    const portfolios = computed(() => store.getters['portfolio/getAccountInfo']?.portfolios);
-    const panelData = computed(() => store.state.portfolio?.accountInfo?.portfolios);
+    const panelData = computed(() => store.state.portfolio?.portfolios);
     const popupOptions = [
       {
         value: 'Edit', action: 'edit', viewBox: '0 0 32 32', path: 'M27 0c2.761 0 5 2.239 5 5 0 1.126-0.372 2.164-1 3l-2 2-7-7 2-2c0.836-0.628 1.874-1 3-1zM2 23l-2 9 9-2 18.5-18.5-7-7-18.5 18.5zM22.362 11.362l-14 14-1.724-1.724 14-14 1.724 1.724z',
@@ -146,18 +145,18 @@ export default {
     const openModal = () => {
       store.commit('modal/openModal', 'CreatePortfolioModal');
     };
-    const loading = computed(() => store.state.portfolio.loadingState.portfolioPanelLoading);
+    const loading = computed(() => store.getters['portfolio/getLoadingState'].portfolioPanelLoading);
     const changePortfolio = async (id) => {
       if (id !== currentPortfolioId.value) {
         store.commit('portfolio/setLoading', { value: true, loadingName: 'chartLoading' });
         store.commit('portfolio/setLoading', { value: true, loadingName: 'assetSectionLoading' });
         store.commit('portfolio/setSelectedPortfolio', id);
-        // await store.dispatch('portfolio/disconnectFromWebSocket');
+        await store.dispatch('portfolio/disconnectFromWebSocket');
         await store.dispatch('portfolio/findPortfolio');
         store.commit('portfolio/setLoading', { value: false, loadingName: 'assetSectionLoading' });
         await store.dispatch('portfolio/getCharts');
         store.commit('portfolio/setLoading', { value: false, loadingName: 'chartLoading' });
-        // await store.dispatch('portfolio/connectToWebSocket');
+        await store.dispatch('portfolio/connectToWebSocket');
       }
     };
     const showPortfolios = () => {
@@ -171,11 +170,11 @@ export default {
       store.commit('portfolio/setLoading', { value: true, loadingName: 'portfolioPanelLoading' });
       await store.dispatch('portfolio/removePortfolio', portfolioId);
       await store.dispatch('portfolio/getPortfolios');
+      await store.dispatch('portfolio/findPortfolio');
       store.commit('portfolio/setLoading', { value: false, loadingName: 'portfolioPanelLoading' });
       await store.dispatch('portfolio/getCharts');
     };
     return {
-      portfolios,
       currentModal,
       totalPortfoliosPrice,
       currentPortfolioId,

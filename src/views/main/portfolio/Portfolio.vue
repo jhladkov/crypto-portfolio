@@ -1,56 +1,59 @@
 <template>
   <div class="container">
-    <portfolio-panel />
-    <price-section />
-    <div v-if="tokensData.length">
-      <chart />
-      <assets-section
-        :asset-col="assetCol"
-        title="Your Assets"
-      >
-        <body-col
-          v-for="(item, index) in tokensData"
-          :key="index"
-          class="table-assets-body-col"
-          :asset="item"
-        />
-      </assets-section>
-    </div>
-    <div
-      v-else-if="!tokensData.length"
-      class="empty-block"
-    >
-      <div class="empty-block__title">
-        This portfolio is empty
-      </div>
-      <div class="empty-block__subtitle">
-        Add any coins to get started
-      </div>
-      <base-button
-        value="Add New"
-        class="price-section__add-crypto"
-        @click="openModal"
-      >
-        <svg
-          class="button__icon"
-          viewBox="0 0 20 20"
+    <base-loader v-if="loading" />
+    <template v-else>
+      <portfolio-panel />
+      <price-section />
+      <div v-if="tokensData?.length">
+        <chart />
+        <assets-section
+          :asset-col="assetCol"
+          title="Your Assets"
         >
-          <icon-add />
-        </svg>
-      </base-button>
-    </div>
-    <div
-      v-else-if="loading"
-      class="loader"
-    >
-      <base-loader />
-    </div>
-    <modal
-      v-if="getModal"
-      type-modal="TransactionModal"
-    >
-      <transaction-modal />
-    </modal>
+          <body-col
+            v-for="(item, index) in tokensData"
+            :key="index"
+            class="table-assets-body-col"
+            :asset="item"
+          />
+        </assets-section>
+      </div>
+      <div
+        v-else-if="!tokensData.length"
+        class="empty-block"
+      >
+        <div class="empty-block__title">
+          This portfolio is empty
+        </div>
+        <div class="empty-block__subtitle">
+          Add any coins to get started
+        </div>
+        <base-button
+          value="Add New"
+          class="price-section__add-crypto"
+          @click="openModal"
+        >
+          <svg
+            class="button__icon"
+            viewBox="0 0 20 20"
+          >
+            <icon-add />
+          </svg>
+        </base-button>
+      </div>
+      <!--      <div-->
+      <!--        v-else-if="loading"-->
+      <!--        class="loader"-->
+      <!--      >-->
+      <!--        <base-loader />-->
+      <!--      </div>-->
+      <modal
+        v-if="getModal"
+        type-modal="TransactionModal"
+      >
+        <transaction-modal />
+      </modal>
+    </template>
   </div>
 </template>
 
@@ -92,7 +95,7 @@ export default {
     const searchData = computed(() => store.getters['portfolio/searchData']);
     const tokensData = computed(() => store.getters['portfolio/getTokensList']);
     const getModal = computed(() => store.getters['modal/getModal']('TransactionModal'));
-    const loading = computed(() => store.state.portfolio.loadingState.portfolioLoading);
+    const loading = computed(() => store.getters['portfolio/getLoadingState'].portfolioLoading);
 
     const openModal = () => {
       store.commit('modal/openModal', 'TransactionModal');
@@ -101,18 +104,38 @@ export default {
     watch(value, async (newValue, oldValue) => {
       if (newValue === oldValue) return;
       const con = store.getters['portfolio/connection'];
-      con.send(JSON.stringify({ method: 'SearchToken', value: newValue }));
+      con.send(JSON.stringify({
+        method: 'SearchToken',
+        value: newValue,
+      }));
     });
 
     onBeforeMount(async () => {
-      if (!store.getters['portfolio/getTokensList'].length) {
-        store.commit('portfolio/setLoading', { value: true, loadingName: 'portfolioLoading' });
-        store.commit('portfolio/setLoading', { value: true, loadingName: 'assetSectionLoading' });
-        store.commit('portfolio/setLoading', { value: true, loadingName: 'portfolioPanelLoading' });
+      if (!store.state.portfolio.connection) {
+        store.dispatch('portfolio/connectToWebSocket');
+      }
+      if (!store.getters['portfolio/getTokensList'].length && localStorage.getItem('token')) {
+        store.commit('portfolio/setLoading', {
+          value: true,
+          loadingName: 'assetSectionLoading',
+        });
+        store.commit('portfolio/setLoading', {
+          value: true,
+          loadingName: 'portfolioPanelLoading',
+        });
         await store.dispatch('portfolio/findPortfolio');
-        store.commit('portfolio/setLoading', { value: false, loadingName: 'portfolioLoading' });
-        store.commit('portfolio/setLoading', { value: false, loadingName: 'assetSectionLoading' });
-        store.commit('portfolio/setLoading', { value: false, loadingName: 'portfolioPanelLoading' });
+        store.commit('portfolio/setLoading', {
+          value: false,
+          loadingName: 'portfolioLoading',
+        });
+        store.commit('portfolio/setLoading', {
+          value: false,
+          loadingName: 'assetSectionLoading',
+        });
+        store.commit('portfolio/setLoading', {
+          value: false,
+          loadingName: 'portfolioPanelLoading',
+        });
       }
     });
 

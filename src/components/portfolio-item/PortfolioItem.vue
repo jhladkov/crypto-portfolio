@@ -51,7 +51,7 @@ export default {
   props: {
     name: String,
     price: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     exception: Number,

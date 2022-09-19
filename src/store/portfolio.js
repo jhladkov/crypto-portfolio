@@ -43,8 +43,8 @@ const state = {
     90: [],
     max: [],
   },
-  accountInfo: undefined,
   selectedPortfolio: undefined,
+  portfolios: [],
   searchData: [],
   connection: null,
   loadingState: {
@@ -60,17 +60,17 @@ const state = {
 };
 
 const getters = {
+  getLoadingState(state) {
+    return state.loadingState;
+  },
   getActivePeriod(state) {
     return state.activePeriod;
-  },
-  getAccountInfo(state) {
-    return state.accountInfo;
   },
   getActiveToken(state) {
     return state.activeToken;
   },
   getTotalPortfoliosPrice(state) {
-    return state.accountInfo?.portfolios?.reduce((sum, item) => sum + +item.totalPrice, 0);
+    return state.portfolios?.reduce((sum, item) => sum + +item.totalPrice, 0);
   },
   calculatedTotalPrice(state) {
     return state.WBSKData.reduce((acc, next) => {
@@ -124,7 +124,7 @@ const mutations = {
   setActiveToken(state, value) {
     state.activeToken = { ...value, image: value.src };
   },
-  resetStore(state) {
+  resetPortfolioStore(state) {
     state.WBSKData = [];
     state.chartData = {
       1: [],
@@ -133,7 +133,7 @@ const mutations = {
       90: [],
       max: [],
     };
-    state.accountInfo = undefined;
+    state.portfolios = [];
     state.selectedPortfolio = undefined;
     state.searchData = [];
     state.connection = null;
@@ -148,11 +148,8 @@ const mutations = {
     state.activePeriod = 1;
     state.activeToken = null;
   },
-  setAccountInfo(state, value) {
-    state.accountInfo = value;
-  },
   setPortfolios(state, value) {
-    state.accountInfo.portfolios = value;
+    state.portfolios = value;
   },
   setSelectedPortfolio(state, value) {
     localStorage.setItem('selectedPortfolio', value);
@@ -186,123 +183,153 @@ const mutations = {
 
 const actions = {
   async removeToken(_, cryptocurrencyId) {
-    await Gateway.post('remove-token', {
-      cryptocurrencyId,
-      id: localStorage.getItem('selectedPortfolio'),
-    });
-  },
-
-  async checkUser({ commit }) {
-    const res = await Gateway.post('check-user');
-    if (res) {
-      commit('setAccountInfo', {
-        ...res,
-      });
-      // commit('setSelectedPortfolio', res.data?.portfolios[0]?.id);
+    try {
+      await Gateway.post('remove-token', {
+        cryptocurrencyId,
+        id: localStorage.getItem('selectedPortfolio'),
+      }, { headers: { token: localStorage.getItem('token') } });
+    } catch (err) {
+      console.warn(err);
     }
   },
 
   async getParticularTokenPrice(_, idToken) {
-    const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${idToken}&vs_currencies=usd`).catch(
-      (err) => console.warn(err),
-    );
-    return response.data[`${idToken}`].usd;
+    try {
+      const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${idToken}&vs_currencies=usd`).catch(
+        (err) => console.warn(err),
+      );
+      return response.data[`${idToken}`].usd;
+    } catch (err) {
+      console.warn(err);
+      return err;
+    }
   },
 
   async getInitArrayTokens() {
-    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false';
-    const response = await axios.get(url).catch(
-      (err) => console.warn(err),
-    );
-    const correctSymbol = response.data.map((item) => {
-      item.symbol = item.symbol.toUpperCase();
-      return item;
-    });
-    return {
-      initArrayTokens: correctSymbol,
-      addTransactionConfig: {
-        name: response.data[0].name,
-        cryptocurrencyId: response.data[0].id || response.data[0].cryptocurrencyId,
-        amount: 0,
-        type: 'Buy',
-        symbol: response.data[0].symbol,
-        price: response.data[0].current_price,
-        timestamp: new Date().getTime(),
-      },
-    };
+    try {
+      const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false';
+      const response = await axios.get(url).catch(
+        (err) => console.warn(err),
+      );
+      const correctSymbol = response.data.map((item) => {
+        item.symbol = item.symbol.toUpperCase();
+        return item;
+      });
+      return {
+        initArrayTokens: correctSymbol,
+        addTransactionConfig: {
+          name: response.data[0].name,
+          cryptocurrencyId: response.data[0].id || response.data[0].cryptocurrencyId,
+          amount: 0,
+          type: 'Buy',
+          symbol: response.data[0].symbol,
+          price: response.data[0].current_price,
+          timestamp: new Date().getTime(),
+        },
+      };
+    } catch (err) {
+      console.warn(err);
+      return err;
+    }
   },
   async removePortfolio({ state, commit }, portfolioId) {
-    if (portfolioId === state.selectedPortfolio) {
-      commit('setSelectedPortfolio', state.accountInfo.portfolios[0].id);
-    }
-    if (portfolioId) {
-      await Gateway.post('remove-portfolio', {}, {
-        params: {
-          id: portfolioId,
-        },
-      });
+    try {
+      if (portfolioId === state.selectedPortfolio) {
+        commit('setSelectedPortfolio', state.portfolios[0].id);
+      }
+      if (portfolioId) {
+        await Gateway.post('remove-portfolio', {}, {
+          headers: { token: localStorage.getItem('token') },
+          params: {
+            id: portfolioId,
+          },
+        });
+      }
+    } catch (err) {
+      console.warn(err);
     }
   },
   async removeTransaction(_, obj) {
-    await Gateway.post('remove-transaction', {
-      ...obj,
-    }, {
-      params: {
-        id: localStorage.getItem('selectedPortfolio'),
-      },
-    });
+    try {
+      await Gateway.post('remove-transaction', {
+        ...obj,
+      }, {
+        headers: { token: localStorage.getItem('token') },
+        params: {
+          id: localStorage.getItem('selectedPortfolio'),
+        },
+      });
+    } catch (err) {
+      console.warn(err);
+    }
   },
 
   async changePortfolioName(_, { newName, portfolioId }) {
-    if (newName) {
-      await Gateway.post('change-portfolio-name', {
-        newName,
-      }, {
-        params: {
-          id: portfolioId,
-        },
-      });
+    try {
+      if (newName) {
+        await Gateway.post('change-portfolio-name', {
+          newName,
+        }, {
+          headers: { token: localStorage.getItem('token') },
+          params: {
+            id: portfolioId,
+          },
+        });
+      }
+    } catch (err) {
+      console.warn(err);
     }
   },
 
   async createPortfolio({ commit }, name) {
-    if (name) {
-      const res = await Gateway.post('create-portfolio', {
-        name,
-      });
-      commit('setAccountInfo', res);
+    try {
+      if (name) {
+        const res = await Gateway.post('create-portfolio', {
+          name,
+        }, { headers: { token: localStorage.getItem('token') } });
+        commit('setAccountInfo', res, { root: true });
+      }
+    } catch (err) {
+      console.warn(err);
     }
   },
 
   async addTokenToPortfolio(_, payload) {
-    await Gateway.post('add-to-portfolio', {
-      ...payload,
-    }, {
-      params: {
-        id: localStorage.getItem('selectedPortfolio'),
-      },
-    });
+    try {
+      await Gateway.post('add-to-portfolio', {
+        ...payload,
+      }, {
+        headers: { token: localStorage.getItem('token') },
+        params: {
+          id: localStorage.getItem('selectedPortfolio'),
+        },
+      });
+    } catch (err) {
+      console.warn(err);
+    }
   },
   async getPortfolios({ commit }) {
-    const res = await Gateway.get('get-portfolios');
-    commit('setPortfolios', res);
+    try {
+      const res = await Gateway.get('get-portfolios', { headers: { token: localStorage.getItem('token') } });
+      commit('setPortfolios', res);
+    } catch (err) {
+      console.warn(err);
+    }
   },
   async findPortfolio({
     commit, state, getters, dispatch,
   }) {
     try {
+      await dispatch('getPortfolios');
       const res = await Gateway.get('find-portfolio', {
+        headers: { token: localStorage.getItem('token') },
         params: {
-          id: localStorage.getItem('selectedPortfolio'),
+          id: localStorage.getItem('selectedPortfolio') || state?.portfolios[0]?.id,
         },
       });
-      // const accountInfo = { ...state.accountInfo };
-      // accountInfo.portfolios = res.data;
       if (!state.selectedPortfolio) {
         commit('setSelectedPortfolio', +localStorage.getItem('selectedPortfolio') || res.id);
       }
-      // commit('setAccountInfo', accountInfo);
-      dispatch('getPortfolios');
       commit('setWBSKData', res.cryptocurrencies);
       commit('setTotalPrice', getters.calculatedTotalPrice);
     } catch (err) {
@@ -312,7 +339,8 @@ const actions = {
 
   async getCharts({ commit }, period = 1) {
     try {
-      const res = await Gateway.get('chart-values', { // TODO: rewrite
+      const res = await Gateway.get('chart-values', {
+        headers: { token: localStorage.getItem('token') },
         params: {
           id: localStorage.getItem('selectedPortfolio'),
           period,
@@ -334,7 +362,7 @@ const actions = {
       const response = JSON.parse(event.data);
       const { data } = response;
       if (response?.action === 'portfolio') {
-        const tokens = data.filter((item) => +item.id === +localStorage.getItem('selectedPortfolio'))[0]?.cryptocurrencies;
+        const tokens = data?.cryptocurrencies;
         commit('setWBSKData', tokens);
       }
       if (response?.action === 'chart') {

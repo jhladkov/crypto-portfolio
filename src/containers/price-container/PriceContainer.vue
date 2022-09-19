@@ -21,8 +21,7 @@
           :class="
             `price-section__profit ${+data.change > 0 ? 'increase' : 'decrease'}`
           "
-          :background="true"
-          :value="replaceData(+data.change)"
+          :value="+replaceData(+data.change)"
         >
           <svg
             class="price-section__profit-icon"

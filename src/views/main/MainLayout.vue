@@ -68,39 +68,33 @@ export default {
     const statusModal = computed(
       () => Object.values(store.state.modal.modals).some((item) => item === true),
     );
-    const userInfo = computed(() => store.getters['portfolio/getAccountInfo']);
+    const userInfo = computed(() => store.getters['auth/getAccountInfo']);
 
     const handleResponse = async (res) => {
       const token = res.credential;
       localStorage.setItem('token', res.credential);
-      await store.dispatch('portfolio/checkUser', token);
+      await store.dispatch('auth/checkUser', token);
 
-      router.push('/');
+      await router.push('/');
     };
-    const exitFromAccount = () => {
-      // store.commit('portfolio/setAccountInfo', undefined);
-      store.commit('portfolio/resetStore');
+    const exitFromAccount = async () => {
+      store.commit('portfolio/resetPortfolioStore');
+      store.commit('auth/resetAccountInfo');
       localStorage.removeItem('token');
-      router.push({ name: 'PortfolioAuth' });
+      localStorage.removeItem('selectedPortfolio');
+      await router.push({ name: 'PortfolioAuth' });
     };
 
     onBeforeMount(async () => {
       if (!localStorage.getItem('token')) {
         router.push({ name: 'PortfolioAuth' });
       } else {
-        // const decode = jwtDecode(localStorage.getItem('token'));
-        await store.dispatch('portfolio/checkUser', localStorage.getItem('token'));
-        // await store.dispatch('portfolio/googleAuth', {
-        //   name: decode.name,
-        //   email: decode.email,
-        //   picture: decode.picture,
-        // });
-        // await store.dispatch('portfolio/connectToWebSocket');
+        await store.dispatch('auth/checkUser', localStorage.getItem('token'));
       }
     });
 
     onBeforeUnmount(async () => {
-      // await store.dispatch('portfolio/disconnectFromWebSocket');
+      await store.dispatch('portfolio/disconnectFromWebSocket');
     });
     return {
       statusModal,

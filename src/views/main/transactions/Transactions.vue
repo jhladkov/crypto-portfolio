@@ -95,7 +95,7 @@ export default {
       change: tokenInfo.value?.change,
     }));
     const preTitle = computed(() => (`${tokenInfo?.value?.name}(${tokenInfo?.value?.shortName}) Balance`));
-    const loading = computed(() => store.state.portfolio.loadingState.transactionsLoading);
+    const loading = computed(() => store.getters['portfolio/getLoadingState'].transactionsLoading);
 
     // const getModal = computed(() => store.getters['modal/getModal']('AddModal'));
     const currentModal = computed(() => {
@@ -119,6 +119,10 @@ export default {
           id,
           cryptocurrencyId,
         });
+      }
+      if (historyList.value.length === 1) {
+        await store.dispatch('portfolio/removeToken', cryptocurrencyId);
+        router.push('/');
       }
       await store.dispatch('portfolio/findPortfolio');
       store.commit('portfolio/setLoading', { value: false, loadingName: 'transactionsLoading' });
